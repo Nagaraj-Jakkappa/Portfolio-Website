@@ -1,0 +1,123 @@
+import React from 'react';
+
+export default function Hero() {
+  const handleScroll = (id) => {
+    document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Function to force open the PDF in a new tab
+  const viewResume = () => {
+    window.open('/Nagaraj_Jakkappa_Resume_2026.pdf', '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-navy-950">
+      {/* Background grid */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-100" />
+
+      {/* Gradient orbs */}
+      <div className="orb w-96 h-96 bg-blue-600 top-20 -left-32 opacity-20" />
+      <div className="orb w-80 h-80 bg-cyan-400 bottom-20 right-0 opacity-10" />
+
+      {/* Radial gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-navy-950/50 via-transparent to-navy-900" />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pt-20 pb-10">
+        <div className="max-w-3xl stagger-children">
+          {/* Status Badge */}
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-400 text-[10px] uppercase tracking-widest font-mono mb-8 animate-fade-up"
+            style={{ animationDelay: '0ms', opacity: 0, animationFillMode: 'forwards' }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+            Open for Frontend & Fullstack Roles
+          </div>
+
+          {/* Heading */}
+          <h1
+            className="font-display font-extrabold text-5xl md:text-7xl leading-tight text-white mb-6 animate-fade-up"
+            style={{ animationDelay: '100ms', opacity: 0, animationFillMode: 'forwards' }}
+          >
+            Crafting Digital
+            <br />
+            <span className="gradient-text italic">Artistry</span> Through Code
+          </h1>
+
+          {/* Role / Sub-brand */}
+          <p
+            className="font-display text-xl md:text-2xl text-slate-300 mb-4 animate-fade-up"
+            style={{ animationDelay: '200ms', opacity: 0, animationFillMode: 'forwards' }}
+          >
+            Nagaraj Jakkappa <span className="text-blue-500 font-bold">@ Techartistry.in</span>
+          </p>
+
+          {/* Targeted Description */}
+          <p
+            className="text-slate-400 text-lg max-w-xl leading-relaxed mb-10 animate-fade-up"
+            style={{ animationDelay: '300ms', opacity: 0, animationFillMode: 'forwards' }}
+          >
+            BCA Graduate & Full-Stack Developer specializing in the MERN stack. I transform complex
+            logic into elegant, high-performance web experiences with a focus on Deep Learning
+            integration and minimalist UI.
+          </p>
+
+          {/* CTAs */}
+          <div
+            className="flex flex-wrap gap-4 animate-fade-up"
+            style={{ animationDelay: '400ms', opacity: 0, animationFillMode: 'forwards' }}
+          >
+            <button
+              onClick={() => handleScroll('#projects')}
+              className="btn-primary rounded-full px-8 flex items-center gap-2"
+            >
+              Explore Work
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+
+            {/* FORCE OPEN IN NEW TAB BUTTON */}
+            <button
+              onClick={viewResume}
+              className="btn-ghost rounded-full px-8 flex items-center gap-2"
+            >
+              Download CV
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Social Proof Stats */}
+          <div
+            className="flex flex-wrap gap-10 mt-14 pt-10 border-t border-navy-800 animate-fade-up"
+            style={{ animationDelay: '500ms', opacity: 0, animationFillMode: 'forwards' }}
+          >
+            {[
+              { val: '8.26', label: 'BCA CGPA' },
+              { val: 'MERN', label: 'Stack' },
+              { val: '6+', label: 'Live Projects' },
+              { val: '1', label: 'Internship' },
+            ].map(({ val, label }) => (
+              <div key={label}>
+                <div className="font-display font-bold text-2xl text-white">{val}</div>
+                <div className="text-[10px] text-blue-400/60 mt-0.5 tracking-widest uppercase font-mono">{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Animated Scroll indicator */}
+      <button
+        onClick={() => handleScroll('#about')}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500 hover:text-blue-400 transition-colors animate-bounce"
+      >
+        <span className="text-[10px] font-mono tracking-tighter uppercase opacity-50">Discovery</span>
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </section>
+  );
+}
