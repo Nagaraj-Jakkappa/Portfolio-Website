@@ -16,11 +16,11 @@ const app = express();
 
 // ── Middleware ────────────────────────────────────────────────
 
-// UPDATED CORS: This allows your main site AND any Vercel preview links
 app.use(cors({
   origin: [
-    process.env.CLIENT_URL,                    // Your Production URL
-    /\.vercel\.app$/,                          // Matches all Vercel Preview/Deployment links
+    'https://techartistry.in',                 // Your New Production URL
+    'https://www.techartistry.in',             // The www version
+    /\.vercel\.app$/,                          // Matches all Vercel Preview links
     'http://localhost:5173'                    // Local development
   ],
   credentials: true,
