@@ -1,21 +1,23 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
-const { protect } = require('../middleware/auth');
-
 const router = express.Router();
 
-// POST /api/auth/login
+// 1. LOGIN ROUTE
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (!username || !password)
-      return res.status(400).json({ error: 'Username and password required' });
+    // We lowercase the username to avoid case-sensitivity issues
+    const admin = await Admin.findOne({ username: username.toLowerCase() });
 
-    const admin = await Admin.findOne({ username });
+    if (!admin) {
+      console.log("Login fail: User not found");
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-    // Check if admin exists and password matches
-    if (!admin || !(await admin.comparePassword(password))) {
+    const isMatch = await admin.comparePassword(password);
+    if (!isMatch) {
+      console.log("Login fail: Password mismatch");
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -25,38 +27,29 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    // FIXED: Sending username at top level AND admin object 
-    // to ensure AuthContext.jsx (data.username) works correctly.
     res.json({
       token,
       username: admin.username,
       admin: { id: admin._id, username: admin.username }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Server Login Error:", err);
+    res.status(500).json({ error: "Server Error" });
   }
 });
 
-// GET /api/auth/me (verify token)
-router.get('/me', protect, (req, res) => {
-  res.json({ admin: req.admin });
-});
-
-/**
- * TEMPORARY RESET ROUTE 
- * Visit: techartistry-api.onrender.com/api/auth/prod-reset
- * After it works, DELETE THIS ROUTE for security.
- */
-router.get('/prod-reset', async (req, res) => {
+// 2. THE NUCLEAR SEED ROUTE (Run this once)
+router.get('/nuclear-reset', async (req, res) => {
   try {
-    const newPassword = "admin123";
-    // This uses your Admin model's middleware to hash the password correctly
-    const admin = await Admin.findOneAndUpdate(
-      { username: 'admin' },
-      { password: newPassword },
-      { upsert: true, new: true }
-    );
-    res.json({ message: "Admin password reset to admin123 successfully" });
+    await Admin.deleteMany({}); // Final wipe
+
+    const newAdmin = new Admin({
+      username: 'admin',
+      password: 'admin123'
+    });
+
+    await newAdmin.save();
+    res.json({ message: "Database wiped and fresh admin created! Use: admin / admin123" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
