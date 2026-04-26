@@ -16,11 +16,10 @@ export default function Skills() {
     const fetchSkills = async () => {
       try {
         const res = await api.get('/skills');
-        // SAFETY: Ensure res.data is actually an array before setting state
         setSkills(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Error loading skills:", err);
-        setSkills([]); // Fallback to empty array on error
+        setSkills([]);
       } finally {
         setLoading(false);
       }
@@ -28,21 +27,18 @@ export default function Skills() {
     fetchSkills();
   }, []);
 
-  // Use optional chaining and fallback to prevent .reduce crash
   const groupedSkills = (skills || []).reduce((acc, skill) => {
-    const category = skill.category || 'Other'; // Fallback if category is missing
+    const category = skill.category || 'Other';
     if (!acc[category]) acc[category] = [];
     acc[category].push(skill.name);
     return acc;
   }, {});
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-navy-950">
-        <div className="text-blue-400 font-mono animate-pulse">Loading Stack...</div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-[400px] flex items-center justify-center bg-navy-950">
+      <div className="text-blue-400 font-mono animate-pulse">Loading Stack...</div>
+    </div>
+  );
 
   return (
     <section id="skills" className="section-padding bg-navy-950 relative overflow-hidden">
@@ -73,12 +69,9 @@ export default function Skills() {
           ))}
         </div>
 
-        {/* Improved empty state message */}
         {skills.length === 0 && (
           <div className="mt-20 text-center border border-dashed border-slate-800 p-10 rounded-xl">
-            <p className="text-slate-500 font-mono text-sm">
-              Database is currently empty. Add your skills in the admin dashboard!
-            </p>
+            <p className="text-slate-500 font-mono text-sm">No skills found. Add them via Admin.</p>
           </div>
         )}
       </div>
