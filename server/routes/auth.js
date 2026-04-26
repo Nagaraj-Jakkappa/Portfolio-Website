@@ -13,19 +13,23 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Username and password required' });
 
     const admin = await Admin.findOne({ username });
-    if (!admin || !(await admin.comparePassword(password)))
-      return res.status(401).json({ error: 'Invalid credentials' });
 
-    // Ensure 'id' is used to match your middleware
+    // Check if admin exists and password matches
+    if (!admin || !(await admin.comparePassword(password))) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
     const token = jwt.sign(
       { id: admin._id, username: admin.username },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    // Wrap username in an admin object to match frontend expectations
+    // FIXED: Sending username at top level AND admin object 
+    // to ensure AuthContext.jsx (data.username) works correctly.
     res.json({
       token,
+      username: admin.username,
       admin: { id: admin._id, username: admin.username }
     });
   } catch (err) {
@@ -33,24 +37,29 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// GET /api/auth/me  (verify token)
+// GET /api/auth/me (verify token)
 router.get('/me', protect, (req, res) => {
   res.json({ admin: req.admin });
 });
 
-// POST /api/auth/seed  — run ONCE to create admin, then disable in prod
-router.post('/seed', async (req, res) => {
-  if (process.env.NODE_ENV === 'production')
-    return res.status(403).json({ error: 'Not available in production' });
-
-  const exists = await Admin.findOne({ username: process.env.ADMIN_USERNAME });
-  if (exists) return res.json({ message: 'Admin already exists' });
-
-  await Admin.create({
-    username: process.env.ADMIN_USERNAME,
-    password: process.env.ADMIN_PASSWORD,
-  });
-  res.json({ message: 'Admin created successfully' });
+/**
+ * TEMPORARY RESET ROUTE 
+ * Visit: techartistry-api.onrender.com/api/auth/prod-reset
+ * After it works, DELETE THIS ROUTE for security.
+ */
+router.get('/prod-reset', async (req, res) => {
+  try {
+    const newPassword = "admin123";
+    // This uses your Admin model's middleware to hash the password correctly
+    const admin = await Admin.findOneAndUpdate(
+      { username: 'admin' },
+      { password: newPassword },
+      { upsert: true, new: true }
+    );
+    res.json({ message: "Admin password reset to admin123 successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
