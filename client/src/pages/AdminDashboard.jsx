@@ -98,7 +98,7 @@ export default function AdminDashboard() {
   const [newSkill, setNewSkill] = useState({ name: '', category: 'Frontend' });
   const [newCert, setNewCert] = useState({ title: '', organization: '', date: '', description: '' });
 
-  const unread = messages.filter((m) => !m.read).length;
+  const unread = (messages || []).filter((m) => !m.read).length;
 
   useEffect(() => {
     fetchExtras();
@@ -106,17 +106,20 @@ export default function AdminDashboard() {
 
   const fetchExtras = async () => {
     setLoadingExtras(true);
-    const currentToken = localStorage.getItem('adminToken'); // 🚀 FIX: Get the correct token
+    const currentToken = localStorage.getItem('adminToken');
     try {
       const [sRes, cRes] = await Promise.all([
-        // 🚀 FIX: Added Authorization headers to the refresh calls
         axios.get('/api/skills', { headers: { Authorization: `Bearer ${currentToken}` } }),
         axios.get('/api/certificates', { headers: { Authorization: `Bearer ${currentToken}` } })
       ]);
-      setSkills(sRes.data);
-      setCerts(cRes.data);
-    } catch (err) { console.error("Fetch error", err); }
-    finally { setLoadingExtras(false); }
+      // 🚀 SAFETY: Ensure data is an array
+      setSkills(Array.isArray(sRes.data) ? sRes.data : []);
+      setCerts(Array.isArray(cRes.data) ? cRes.data : []);
+    } catch (err) { 
+      console.error("Fetch error", err); 
+      setSkills([]);
+      setCerts([]);
+    } finally { setLoadingExtras(false); }
   };
 
   const handleLogout = () => { logout(); navigate('/'); };
@@ -126,7 +129,6 @@ export default function AdminDashboard() {
     e.preventDefault();
     const currentToken = localStorage.getItem('adminToken');
     try {
-      // 🚀 FIX: Added default level and icon to prevent 500 Schema Validation errors
       await axios.post('/api/skills', { ...newSkill, level: 85, icon: 'code' }, {
         headers: { Authorization: `Bearer ${currentToken}` }
       });
@@ -134,7 +136,6 @@ export default function AdminDashboard() {
       fetchExtras();
       toast.success('Skill added');
     } catch (err) {
-      console.error(err.response?.data);
       toast.error(err.response?.data?.message || 'Failed to add skill');
     }
   };
@@ -208,15 +209,15 @@ export default function AdminDashboard() {
           {/* Stats Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="card-base p-4">
-              <div className="font-display font-bold text-3xl text-blue-400">{projects.length}</div>
+              <div className="font-display font-bold text-3xl text-blue-400">{(projects || []).length}</div>
               <div className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Projects</div>
             </div>
             <div className="card-base p-4">
-              <div className="font-display font-bold text-3xl text-emerald-400">{skills.length}</div>
+              <div className="font-display font-bold text-3xl text-emerald-400">{(skills || []).length}</div>
               <div className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Skills</div>
             </div>
             <div className="card-base p-4">
-              <div className="font-display font-bold text-3xl text-purple-400">{certs.length}</div>
+              <div className="font-display font-bold text-3xl text-purple-400">{(certs || []).length}</div>
               <div className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Certificates</div>
             </div>
             <div className="card-base p-4">
@@ -244,10 +245,10 @@ export default function AdminDashboard() {
                 <button onClick={() => setModal('create')} className="btn-primary text-sm py-2 px-4">+ Add Project</button>
               </div>
               <div className="space-y-3">
-                {projects.map((p) => (
+                {(projects || []).map((p) => (
                   <div key={p._id} className="card-base p-4 flex items-center justify-between group">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded bg-navy-700 flex items-center justify-center text-blue-400 font-bold">{p.title[0]}</div>
+                      <div className="w-10 h-10 rounded bg-navy-700 flex items-center justify-center text-blue-400 font-bold">{p.title ? p.title[0] : '?'}</div>
                       <div>
                         <p className="text-white text-sm font-medium">{p.title}</p>
                         <p className="text-slate-500 text-xs">{p.category}</p>
@@ -278,12 +279,13 @@ export default function AdminDashboard() {
                 <button className="btn-primary w-full py-2">Add Skill</button>
               </form>
               <div className="space-y-2">
-                {skills.map(s => (
+                {/* 🚀 FIXED: Array check prevents crash */}
+                {(skills || []).length > 0 ? (skills || []).map(s => (
                   <div key={s._id} className="card-base p-3 flex justify-between items-center">
                     <span className="text-sm text-white">{s.name} <span className="text-[10px] text-slate-500 ml-2 uppercase tracking-tighter">{s.category}</span></span>
                     <button onClick={() => handleDeleteSkill(s._id)} className="text-xs text-red-400 hover:underline">Delete</button>
                   </div>
-                ))}
+                )) : <p className="text-slate-500 text-center text-sm py-10">No skills found.</p>}
               </div>
             </div>
           )}
@@ -299,7 +301,8 @@ export default function AdminDashboard() {
                 <button className="btn-primary w-full py-2">Add Certificate</button>
               </form>
               <div className="space-y-3">
-                {certs.map(c => (
+                {/* 🚀 FIXED: Array check prevents crash */}
+                {(certs || []).length > 0 ? (certs || []).map(c => (
                   <div key={c._id} className="card-base p-4">
                     <div className="flex justify-between items-start">
                       <div>
@@ -309,7 +312,7 @@ export default function AdminDashboard() {
                       <button onClick={() => handleDeleteCert(c._id)} className="text-xs text-red-500">Delete</button>
                     </div>
                   </div>
-                ))}
+                )) : <p className="text-slate-500 text-center text-sm py-10">No certificates found.</p>}
               </div>
             </div>
           )}
@@ -317,7 +320,7 @@ export default function AdminDashboard() {
           {/* ── MESSAGES TAB ── */}
           {tab === 'messages' && (
             <div className="space-y-3">
-              {messages.map((m) => (
+              {(messages || []).map((m) => (
                 <div key={m._id} className={`card-base p-5 ${!m.read ? 'border-blue-400/30 shadow-lg shadow-blue-500/5' : ''}`}>
                   <div className="flex justify-between items-start">
                     <div>
