@@ -1,39 +1,8 @@
-// import axios from 'axios';
-
-// const api = axios.create({
-//   baseURL: 'http://localhost:5180/api',
-//   timeout: 10000,
-// });
-
-// // Attach token on every request if present
-// api.interceptors.request.use((config) => {
-//   const token = localStorage.getItem('adminToken');
-//   if (token) config.headers.Authorization = `Bearer ${token}`;
-//   return config;
-// });
-
-// // Global error handling
-// api.interceptors.response.use(
-//   (res) => res,
-//   (err) => {
-//     if (err.response?.status === 401) {
-//       localStorage.removeItem('adminToken');
-//     }
-//     return Promise.reject(err);
-//   }
-// );
-
-// export default api;
-
-
-
 import axios from 'axios';
 
-// This checks if the live Vercel environment variable exists. 
-// If it doesn't (like when you are coding locally), it falls back to localhost.
-const API_BASE_URL = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api`
-  : 'http://localhost:5180/api';
+// Safely format the URL by removing any trailing slashes from the environment variable
+const VITE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5180';
+const API_BASE_URL = `${VITE_URL.replace(/\/$/, '')}/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -51,7 +20,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    // Only clear token if the error isn't coming from the login page itself
+    if (err.response?.status === 401 && !window.location.pathname.includes('/login')) {
       localStorage.removeItem('adminToken');
     }
     return Promise.reject(err);
