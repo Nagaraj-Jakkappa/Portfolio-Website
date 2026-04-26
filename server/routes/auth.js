@@ -1,23 +1,21 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
+const { protect } = require('../middleware/auth'); // Make sure this path is correct
 const router = express.Router();
 
 // 1. LOGIN ROUTE
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    // We lowercase the username to avoid case-sensitivity issues
     const admin = await Admin.findOne({ username: username.toLowerCase() });
 
     if (!admin) {
-      console.log("Login fail: User not found");
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const isMatch = await admin.comparePassword(password);
     if (!isMatch) {
-      console.log("Login fail: Password mismatch");
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -38,18 +36,27 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// 2. THE NUCLEAR SEED ROUTE (Run this once)
+// 2. GET /me ROUTE (Fixes the 404 Error)
+// This verifies the token and keeps the admin logged in on refresh
+router.get('/me', protect, async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin.id).select('-password');
+    res.json({ admin });
+  } catch (err) {
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+// 3. THE NUCLEAR SEED ROUTE
 router.get('/nuclear-reset', async (req, res) => {
   try {
-    await Admin.deleteMany({}); // Final wipe
-
+    await Admin.deleteMany({});
     const newAdmin = new Admin({
       username: 'admin',
       password: 'admin123'
     });
-
     await newAdmin.save();
-    res.json({ message: "Database wiped and fresh admin created! Use: admin / admin123" });
+    res.json({ message: "Database wiped and fresh admin created!" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

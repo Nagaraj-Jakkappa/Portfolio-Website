@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// Import your custom axios instance
 import api from '../../api/axios';
 
 const LEVEL_COLORS = {
@@ -16,11 +15,12 @@ export default function Skills() {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        // Use 'api' instance and the relative path '/skills'
         const res = await api.get('/skills');
-        setSkills(res.data);
+        // SAFETY: Ensure res.data is actually an array before setting state
+        setSkills(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Error loading skills:", err);
+        setSkills([]); // Fallback to empty array on error
       } finally {
         setLoading(false);
       }
@@ -28,14 +28,21 @@ export default function Skills() {
     fetchSkills();
   }, []);
 
-  const groupedSkills = skills.reduce((acc, skill) => {
-    const { category } = skill;
+  // Use optional chaining and fallback to prevent .reduce crash
+  const groupedSkills = (skills || []).reduce((acc, skill) => {
+    const category = skill.category || 'Other'; // Fallback if category is missing
     if (!acc[category]) acc[category] = [];
     acc[category].push(skill.name);
     return acc;
   }, {});
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-navy-950">
+        <div className="text-blue-400 font-mono animate-pulse">Loading Stack...</div>
+      </div>
+    );
+  }
 
   return (
     <section id="skills" className="section-padding bg-navy-950 relative overflow-hidden">
@@ -66,8 +73,13 @@ export default function Skills() {
           ))}
         </div>
 
+        {/* Improved empty state message */}
         {skills.length === 0 && (
-          <p className="text-slate-500 text-center font-mono text-sm mt-10">No skills found in database.</p>
+          <div className="mt-20 text-center border border-dashed border-slate-800 p-10 rounded-xl">
+            <p className="text-slate-500 font-mono text-sm">
+              Database is currently empty. Add your skills in the admin dashboard!
+            </p>
+          </div>
         )}
       </div>
     </section>
