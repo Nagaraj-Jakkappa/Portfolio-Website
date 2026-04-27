@@ -18,12 +18,15 @@ const app = express();
 
 app.use(cors({
   origin: [
-    'https://techartistry.in',                 // Your New Production URL
-    'https://www.techartistry.in',             // The www version
-    /\.vercel\.app$/,                          // Matches all Vercel Preview links
-    'http://localhost:5173'                    // Local development
+    'https://techartistry.in',
+    'https://www.techartistry.in',
+    /\.vercel\.app$/,
+    'http://localhost:5173'
   ],
   credentials: true,
+  // Explicitly allow these methods to prevent 405 errors
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json());
