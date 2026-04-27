@@ -15,7 +15,7 @@ export default function Skills() {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await api.get('/skills');
+        const res = await api.get('skills');
         setSkills(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Error loading skills:", err);

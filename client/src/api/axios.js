@@ -7,6 +7,7 @@ const API_BASE_URL = `${VITE_URL.replace(/\/$/, '')}/api`;
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
+  withCredentials: true,
 });
 
 // Attach token on every request if present
