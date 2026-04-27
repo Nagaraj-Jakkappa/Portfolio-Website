@@ -9,6 +9,7 @@ const { protect } = require('../middleware/auth');
  */
 router.get('/', async (req, res) => {
     try {
+        // Added .sort to show newest certificates first
         const certificates = await Certificate.find().sort({ createdAt: -1 });
         res.json(certificates);
     } catch (err) {
