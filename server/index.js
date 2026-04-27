@@ -16,23 +16,24 @@ const app = express();
 
 // ── Middleware ────────────────────────────────────────────────
 
+// 1. CORS Configuration - MUST BE FIRST to handle Pre-flight (OPTIONS) requests
 app.use(cors({
   origin: [
-    'https://techartistry.in',
-    'https://www.techartistry.in',
-    /\.vercel\.app$/,
-    'http://localhost:5173'
+    'https://techartistry.in',         // Your Production URL
+    'https://www.techartistry.in',     // The www version
+    /\.vercel\.app$/,                 // Matches all Vercel Preview links
+    'http://localhost:5173'           // Local development
   ],
   credentials: true,
-  // Explicitly allow these methods to prevent 405 errors
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow methods
+  allowedHeaders: ['Content-Type', 'Authorization'],    // Ensure Auth headers pass through
 }));
 
+// 2. Global Parsers & Logging
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Rate limiter for contact form
+// 3. Rate Limiter for Contact Form - Defined before routes
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5,
@@ -40,14 +41,15 @@ const contactLimiter = rateLimit({
 });
 
 // ── Routes ────────────────────────────────────────────────────
+
+// Apply specific limiters before the general routes if possible
+app.use('/api/messages/send', contactLimiter);
+
 app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/certificates', certificateRoutes);
-
-// Apply rate limiter specifically to the message sending endpoint
-app.use('/api/messages/send', contactLimiter);
 
 // Health check endpoint (Useful for Render to see if your app is alive)
 app.get('/api/health', (req, res) => res.json({
