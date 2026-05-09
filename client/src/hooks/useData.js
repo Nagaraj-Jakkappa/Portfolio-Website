@@ -103,8 +103,9 @@ export function useCertificates() {
   const fetch = useCallback(async () => {
     setLoading(true); setError(null);
     try {
-      const { data } = await api.get('/certificates');
-      setCertificates(Array.isArray(data) ? data : []);
+      const { data: res } = await api.get('/certificates');
+      // Updated to match the { data, meta } pattern while staying backwards compatible
+      setCertificates(Array.isArray(res) ? res : (res.data ?? []));
     } catch (e) {
       setError(e?.response?.data?.error ?? 'Failed to load certificates');
     } finally { setLoading(false); }
@@ -114,12 +115,16 @@ export function useCertificates() {
 
   const createCertificate = async (payload) => {
     const { data } = await api.post('/certificates', payload);
-    setCertificates(prev => [data, ...prev]); return data;
+    setCertificates(prev => [data, ...prev]);
+    return data;
   };
+
   const updateCertificate = async (id, payload) => {
     const { data } = await api.put(`/certificates/${id}`, payload);
-    setCertificates(prev => prev.map(c => c._id === id ? data : c)); return data;
+    setCertificates(prev => prev.map(c => c._id === id ? data : c));
+    return data;
   };
+
   const deleteCertificate = async (id) => {
     await api.delete(`/certificates/${id}`);
     setCertificates(prev => prev.filter(c => c._id !== id));
