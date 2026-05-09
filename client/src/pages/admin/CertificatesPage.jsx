@@ -44,15 +44,14 @@ function CertModal({ cert, onClose, onSave }) {
                 </Btn>
             </>}>
             <div className="space-y-4">
-                <Input label="Certificate Title *" value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. React - The Complete Guide 2024" />
-                <Input label="Issuing Organization *" value={form.organization} onChange={e => set('organization', e.target.value)} placeholder="Udemy, Coursera, Google, etc." />
-                {/* New Logo URL Input */}
+                <Input label="Certificate Title *" value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. CSS (Basic)" />
+                <Input label="Issuing Organization *" value={form.organization} onChange={e => set('organization', e.target.value)} placeholder="HackerRank, Microsoft, etc." />
                 <Input label="Organization Logo URL" value={form.organizationLogo} onChange={e => set('organizationLogo', e.target.value)} placeholder="https://logo-url.com/logo.png" icon={<Ic d={IC.image} size={14} />} />
                 <div className="grid grid-cols-2 gap-3">
                     <Input label="Date Issued" type="date" value={form.date?.slice(0, 10) ?? ''} onChange={e => set('date', e.target.value)} />
                     <Input label="Credential URL" value={form.link} onChange={e => set('link', e.target.value)} placeholder="https://..." />
                 </div>
-                <Textarea label="Description (optional)" value={form.description} onChange={e => set('description', e.target.value)} placeholder="What did you learn? Key topics covered…" />
+                <Textarea label="Description (optional)" value={form.description} onChange={e => set('description', e.target.value)} placeholder="What did you learn?" />
             </div>
         </Modal>
     );
@@ -62,16 +61,17 @@ function CertCard({ cert, onEdit, onDelete }) {
     const [confirmDelete, setConfirmDelete] = useState(false);
     return (
         <div className="bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl p-5 hover:border-[#2a3f55] transition-colors group">
-            {/* Logic to show Logo or Default Icon */}
+            {/* Logo Section - Replaced Rocket Icon with Organization Logo */}
             <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 overflow-hidden">
                 {cert.organizationLogo ? (
                     <img src={cert.organizationLogo} alt={cert.organization} className="w-full h-full object-contain p-2" />
                 ) : (
-                    <div className="bg-gradient-to-br from-[#38bdf8]/20 to-[#6366f1]/20 w-full h-full flex items-center justify-center">
+                    <div className="bg-gradient-to-br from-[#38bdf8]/20 to-[#6366f1]/20 w-full h-full flex items-center justify-center text-[#38bdf8]">
                         <Ic d={IC.cert} size={20} />
                     </div>
                 )}
             </div>
+
             <h3 className="text-sm font-semibold text-white mb-1 line-clamp-2 leading-snug">{cert.title}</h3>
             <p className="text-xs text-[#38bdf8] mb-1 font-medium">{cert.organization}</p>
             {cert.date && (
@@ -95,22 +95,16 @@ function CertCard({ cert, onEdit, onDelete }) {
                         className="p-1.5 text-slate-600 hover:text-[#38bdf8] hover:bg-[#38bdf8]/10 rounded-lg transition-all">
                         <Ic d={IC.edit} size={12} />
                     </button>
-                    {confirmDelete
-                        ? (
-                            <div className="flex gap-1">
-                                <button onClick={() => setConfirmDelete(false)}
-                                    className="text-xs px-2 py-1 text-slate-500 hover:text-slate-300 border border-[#1e2d3d] rounded-md transition-all">No</button>
-                                <button onClick={() => { onDelete(cert._id); setConfirmDelete(false); }}
-                                    className="text-xs px-2 py-1 text-red-400 bg-red-500/10 border border-red-500/20 rounded-md">Yes</button>
-                            </div>
-                        )
-                        : (
-                            <button onClick={() => setConfirmDelete(true)}
-                                className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
-                                <Ic d={IC.trash} size={12} />
-                            </button>
-                        )
-                    }
+                    {confirmDelete ? (
+                        <div className="flex gap-1">
+                            <button onClick={() => setConfirmDelete(false)} className="text-xs px-2 py-1 text-slate-500">No</button>
+                            <button onClick={() => onDelete(cert._id)} className="text-xs px-2 py-1 text-red-400 bg-red-500/10 rounded-md">Yes</button>
+                        </div>
+                    ) : (
+                        <button onClick={() => setConfirmDelete(true)} className="p-1.5 text-slate-600 hover:text-red-400">
+                            <Ic d={IC.trash} size={12} />
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
@@ -153,31 +147,18 @@ export default function CertificatesPage() {
                     onSave={handleSave}
                 />
             )}
-
             <PageHeader
                 title="Certificates"
-                description={`${certs.length} certificate${certs.length !== 1 ? 's' : ''} in your portfolio`}
+                description={`${certs.length} certificates in your portfolio`}
                 action={<Btn variant="primary" onClick={() => setModal('create')}><Ic d={IC.plus} size={14} /> Add Certificate</Btn>}
             />
-
             {loading ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="h-52 bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl animate-pulse" />
-                    ))}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
+                    {[1, 2, 3, 4].map(i => <div key={i} className="h-52 bg-[#0d1b2a] rounded-xl" />)}
                 </div>
-            ) : certs.length === 0 ? (
-                <EmptyState
-                    icon={<Ic d={IC.cert} size={22} />}
-                    title="No certificates yet"
-                    description="Add your certifications to showcase your learning and achievements."
-                    action={<Btn variant="primary" size="sm" onClick={() => setModal('create')}><Ic d={IC.plus} size={13} /> Add Certificate</Btn>}
-                />
             ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {certs.map(c => (
-                        <CertCard key={c._id} cert={c} onEdit={setModal} onDelete={handleDelete} />
-                    ))}
+                    {certs.map(c => <CertCard key={c._id} cert={c} onEdit={setModal} onDelete={handleDelete} />)}
                 </div>
             )}
         </div>

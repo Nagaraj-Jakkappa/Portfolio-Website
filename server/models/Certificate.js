@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const certificateSchema = new mongoose.Schema({
     title: { type: String, required: true },
     organization: { type: String, required: true },
-    // Added organizationLogo field to store the image URL
+    // New field for the logo URL
     organizationLogo: { type: String },
     date: { type: String },
     link: { type: String },
