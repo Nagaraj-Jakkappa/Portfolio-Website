@@ -31,7 +31,7 @@ const corsOptions = {
   origin: [
     'https://techartistry.in',
     'https://www.techartistry.in',
-    /\.vercel\.app$/,
+    /\.vercel\.app$/, // Allows all Vercel preview deployments
     'http://localhost:5173',
   ],
   credentials: true,
@@ -64,7 +64,7 @@ app.get('/api/health', (req, res) => res.json({
   uptime: Math.floor(process.uptime()),
 }));
 
-// UPDATED: Dashboard stats now returns the actual data arrays the dashboard needs
+// Dashboard stats endpoint
 app.get('/api/stats', protect, async (req, res) => {
   try {
     const [projects, messages, certificates] = await Promise.all([
@@ -104,15 +104,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5180;
+// CRITICAL FIX: Ensure port is a number and bind to 0.0.0.0 for Render
+const PORT = parseInt(process.env.PORT) || 5180;
 
 mongoose
-  .connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 5000 })
+  .connect(process.env.MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000, // Helps with Render free tier connection stability
+  })
   .then(() => {
     console.log('✅  MongoDB connected');
-    const server = app.listen(PORT, () =>
-      console.log(`🚀  Server on http://localhost:${PORT}`)
+    // FIX: Removed 'localhost' to allow Render to bind to its own host
+    const server = app.listen(PORT, '0.0.0.0', () =>
+      console.log(`🚀  Server running on port ${PORT}`)
     );
+
     const shutdown = (sig) => {
       console.log(`\n🛑  ${sig} — shutting down`);
       server.close(() => {
@@ -122,4 +128,7 @@ mongoose
     process.on('SIGTERM', () => shutdown('SIGTERM'));
     process.on('SIGINT', () => shutdown('SIGINT'));
   })
-  .catch(err => { console.error('❌  MongoDB failed:', err.message); process.exit(1); });
+  .catch(err => {
+    console.error('❌  MongoDB failed:', err.message);
+    process.exit(1);
+  });
