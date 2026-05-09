@@ -1,11 +1,3 @@
-/**
- * CertificatesPage.jsx
- * Path: client/src/pages/admin/CertificatesPage.jsx
- *
- * Connects to your existing /api/certificates route.
- * Your Certificate model: { title, organization, date, link, description }
- */
-
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
 import { Card, PageHeader, Btn, Input, Textarea, Modal, EmptyState, Spinner, Ic, Badge } from '../../components/admin/ui/ui';
@@ -18,9 +10,10 @@ const IC = {
     link: 'M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71 M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71',
     check: 'M20 6L9 17l-5-5',
     edit: 'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7 M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z',
+    image: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
 };
 
-const EMPTY = { title: '', organization: '', date: '', link: '', description: '' };
+const EMPTY = { title: '', organization: '', organizationLogo: '', date: '', link: '', description: '' };
 
 function CertModal({ cert, onClose, onSave }) {
     const editing = !!cert?._id;
@@ -53,6 +46,8 @@ function CertModal({ cert, onClose, onSave }) {
             <div className="space-y-4">
                 <Input label="Certificate Title *" value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. React - The Complete Guide 2024" />
                 <Input label="Issuing Organization *" value={form.organization} onChange={e => set('organization', e.target.value)} placeholder="Udemy, Coursera, Google, etc." />
+                {/* New Logo URL Input */}
+                <Input label="Organization Logo URL" value={form.organizationLogo} onChange={e => set('organizationLogo', e.target.value)} placeholder="https://logo-url.com/logo.png" icon={<Ic d={IC.image} size={14} />} />
                 <div className="grid grid-cols-2 gap-3">
                     <Input label="Date Issued" type="date" value={form.date?.slice(0, 10) ?? ''} onChange={e => set('date', e.target.value)} />
                     <Input label="Credential URL" value={form.link} onChange={e => set('link', e.target.value)} placeholder="https://..." />
@@ -67,9 +62,15 @@ function CertCard({ cert, onEdit, onDelete }) {
     const [confirmDelete, setConfirmDelete] = useState(false);
     return (
         <div className="bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl p-5 hover:border-[#2a3f55] transition-colors group">
-            {/* Icon / badge placeholder */}
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#38bdf8]/20 to-[#6366f1]/20 border border-[#38bdf8]/10 flex items-center justify-center mb-4">
-                <Ic d={IC.cert} size={20} />
+            {/* Logic to show Logo or Default Icon */}
+            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 overflow-hidden">
+                {cert.organizationLogo ? (
+                    <img src={cert.organizationLogo} alt={cert.organization} className="w-full h-full object-contain p-2" />
+                ) : (
+                    <div className="bg-gradient-to-br from-[#38bdf8]/20 to-[#6366f1]/20 w-full h-full flex items-center justify-center">
+                        <Ic d={IC.cert} size={20} />
+                    </div>
+                )}
             </div>
             <h3 className="text-sm font-semibold text-white mb-1 line-clamp-2 leading-snug">{cert.title}</h3>
             <p className="text-xs text-[#38bdf8] mb-1 font-medium">{cert.organization}</p>
@@ -82,7 +83,6 @@ function CertCard({ cert, onEdit, onDelete }) {
                 <p className="text-xs text-slate-600 line-clamp-2 mb-3 leading-relaxed">{cert.description}</p>
             )}
 
-            {/* Actions — visible on hover */}
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity pt-3 border-t border-[#1e2d3d]">
                 {cert.link && (
                     <a href={cert.link} target="_blank" rel="noopener noreferrer"
