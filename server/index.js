@@ -31,29 +31,32 @@ const corsOptions = {
   origin: [
     'https://techartistry.in',
     'https://www.techartistry.in',
-    /\.vercel\.app$/, // Allows all Vercel preview deployments
+    /\.vercel\.app$/,
     'http://localhost:5173',
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-confirm-delete'],
+  // Added 'x-requested-with' which some browsers/libraries require
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-confirm-delete', 'x-requested-with'],
 };
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true }));
+// 3. Payload Size Limit - Increased to 5mb to prevent 400 errors with large inputs
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 }
 
+// 4. Rate Limiting - Increased limit for testing stability
 app.use('/api', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 200,
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 500, // Increased from 200
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.method === 'OPTIONS',
+  skip: (req) => req.method === 'OPTIONS' || process.env.NODE_ENV !== 'production',
   message: { error: 'Too many requests — please slow down.' },
 }));
 
@@ -98,23 +101,23 @@ app.use('/api/*', (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error('[Error]', err);
-  const status = err.status || err.statusCode || 500;
+  // Improved error reporting for debugging
+  const status = err.status || err.statusCode || 400;
   res.status(status).json({
-    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+    error: err.message || 'Internal server error',
+    details: process.env.NODE_ENV === 'production' ? null : err.stack
   });
 });
 
-// CRITICAL FIX: Ensure port is a number and bind to 0.0.0.0 for Render
 const PORT = parseInt(process.env.PORT) || 5180;
 
 mongoose
   .connect(process.env.MONGODB_URI, {
     serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000, // Helps with Render free tier connection stability
+    socketTimeoutMS: 45000,
   })
   .then(() => {
     console.log('✅  MongoDB connected');
-    // FIX: Removed 'localhost' to allow Render to bind to its own host
     const server = app.listen(PORT, '0.0.0.0', () =>
       console.log(`🚀  Server running on port ${PORT}`)
     );
