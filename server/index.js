@@ -27,7 +27,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS — preserved from current project (multi-origin)
 const corsOptions = {
   origin: [
     'https://techartistry.in',
@@ -58,7 +57,6 @@ app.use('/api', rateLimit({
   message: { error: 'Too many requests — please slow down.' },
 }));
 
-// Health check
 app.get('/api/health', (req, res) => res.json({
   status: 'ok',
   env: process.env.NODE_ENV || 'development',
@@ -66,17 +64,23 @@ app.get('/api/health', (req, res) => res.json({
   uptime: Math.floor(process.uptime()),
 }));
 
-// Dashboard stats (protected)
+// UPDATED: Dashboard stats now returns the actual data arrays the dashboard needs
 app.get('/api/stats', protect, async (req, res) => {
   try {
-    const [projects, messages, certs, unread, featured] = await Promise.all([
-      Project.countDocuments(),
-      Message.countDocuments(),
-      Certificate.countDocuments(),
-      Message.countDocuments({ read: false }),
-      Project.countDocuments({ featured: true }),
+    const [projects, messages, certificates] = await Promise.all([
+      Project.find().sort({ createdAt: -1 }).limit(5),
+      Message.find().sort({ createdAt: -1 }).limit(10),
+      Certificate.find().sort({ createdAt: -1 })
     ]);
-    res.json({ projects, messages, certificates: certs, unread, featured });
+
+    const counts = {
+      projectCount: await Project.countDocuments(),
+      messageCount: await Message.countDocuments(),
+      unreadMessages: await Message.countDocuments({ read: false }),
+      certCount: await Certificate.countDocuments()
+    };
+
+    res.json({ projects, messages, certificates, counts });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -92,7 +96,6 @@ app.use('/api/*', (req, res) => {
   res.status(404).json({ error: `Route ${req.method} ${req.originalUrl} not found` });
 });
 
-// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   console.error('[Error]', err);
   const status = err.status || err.statusCode || 500;

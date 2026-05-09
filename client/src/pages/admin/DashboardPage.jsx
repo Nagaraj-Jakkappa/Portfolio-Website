@@ -1,10 +1,3 @@
-/**
- * DashboardPage.jsx
- * Path: client/src/pages/admin/DashboardPage.jsx
- *
- * Run: npm install recharts   (one-time)
- */
-
 import { useState, useEffect } from 'react';
 import {
     AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -13,7 +6,6 @@ import {
 import api from '../../api/axios';
 import { StatCard, Card, CardHeader, Badge, Btn, PageHeader, Ic } from '../../components/admin/ui/ui';
 
-// ── Icon paths ────────────────────────────────────────────────
 const IC = {
     proj: 'M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z',
     msg: 'M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z',
@@ -27,7 +19,6 @@ const IC = {
     live: 'M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0',
 };
 
-// ── Seeded chart data (swap for real analytics later) ─────────
 const VISITOR_DATA = [
     { month: 'Jan', visitors: 124, pageviews: 348 },
     { month: 'Feb', visitors: 187, pageviews: 502 },
@@ -53,7 +44,6 @@ const TECH_PIE = [
 ];
 const PIE_COLORS = ['#38bdf8', '#0ea5e9', '#6366f1', '#8b5cf6'];
 
-// ── Custom tooltip ────────────────────────────────────────────
 const ChartTip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null;
     return (
@@ -70,7 +60,6 @@ const ChartTip = ({ active, payload, label }) => {
     );
 };
 
-// ── Activity row ──────────────────────────────────────────────
 function ActivityRow({ color, icon, title, meta, time }) {
     return (
         <div className="flex items-start gap-3 py-3 border-b border-[#1e2d3d] last:border-0">
@@ -87,7 +76,6 @@ function ActivityRow({ color, icon, title, meta, time }) {
     );
 }
 
-// ── Quick action ──────────────────────────────────────────────
 function QuickAction({ icon, accent, label, desc, href }) {
     return (
         <a href={href}
@@ -107,7 +95,6 @@ function QuickAction({ icon, accent, label, desc, href }) {
     );
 }
 
-// ── Recent project row ────────────────────────────────────────
 function ProjectRow({ p }) {
     const CAT = { web: 'blue', fullstack: 'green', ml: 'purple', other: 'slate' };
     return (
@@ -127,7 +114,6 @@ function ProjectRow({ p }) {
     );
 }
 
-// ── Recent message row ────────────────────────────────────────
 function MsgRow({ m }) {
     const colors = ['from-[#38bdf8] to-[#0284c7]', 'from-[#6366f1] to-[#4f46e5]', 'from-[#10b981] to-[#059669]'];
     const ci = (m.name?.charCodeAt(0) ?? 0) % colors.length;
@@ -150,33 +136,29 @@ function MsgRow({ m }) {
     );
 }
 
-// ── Dashboard ─────────────────────────────────────────────────
 export default function DashboardPage() {
-    const [data, setData] = useState({ projects: [], messages: [], certs: [] });
+    const [data, setData] = useState({ projects: [], messages: [], certificates: [], counts: {} });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        Promise.allSettled([
-            api.get('/projects'),
-            api.get('/messages'),
-            api.get('/certificates'),
-        ]).then(([p, m, c]) => {
-            setData({
-                projects: p.status === 'fulfilled' ? p.value.data : [],
-                messages: m.status === 'fulfilled' ? m.value.data : [],
-                certs: c.status === 'fulfilled' ? c.value.data : [],
-            });
-        }).finally(() => setLoading(false));
+        api.get('/stats')
+            .then(res => {
+                setData(res.data);
+            })
+            .catch(err => console.error("Dashboard Load Error:", err))
+            .finally(() => setLoading(false));
     }, []);
 
-    const unread = data.messages.filter(m => !m.read).length;
+    // SAFE GUARD: Line 172 - Check if array exists before filtering
+    const unreadCount = Array.isArray(data.messages)
+        ? data.messages.filter(m => !m.read).length
+        : 0;
+
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
     return (
         <div className="p-5 md:p-7 max-w-[1400px] mx-auto space-y-4">
-
-            {/* ── Header ─────────────────────────────────────────── */}
             <div className="flex items-start justify-between flex-wrap gap-3">
                 <div>
                     <p className="text-xs text-slate-700 font-mono mb-0.5">
@@ -190,18 +172,14 @@ export default function DashboardPage() {
                 </Btn>
             </div>
 
-            {/* ── KPI row ────────────────────────────────────────── */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard label="Total Projects" value={loading ? '—' : data.projects.length} delta={12} accent="#38bdf8" loading={loading} icon={<Ic d={IC.proj} size={16} />} />
-                <StatCard label="Messages Received" value={loading ? '—' : data.messages.length} delta={unread > 0 ? unread : undefined} accent="#6366f1" loading={loading} icon={<Ic d={IC.msg} size={16} />} />
-                <StatCard label="Certificates" value={loading ? '—' : data.certs.length} accent="#f59e0b" loading={loading} icon={<Ic d={IC.cert} size={16} />} />
+                <StatCard label="Total Projects" value={loading ? '—' : data.counts?.projectCount ?? 0} accent="#38bdf8" loading={loading} icon={<Ic d={IC.proj} size={16} />} />
+                <StatCard label="Messages Received" value={loading ? '—' : data.counts?.messageCount ?? 0} delta={data.counts?.unreadMessages > 0 ? data.counts.unreadMessages : undefined} accent="#6366f1" loading={loading} icon={<Ic d={IC.msg} size={16} />} />
+                <StatCard label="Certificates" value={loading ? '—' : data.counts?.certCount ?? 0} accent="#f59e0b" loading={loading} icon={<Ic d={IC.cert} size={16} />} />
                 <StatCard label="Profile Views" value={loading ? '—' : '1.2k'} delta={8} accent="#10b981" loading={loading} icon={<Ic d={IC.eye} size={16} />} />
             </div>
 
-            {/* ── Row 2: Traffic chart + Pie ─────────────────────── */}
             <div className="grid lg:grid-cols-3 gap-4">
-
-                {/* Area chart */}
                 <Card className="lg:col-span-2" padding={false}>
                     <div className="p-5 pb-0">
                         <CardHeader title="Visitor Traffic" subtitle="Monthly unique visitors vs page views" />
@@ -229,17 +207,8 @@ export default function DashboardPage() {
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
-                    <div className="flex items-center gap-5 px-5 pb-4 pt-2 border-t border-[#1e2d3d]">
-                        {[{ c: '#38bdf8', l: 'Visitors' }, { c: '#6366f1', l: 'Page Views' }].map(({ c, l }) => (
-                            <div key={l} className="flex items-center gap-1.5">
-                                <div className="w-2 h-2 rounded-full" style={{ background: c }} />
-                                <span className="text-xs text-slate-600">{l}</span>
-                            </div>
-                        ))}
-                    </div>
                 </Card>
 
-                {/* Tech pie */}
                 <Card>
                     <CardHeader title="Tech Stack" subtitle="Distribution across projects" />
                     <div className="h-36 mb-3">
@@ -268,7 +237,6 @@ export default function DashboardPage() {
                 </Card>
             </div>
 
-            {/* ── Row 3: Msg bar chart + Quick actions ────────────── */}
             <div className="grid lg:grid-cols-3 gap-4">
                 <Card>
                     <CardHeader title="Message Volume" subtitle="Contact form submissions per month" />
@@ -289,14 +257,13 @@ export default function DashboardPage() {
                     <CardHeader title="Quick Actions" subtitle="Jump to common tasks" />
                     <div className="grid sm:grid-cols-2 gap-2">
                         <QuickAction icon={<Ic d={IC.plus} size={14} />} accent="#38bdf8" label="Add Project" desc="Create a new portfolio entry" href="/admin/projects" />
-                        <QuickAction icon={<Ic d={IC.msg} size={14} />} accent="#6366f1" label="View Messages" desc={`${unread} unread message${unread !== 1 ? 's' : ''}`} href="/admin/messages" />
+                        <QuickAction icon={<Ic d={IC.msg} size={14} />} accent="#6366f1" label="View Messages" desc={`${unreadCount} unread messages`} href="/admin/messages" />
                         <QuickAction icon={<Ic d={IC.cert} size={14} />} accent="#f59e0b" label="Add Certificate" desc="Upload a new certificate" href="/admin/certificates" />
                         <QuickAction icon={<Ic d={IC.live} size={14} />} accent="#10b981" label="Live Site" desc="Open your public portfolio" href="/" />
                     </div>
                 </Card>
             </div>
 
-            {/* ── Row 4: Recent projects + Recent messages ─────────── */}
             <div className="grid lg:grid-cols-2 gap-4">
                 <Card padding={false}>
                     <div className="p-5 pb-0">
@@ -314,7 +281,7 @@ export default function DashboardPage() {
                                     </div>
                                 </div>
                             ))
-                            : data.projects.length === 0
+                            : (data.projects || []).length === 0
                                 ? <p className="text-sm text-slate-700 py-10 text-center">No projects yet.</p>
                                 : data.projects.slice(0, 5).map(p => <ProjectRow key={p._id} p={p} />)
                         }
@@ -337,33 +304,13 @@ export default function DashboardPage() {
                                     </div>
                                 </div>
                             ))
-                            : data.messages.length === 0
+                            : (data.messages || []).length === 0
                                 ? <p className="text-sm text-slate-700 py-10 text-center">No messages yet.</p>
                                 : data.messages.slice(0, 5).map(m => <MsgRow key={m._id} m={m} />)
                         }
                     </div>
-                    {data.messages.length > 0 && (
-                        <div className="px-5 py-3 border-t border-[#1e2d3d]">
-                            <span className="text-xs text-slate-700">{unread} unread · {data.messages.length} total</span>
-                        </div>
-                    )}
                 </Card>
             </div>
-
-            {/* ── Activity feed ───────────────────────────────────── */}
-            <Card>
-                <CardHeader title="Activity Feed" subtitle="Recent actions in your dashboard"
-                    action={<Badge label="Live" variant="green" />} />
-                {[
-                    { color: '#38bdf8', icon: <Ic d={IC.plus} size={13} />, title: 'New project added — "Pothole Detection App"', meta: 'Category: ML · Featured', time: '2h ago' },
-                    { color: '#6366f1', icon: <Ic d={IC.msg} size={13} />, title: 'New message from a recruiter', meta: 'Subject: Frontend Internship at GoComet', time: '5h ago' },
-                    { color: '#f59e0b', icon: <Ic d={IC.cert} size={13} />, title: 'Certificate uploaded — "React - Complete Guide"', meta: 'Issuer: Udemy', time: '1d ago' },
-                    { color: '#f59e0b', icon: <Ic d={IC.edit} size={13} />, title: 'Project updated — "Weather Forecast App"', meta: 'Changed: description, live URL', time: '2d ago' },
-                    { color: '#6366f1', icon: <Ic d={IC.msg} size={13} />, title: 'New message — "Job opportunity at Zensar"', meta: 'Marked as read', time: '3d ago' },
-                    { color: '#38bdf8', icon: <Ic d={IC.plus} size={13} />, title: 'New project added — "ThinkFast Quiz App"', meta: 'Category: Web', time: '4d ago' },
-                ].map((a, i) => <ActivityRow key={i} {...a} />)}
-            </Card>
-
         </div>
     );
 }
