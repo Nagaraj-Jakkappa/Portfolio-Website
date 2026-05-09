@@ -1,69 +1,107 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Project = require('../models/Project');
 const { protect } = require('../middleware/auth');
-
 const router = express.Router();
 
-// ── Public ────────────────────────────────────────────────────
+function validateProject(body) {
+  const errors = {};
+  if (!body.title?.trim()) errors.title = 'Title is required';
+  if (!body.description?.trim()) errors.description = 'Description is required';
+  if (body.category && !['web', 'ml', 'fullstack', 'other'].includes(body.category))
+    errors.category = 'Invalid category';
+  return errors;
+}
 
-// GET /api/projects  — all projects (optionally ?featured=true)
+// GET /api/projects  — supports ?featured=true, ?category=ml, ?search=react, ?page=1, ?limit=100
 router.get('/', async (req, res) => {
   try {
+    const { featured, category, search, page = 1, limit = 100, sort = 'order', dir = 'asc' } = req.query;
     const filter = {};
-    if (req.query.featured === 'true') filter.featured = true;
-    const projects = await Project.find(filter).sort({ order: 1, createdAt: -1 });
-    res.json(projects);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    if (featured !== undefined) filter.featured = featured === 'true';
+    if (category) filter.category = category;
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { techStack: { $elemMatch: { $regex: search, $options: 'i' } } },
+      ];
+    }
+    const SORTS = ['order', 'createdAt', 'title'];
+    const sortField = SORTS.includes(sort) ? sort : 'order';
+    const sortDir = dir === 'desc' ? -1 : 1;
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 100));
+    const skip = (pageNum - 1) * limitNum;
+
+    const [items, total] = await Promise.all([
+      Project.find(filter).sort({ [sortField]: sortDir, createdAt: -1 }).skip(skip).limit(limitNum).lean(),
+      Project.countDocuments(filter),
+    ]);
+    res.json({ data: items, meta: { total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) } });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // GET /api/projects/:id
 router.get('/:id', async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    if (!mongoose.Types.ObjectId.isValid(req.params.id))
+      return res.status(400).json({ error: 'Invalid project ID' });
+    const project = await Project.findById(req.params.id).lean();
     if (!project) return res.status(404).json({ error: 'Project not found' });
     res.json(project);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
-
-// ── Protected (Admin) ─────────────────────────────────────────
 
 // POST /api/projects
 router.post('/', protect, async (req, res) => {
   try {
-    const project = await Project.create(req.body);
+    const errors = validateProject(req.body);
+    if (Object.keys(errors).length) return res.status(400).json({ error: 'Validation failed', errors });
+    const project = await Project.create({
+      title: req.body.title.trim(),
+      description: req.body.description.trim(),
+      longDescription: req.body.longDescription?.trim() || '',
+      techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
+      imageUrl: req.body.imageUrl?.trim() || '',
+      liveUrl: req.body.liveUrl?.trim() || '',
+      githubUrl: req.body.githubUrl?.trim() || '',
+      featured: Boolean(req.body.featured),
+      category: req.body.category || 'web',
+      order: Number(req.body.order) || 0,
+    });
     res.status(201).json(project);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+  } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 // PUT /api/projects/:id
 router.put('/:id', protect, async (req, res) => {
   try {
-    const project = await Project.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!project) return res.status(404).json({ error: 'Project not found' });
-    res.json(project);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+    if (!mongoose.Types.ObjectId.isValid(req.params.id))
+      return res.status(400).json({ error: 'Invalid project ID' });
+    const errors = validateProject(req.body);
+    if (Object.keys(errors).length) return res.status(400).json({ error: 'Validation failed', errors });
+    const updated = await Project.findByIdAndUpdate(req.params.id, {
+      title: req.body.title.trim(), description: req.body.description.trim(),
+      longDescription: req.body.longDescription?.trim() || '',
+      techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
+      imageUrl: req.body.imageUrl?.trim() || '', liveUrl: req.body.liveUrl?.trim() || '',
+      githubUrl: req.body.githubUrl?.trim() || '', featured: Boolean(req.body.featured),
+      category: req.body.category || 'web', order: Number(req.body.order) || 0,
+    }, { new: true, runValidators: true });
+    if (!updated) return res.status(404).json({ error: 'Project not found' });
+    res.json(updated);
+  } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 // DELETE /api/projects/:id
 router.delete('/:id', protect, async (req, res) => {
   try {
-    const project = await Project.findByIdAndDelete(req.params.id);
-    if (!project) return res.status(404).json({ error: 'Project not found' });
-    res.json({ message: 'Project deleted' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    if (!mongoose.Types.ObjectId.isValid(req.params.id))
+      return res.status(400).json({ error: 'Invalid project ID' });
+    const deleted = await Project.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Project not found' });
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 module.exports = router;

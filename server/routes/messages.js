@@ -1,94 +1,121 @@
+/**
+ * messages.js — MERGED
+ * Preserved: Nodemailer email notification, EMAIL_USER/EMAIL_PASS env vars
+ * Added: pagination, email validation, read-all, clear-all
+ */
 const express = require('express');
+const nodemailer = require('nodemailer');
 const Message = require('../models/Message');
 const { protect } = require('../middleware/auth');
-const nodemailer = require('nodemailer'); // Import Nodemailer
-
 const router = express.Router();
 
-// 1. Configure the Email Transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
 });
 
-// POST /api/messages — public contact form submission
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateMessage(body) {
+  const errors = {};
+  if (!body.name?.trim()) errors.name = 'Name is required';
+  if (!body.email?.trim()) errors.email = 'Email is required';
+  else if (!EMAIL_RE.test(body.email)) errors.email = 'Invalid email format';
+  if (!body.message?.trim()) errors.message = 'Message is required';
+  else if (body.message.trim().length < 10) errors.message = 'Message must be at least 10 characters';
+  return errors;
+}
+
+// POST /api/messages  — public contact form (saves + emails)
 router.post('/', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
+    const errors = validateMessage(req.body);
+    if (Object.keys(errors).length)
+      return res.status(400).json({ error: 'Validation failed', errors });
 
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: 'Name, email and message are required' });
-    }
-
-    // A. Save to MongoDB
     const saved = await Message.create({
-      name,
-      email,
-      subject,
-      message,
-      ipAddress: req.ip,
+      name: name.trim(), email: email.trim().toLowerCase(),
+      subject: subject?.trim() || '', message: message.trim(),
+      ipAddress: req.ip, read: false,
     });
 
-    // B. Send Email Notification
-    const mailOptions = {
-      from: process.env.EMAIL_USER, // Your nagupoojary33 address
-      to: 'nagupoojary33@gmail.com', // Where you want to receive it
-      replyTo: email,               // Allows you to reply directly to the sender
-      subject: `New Portfolio Message: ${subject || 'No Subject'}`,
-      html: `
-        <div style="font-family: sans-serif; padding: 20px; color: #333; border: 1px solid #ddd; border-radius: 10px;">
-          <h2 style="color: #2563eb;">New Message from ${name}</h2>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Subject:</strong> ${subject || 'N/A'}</p>
-          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-          <p style="white-space: pre-wrap;">${message}</p>
-        </div>
-      `,
-    };
-
-    // Use await to ensure we catch any email errors
-    await transporter.sendMail(mailOptions);
+    // Email notification — non-blocking, failure won't break response
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER,
+        replyTo: email,
+        subject: `New Portfolio Message: ${subject || 'No Subject'}`,
+        html: `
+          <div style="font-family:sans-serif;padding:20px;color:#333;border:1px solid #ddd;border-radius:10px;">
+            <h2 style="color:#2563eb;">New Message from ${name}</h2>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Subject:</strong> ${subject || 'N/A'}</p>
+            <hr style="border:0;border-top:1px solid #eee;margin:20px 0;"/>
+            <p style="white-space:pre-wrap;">${message}</p>
+          </div>`,
+      }).catch(err => console.error('[Email] Failed:', err.message));
+    }
 
     res.status(201).json({ success: true, id: saved._id });
   } catch (err) {
-    console.error('SERVER ERROR:', err);
+    console.error('[Messages POST]', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ── Admin only ────────────────────────────────────────────────
-
-// GET /api/messages — list all messages
+// GET /api/messages  — admin inbox with pagination
 router.get('/', protect, async (req, res) => {
   try {
-    const messages = await Message.find().sort({ createdAt: -1 });
-    res.json(messages);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    const { page = 1, limit = 50, unread } = req.query;
+    const filter = {};
+    if (unread === 'true') filter.read = false;
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(100, parseInt(limit, 10) || 50);
+    const skip = (pageNum - 1) * limitNum;
+    const [items, total, unreadCount] = await Promise.all([
+      Message.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
+      Message.countDocuments(filter),
+      Message.countDocuments({ read: false }),
+    ]);
+    res.json({ data: items, meta: { total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum), unreadCount } });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// PATCH /api/messages/read-all  — must be before /:id
+router.patch('/read-all', protect, async (req, res) => {
+  try {
+    const result = await Message.updateMany({ read: false }, { read: true });
+    res.json({ success: true, updated: result.modifiedCount });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // PATCH /api/messages/:id/read
 router.patch('/:id/read', protect, async (req, res) => {
   try {
     const msg = await Message.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
+    if (!msg) return res.status(404).json({ error: 'Message not found' });
     res.json(msg);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // DELETE /api/messages/:id
 router.delete('/:id', protect, async (req, res) => {
   try {
     await Message.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Deleted' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// DELETE /api/messages  — clear all (requires x-confirm-delete: yes header)
+router.delete('/', protect, async (req, res) => {
+  try {
+    if (req.headers['x-confirm-delete'] !== 'yes')
+      return res.status(400).json({ error: 'Send header x-confirm-delete: yes to confirm' });
+    const result = await Message.deleteMany({});
+    res.json({ success: true, deleted: result.deletedCount });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 module.exports = router;

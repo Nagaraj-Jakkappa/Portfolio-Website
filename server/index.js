@@ -5,72 +5,118 @@ const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
-// ── Route Imports ─────────────────────────────────────────────
 const projectRoutes = require('./routes/projects');
 const messageRoutes = require('./routes/messages');
 const authRoutes = require('./routes/auth');
 const skillRoutes = require('./routes/skills');
 const certificateRoutes = require('./routes/certificates');
 
+const Project = require('./models/Project');
+const Message = require('./models/Message');
+const Certificate = require('./models/Certificate');
+const { protect } = require('./middleware/auth');
+
 const app = express();
 
-// ── Middleware ────────────────────────────────────────────────
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
-// 1. CORS Configuration - MUST BE FIRST
-app.use(cors({
+// CORS — preserved from current project (multi-origin)
+const corsOptions = {
   origin: [
     'https://techartistry.in',
     'https://www.techartistry.in',
     /\.vercel\.app$/,
-    'http://localhost:5173'
+    'http://localhost:5173',
   ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-confirm-delete'],
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+}
+
+app.use('/api', rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS',
+  message: { error: 'Too many requests — please slow down.' },
 }));
 
-// 2. Explicit OPTIONS Handling (The "405 Killer")
-// This ensures that any pre-flight request is immediately met with a 200 OK
-app.options('*', cors());
-
-app.use(express.json());
-app.use(morgan('dev'));
-
-// 3. Rate Limiter for Contact Form
-const contactLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { error: 'Too many messages, please try again later.' },
-});
-
-// ── Routes ────────────────────────────────────────────────────
-
-// Health check endpoint (Always keep this high up)
+// Health check
 app.get('/api/health', (req, res) => res.json({
   status: 'ok',
-  timestamp: new Date()
+  env: process.env.NODE_ENV || 'development',
+  timestamp: new Date().toISOString(),
+  uptime: Math.floor(process.uptime()),
 }));
 
-// Apply specific limiters
-app.use('/api/messages/send', contactLimiter);
+// Dashboard stats (protected)
+app.get('/api/stats', protect, async (req, res) => {
+  try {
+    const [projects, messages, certs, unread, featured] = await Promise.all([
+      Project.countDocuments(),
+      Message.countDocuments(),
+      Certificate.countDocuments(),
+      Message.countDocuments({ read: false }),
+      Project.countDocuments({ featured: true }),
+    ]);
+    res.json({ projects, messages, certificates: certs, unread, featured });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-// General Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
-app.use('/api/auth', authRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/certificates', certificateRoutes);
 
-// ── DB + Server ───────────────────────────────────────────────
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: `Route ${req.method} ${req.originalUrl} not found` });
+});
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error('[Error]', err);
+  const status = err.status || err.statusCode || 500;
+  res.status(status).json({
+    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+  });
+});
+
 const PORT = process.env.PORT || 5180;
 
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 5000 })
   .then(() => {
-    console.log('✅ MongoDB connected');
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    console.log('✅  MongoDB connected');
+    const server = app.listen(PORT, () =>
+      console.log(`🚀  Server on http://localhost:${PORT}`)
+    );
+    const shutdown = (sig) => {
+      console.log(`\n🛑  ${sig} — shutting down`);
+      server.close(() => {
+        mongoose.connection.close(false).then(() => process.exit(0));
+      });
+    };
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
   })
-  .catch((err) => {
-    console.error('❌ MongoDB connection failed:', err.message);
-    process.exit(1);
-  });
+  .catch(err => { console.error('❌  MongoDB failed:', err.message); process.exit(1); });
