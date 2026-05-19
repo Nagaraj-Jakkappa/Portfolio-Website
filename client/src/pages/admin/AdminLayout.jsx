@@ -61,6 +61,7 @@ export default function AdminLayout() {
     const { pathname } = useLocation();
 
     const [expanded, setExpanded] = useState(true);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState([]);
