@@ -4,3 +4,32 @@ dist/
 build/
 .DS_Store
 *.log
+# dependencies
+node_modules/
+
+# python
+.venv/
+venv/
+
+# logs
+logs/
+*.log
+
+# env
+.env
+.env.local
+
+# build
+dist/
+build/
+
+# runtime
+runs/
+
+# cache
+.cache/
+tmp/
+
+# editor
+.vscode/
+.idea/
