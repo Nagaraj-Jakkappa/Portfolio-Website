@@ -250,7 +250,7 @@ export default function AdminLayout() {
 
             </div>
 
-           /* Desktop Sidebar */
+           {/* Desktop Sidebar */}
             <aside
                 className={`
         hidden md:flex flex-col
