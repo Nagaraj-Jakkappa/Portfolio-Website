@@ -250,9 +250,87 @@ export default function AdminLayout() {
 
             </div>
 
+           /* Desktop Sidebar */
+            <aside
+                className={`
+        hidden md:flex flex-col
+        bg-[#0a1628]
+        border-r border-[#1e2d3d]
+        transition-all duration-300 ease-in-out
+        overflow-hidden
+        ${expanded ? 'w-56' : 'w-16'}
+    `}
+            >
+
+                <div className="flex flex-col h-full">
+
+                    {/* Logo */}
+                    <div
+                        className={`
+                h-16 flex items-center border-b border-[#1e2d3d]
+                ${expanded ? 'px-5' : 'justify-center px-0'}
+            `}
+                    >
+
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center">
+                            <span className="text-xs font-bold text-white">
+                                NJ
+                            </span>
+                        </div>
+
+                        {expanded && (
+                            <div className="ml-2.5">
+
+                                <div className="text-sm font-semibold text-white">
+                                    Techartistry
+                                </div>
+
+                                <div className="text-[10px] text-slate-600">
+                                    Portfolio OS
+                                </div>
+
+                            </div>
+                        )}
+
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className="flex-1 py-4 px-2">
+
+                        {NAV_MAIN.map(item => (
+
+                            <NavLink
+                                key={item.path}
+                                to={item.path}
+                                end={item.end}
+                                className={({ isActive }) =>
+                                    `
+                        flex items-center gap-3
+                        rounded-lg px-3 py-2.5 mb-1
+                        transition
+                        ${isActive
+                                        ? 'bg-[#38bdf8]/10 text-[#38bdf8]'
+                                        : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
+                                    }
+                    `
+                                }
+                            >
+                                <Ic d={ICONS[item.icon]} size={15} />
+
+                                {expanded && item.label}
+
+                            </NavLink>
+
+                        ))}
+
+                    </nav>
+
+                </div>
+
+            </aside>
+
             {/* Main */}
             <div className="flex-1 flex flex-col overflow-hidden">
-
                 {/* Header */}
                 <header className="relative z-40 h-16 border-b border-[#1e2d3d] bg-[#0a1628]/80 backdrop-blur-sm flex items-center gap-4 px-6">
 
