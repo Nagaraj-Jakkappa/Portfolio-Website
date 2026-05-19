@@ -1,111 +1,315 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+
+const API_URL = 'http://127.0.0.1:8000/detect'
 
 export default function DetectionPlayground() {
-  const [image, setImage] = useState(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [detected, setDetected] = useState(false);
+  const [image, setImage] = useState(null)
+  const [detections, setDetections] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
+  const [imageSize, setImageSize] = useState({
+    width: 1,
+    height: 1
+  })
 
-  const handleUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (f) => {
-        setImage(f.target.result);
-        startAnalysis();
-      };
-      reader.readAsDataURL(file);
+  const resetState = () => {
+    setDetections([])
+    setError('')
+    setMessage('')
+  }
+
+  const handleUpload = async (e) => {
+    const file = e.target.files[0]
+
+    if (!file) return
+
+    resetState()
+
+    // Validate image
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload a valid image.')
+      return
     }
-  };
 
-  const startAnalysis = () => {
-    setIsAnalyzing(true);
-    setDetected(false);
-    // Simulate model processing time
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setDetected(true);
-    }, 2500);
-  };
+    setLoading(true)
+
+    const imageURL = URL.createObjectURL(file)
+    setImage(imageURL)
+
+    const img = new Image()
+
+    img.onload = async () => {
+      setImageSize({
+        width: img.width,
+        height: img.height
+      })
+
+      try {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: formData
+        })
+
+        if (!response.ok) {
+          throw new Error('Server error')
+        }
+
+        const data = await response.json()
+
+        console.log('AI RESPONSE:', data)
+
+        if (data.success) {
+          setDetections(data.detections || [])
+          setMessage(data.message || '')
+
+          if (data.detections?.length === 0) {
+            setMessage('No potholes detected')
+          }
+        } else {
+          setError(data.error || 'Detection failed.')
+        }
+
+      } catch (err) {
+        console.error(err)
+        setError('Backend connection failed.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    img.src = imageURL
+  }
 
   return (
-    <section id="pothole-demo" className="section-padding bg-navy-900">
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="font-display font-bold text-3xl text-white mb-4">AI Playground</h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Experience my <span className="text-blue-400">Pothole Detection</span> logic. 
-            Upload a road photo to see the Deep Learning model in action.
+    <section
+      id="ai-playground"
+      className="py-24 px-6 md:px-12 bg-[#08111f] border-y border-white/5"
+    >
+      <div className="max-w-6xl mx-auto">
+
+        {/* HEADER */}
+        <div className="text-center mb-14">
+
+          <p className="text-cyan-400 uppercase tracking-[0.25em] text-xs font-semibold mb-4">
+            AI Detection Playground
           </p>
+
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+            Real-Time AI Pothole Detection
+          </h2>
+
+          <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            Upload a road image to test YOLOv8 pothole detection powered by FastAPI.
+          </p>
+
         </div>
 
-        <div className="relative group card-base p-4 min-h-[400px] flex flex-col items-center justify-center overflow-hidden">
+        {/* MAIN CARD */}
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8">
+
           {!image ? (
-            <label className="cursor-pointer flex flex-col items-center group">
-              <div className="w-16 h-16 mb-4 rounded-full bg-navy-800 flex items-center justify-center border border-navy-700 group-hover:border-blue-500/50 transition-colors">
-                <svg className="w-8 h-8 text-slate-500 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
-              </div>
-              <p className="text-slate-400 font-mono text-sm uppercase tracking-widest">Upload Image</p>
-              <input type="file" className="hidden" onChange={handleUpload} accept="image/*" />
-            </label>
-          ) : (
-            <div className="relative w-full h-full rounded-lg overflow-hidden">
-              <img src={image} alt="Upload" className="w-full h-auto max-h-[500px] object-cover" />
-              
-              {/* Scanning Line Animation */}
-              <AnimatePresence>
-                {isAnalyzing && (
-                  <motion.div 
-                    initial={{ top: 0 }}
-                    animate={{ top: '100%' }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-x-0 h-1 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)] z-20"
-                  />
-                )}
-              </AnimatePresence>
 
-              {/* Detected Pothole Overlay */}
-              {detected && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute top-1/3 left-1/4 w-32 h-24 border-2 border-emerald-400 rounded-lg shadow-[0_0_20px_rgba(52,211,153,0.4)] z-30"
+            <label className="border-2 border-dashed border-white/10 rounded-3xl min-h-[420px] flex flex-col items-center justify-center cursor-pointer hover:border-cyan-400/40 transition-all duration-300">
+
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleUpload}
+              />
+
+              <div className="w-20 h-20 rounded-full bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center mb-6">
+
+                <svg
+                  className="w-10 h-10 text-cyan-400"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  viewBox="0 0 24 24"
                 >
-                  <span className="absolute -top-6 left-0 bg-emerald-500 text-navy-950 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                    Pothole: 98.2%
-                  </span>
-                </motion.div>
-              )}
-            </div>
-          )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"
+                  />
+                </svg>
 
-          {image && !isAnalyzing && (
-            <button 
-              onClick={() => setImage(null)} 
-              className="mt-6 text-slate-500 hover:text-white text-xs font-mono uppercase tracking-tighter transition-colors"
-            >
-              Reset Playground
-            </button>
+              </div>
+
+              <h3 className="text-white text-2xl font-bold mb-3">
+                Upload Road Image
+              </h3>
+
+              <p className="text-slate-400 text-sm">
+                Upload a road surface image to simulate AI-powered pothole
+                detection using object detection workflows.
+              </p>
+
+              <p className="text-slate-400 text-sm">
+                JPG, PNG, WEBP supported
+              </p>
+
+            </label>
+
+          ) : (
+
+            <div className="space-y-8">
+
+              {/* IMAGE */}
+              <div className="relative overflow-hidden rounded-3xl border border-white/10">
+
+                <img
+                  src={image}
+                  alt="Uploaded"
+                  className="w-full h-auto"
+                />
+
+                {/* DETECTIONS */}
+                {detections.map((det, index) => {
+
+                  const left =
+                    (det.x1 / imageSize.width) * 100
+
+                  const top =
+                    (det.y1 / imageSize.height) * 100
+
+                  const width =
+                    ((det.x2 - det.x1) / imageSize.width) * 100
+
+                  const height =
+                    ((det.y2 - det.y1) / imageSize.height) * 100
+
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute border-[3px] border-emerald-400 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                      style={{
+                        left: `${left}%`,
+                        top: `${top}%`,
+                        width: `${width}%`,
+                        height: `${height}%`
+                      }}
+                    >
+
+                      {/* LABEL */}
+                      <div className="absolute -top-9 left-0 bg-emerald-400 text-black text-xs font-black px-3 py-1 rounded-lg whitespace-nowrap">
+
+                        Pothole • {det.confidence}%
+
+                      </div>
+
+                    </motion.div>
+                  )
+                })}
+
+              </div>
+
+              {/* LOADING */}
+              {loading && (
+                <div className="flex items-center gap-3 text-cyan-400">
+
+                  <div className="w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+
+                  Running YOLOv8 inference...
+
+                </div>
+              )}
+
+              {/* SUCCESS MESSAGE */}
+              {!loading && message && !error && (
+                <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 text-emerald-300 px-5 py-4">
+
+                  {message}
+
+                </div>
+              )}
+
+              {/* ERROR */}
+              {error && (
+                <div className="rounded-2xl border border-red-500/20 bg-red-500/10 text-red-300 px-5 py-4">
+
+                  {error}
+
+                </div>
+              )}
+
+              {/* DETECTION COUNT */}
+              {!loading && detections.length > 0 && (
+                <div className="flex items-center gap-3 text-white">
+
+                  <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
+
+                  <span className="font-semibold">
+                    {detections.length} pothole(s) detected
+                  </span>
+
+                </div>
+              )}
+
+              {/* RESET */}
+              <button
+                onClick={() => {
+                  setImage(null)
+                  resetState()
+                }}
+                className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all duration-300"
+              >
+                Upload Another Image
+              </button>
+
+            </div>
           )}
         </div>
 
-        {/* Technical Specs Footer */}
-        <div className="mt-8 grid grid-cols-3 gap-4">
-            <div className="text-center border-r border-navy-800">
-                <p className="text-[10px] text-slate-500 uppercase font-mono">Backbone</p>
-                <p className="text-sm text-white font-bold">YOLOv8</p>
-            </div>
-            <div className="text-center border-r border-navy-800">
-                <p className="text-[10px] text-slate-500 uppercase font-mono">Dataset</p>
-                <p className="text-sm text-white font-bold">800+ Images</p>
-            </div>
-            <div className="text-center">
-                <p className="text-[10px] text-slate-500 uppercase font-mono">Accuracy</p>
-                <p className="text-sm text-white font-bold">94.5%</p>
-            </div>
+        {/* FOOTER STATS */}
+        <div className="grid md:grid-cols-3 gap-6 mt-10">
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+
+            <p className="text-slate-500 text-xs uppercase tracking-widest mb-2">
+              Backend
+            </p>
+
+            <h3 className="text-white text-xl font-bold">
+              FastAPI
+            </h3>
+
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+
+            <p className="text-slate-500 text-xs uppercase tracking-widest mb-2">
+              Detection Model
+            </p>
+
+            <h3 className="text-white text-xl font-bold">
+              YOLOv8 Segmentation
+            </h3>
+
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+
+            <p className="text-slate-500 text-xs uppercase tracking-widest mb-2">
+              Inference Speed
+            </p>
+
+            <h3 className="text-white text-xl font-bold">
+              Real-Time
+            </h3>
+
+          </div>
+
         </div>
       </div>
     </section>
-  );
+  )
 }

@@ -9,50 +9,61 @@ export default function Footer() {
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-24 bg-blue-500/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-        {/* Rebranded Logo */}
+        {/* Logo */}
         <div className="flex items-center gap-1">
           <span className="font-display font-black text-lg tracking-tighter text-white uppercase italic">
             Tech<span className="text-blue-400">Artistry</span>
           </span>
-          <span className="font-mono text-[10px] text-slate-600 mt-1">.in</span>
+
+          <span className="font-mono text-[10px] text-slate-600 mt-1">
+            .in
+          </span>
         </div>
 
-        {/* Professional Copyright Line */}
+        {/* Copyright */}
         <p className="text-slate-500 text-xs font-mono tracking-tight text-center md:order-none order-last">
-          © {year} <span className="text-slate-400">Techartistry.in</span> |
-          Built with <span className="text-blue-400/80">React</span> +
+          © {year}{' '}
+          <span className="text-slate-400">Techartistry.in</span> | Built with{' '}
+          <span className="text-blue-400/80">React</span> +
           <span className="text-emerald-400/80"> Node.js</span> +
           <span className="text-slate-300"> MongoDB</span>
         </p>
 
-        {/* Social Links */}
+        {/* Social + Top */}
         <div className="flex items-center gap-6 text-xs font-medium uppercase tracking-widest text-slate-500">
           <a
             href="https://github.com/Nagaraj-Jakkappa"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-all hover:-translate-y-0.5"
+            className="hover:text-blue-400 transition-all duration-300 hover:-translate-y-1"
           >
             GitHub
           </a>
+
           <a
             href="https://linkedin.com/in/nagaraj-jakkappa"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-all hover:-translate-y-0.5"
+            className="hover:text-blue-400 transition-all duration-300 hover:-translate-y-1"
           >
             LinkedIn
           </a>
-          <Link
-            to="/"
-            className="hover:text-white transition-all hover:-translate-y-0.5"
+
+          <button
+            onClick={() =>
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              })
+            }
+            className="hover:text-white transition-all duration-300 hover:-translate-y-1"
           >
-            Top
-          </Link>
+            ↑ Top
+          </button>
         </div>
       </div>
 
-      {/* Handcrafted Tagline */}
+      {/* Bottom Tagline */}
       <div className="max-w-6xl mx-auto mt-8 pt-8 border-t border-navy-900/50 flex justify-center">
         <p className="text-[10px] text-slate-700 uppercase tracking-[0.2em]">
           Handcrafted by Nagaraj Jakkappa

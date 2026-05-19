@@ -1,19 +1,30 @@
+// client/src/App.jsx
+
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
+
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 
-const AdminLogin       = lazy(() => import('./pages/AdminLogin'));
-const AdminLayout      = lazy(() => import('./pages/admin/AdminLayout'));
-const DashboardPage    = lazy(() => import('./pages/admin/DashboardPage'));
-const ProjectsPage     = lazy(() => import('./pages/admin/ProjectsPage'));
-const MessagesPage     = lazy(() => import('./pages/admin/MessagesPage'));
+// Lazy Pages
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
+
+const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
+const ProjectsPage = lazy(() => import('./pages/admin/ProjectsPage'));
+const MessagesPage = lazy(() => import('./pages/admin/MessagesPage'));
 const CertificatesPage = lazy(() => import('./pages/admin/CertificatesPage'));
-const AnalyticsPage    = lazy(() => import('./pages/admin/AnalyticsPage'));
-const SettingsPage     = lazy(() => import('./pages/admin/SettingsPage'));
+const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
+const SettingsPage = lazy(() => import('./pages/admin/SettingsPage'));
+
+// NEW Notification Page
+const NotificationsPage = lazy(() =>
+  import('./pages/admin/NotificationsPage')
+);
 
 function PageSpinner() {
   return (
@@ -27,27 +38,64 @@ export default function App() {
   return (
     <Suspense fallback={<PageSpinner />}>
       <Routes>
-        <Route path="/" element={
-          <div className="min-h-screen bg-navy-900 font-body">
-            <Navbar />
-            <main><Home /></main>
-            <Footer />
-          </div>
-        } />
+
+        {/* PUBLIC WEBSITE */}
+        <Route
+          path="/"
+          element={
+            <div className="min-h-screen bg-navy-900 font-body">
+              <Navbar />
+              <main>
+                <Home />
+              </main>
+              <Footer />
+            </div>
+          }
+        />
+
+        {/* ADMIN LOGIN */}
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={
-          <ProtectedRoute>
-            <AdminLayout />
-          </ProtectedRoute>
-        }>
-          <Route index             element={<DashboardPage />} />
-          <Route path="projects"     element={<ProjectsPage />} />
-          <Route path="messages"     element={<MessagesPage />} />
-          <Route path="certificates" element={<CertificatesPage />} />
-          <Route path="analytics"    element={<AnalyticsPage />} />
-          <Route path="settings"     element={<SettingsPage />} />
+
+        {/* ADMIN PANEL */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Dashboard */}
+          <Route index element={<DashboardPage />} />
+
+          {/* Analytics */}
+          <Route path="analytics" element={<AnalyticsPage />} />
+
+          {/* Projects */}
+          <Route path="projects" element={<ProjectsPage />} />
+
+          {/* Messages */}
+          <Route path="messages" element={<MessagesPage />} />
+
+          {/* Certificates */}
+          <Route
+            path="certificates"
+            element={<CertificatesPage />}
+          />
+
+          {/* Settings */}
+          <Route path="settings" element={<SettingsPage />} />
+
+          {/* NEW Notifications Route */}
+          <Route
+            path="notifications"
+            element={<NotificationsPage />}
+          />
         </Route>
+
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
+
       </Routes>
     </Suspense>
   );
