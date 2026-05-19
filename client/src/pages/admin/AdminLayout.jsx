@@ -260,16 +260,15 @@ export default function AdminLayout() {
                     <button
                         onClick={() => {
                             if (window.innerWidth < 768) {
-                                setMobileOpen(true);
+                                setMobileOpen(prev => !prev);
                             } else {
-                                setExpanded(v => !v);
+                                setExpanded(prev => !prev);
                             }
                         }}
                         className="p-1.5 text-slate-500 hover:text-white"
                     >
                         <Ic d={ICONS.menu} size={17} />
                     </button>
-
                     {/* Breadcrumb */}
                     <div className="text-sm">
 
