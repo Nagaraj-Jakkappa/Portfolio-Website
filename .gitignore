@@ -1,35 +1,71 @@
+# =========================
+# Node / React
+# =========================
 node_modules/
-.env
 dist/
 build/
-.DS_Store
-*.log
-# dependencies
-node_modules/
 
-# python
-.venv/
-venv/
-
-# logs
-logs/
-*.log
-
-# env
+# =========================
+# Environment Variables
+# =========================
 .env
 .env.local
+.env.production
+.env.development
 
-# build
-dist/
-build/
+# =========================
+# Python
+# =========================
+.venv/
+venv/
+__pycache__/
+*.pyc
 
-# runtime
+# =========================
+# AI / ML
+# =========================
 runs/
+ai-backend/venv/
+*.pt
+*.pth
+*.onnx
+*.engine
 
-# cache
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# Cache / Temp
+# =========================
 .cache/
 tmp/
+temp/
 
-# editor
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Editors
+# =========================
 .vscode/
 .idea/
+
+# =========================
+# Testing
+# =========================
+coverage/
+
+# =========================
+# Misc
+# =========================
+*.zip
+*.tar.gz
