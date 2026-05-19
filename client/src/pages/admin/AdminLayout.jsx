@@ -268,18 +268,19 @@ export default function AdminLayout() {
 
                             <div
                                 className="
-                                    absolute
-                                    top-[60px]
-                                    right-0
-                                    w-[360px]
-                                    z-50
-                                    rounded-2xl
-                                    border border-white/10
-                                    bg-[#0a1628]/90
-                                    backdrop-blur-[18px]
-                                    shadow-[0_10px_40px_rgba(0,0,0,0.45)]
-                                    overflow-hidden
-                                "
+            absolute
+            top-[60px]
+            right-0
+            w-[360px]
+            z-[9999]
+            rounded-2xl
+            border border-white/10
+            bg-[#0a1628]/90
+            backdrop-blur-[18px]
+            shadow-[0_10px_40px_rgba(0,0,0,0.45)]
+            overflow-hidden
+            pointer-events-auto
+        "
                             >
 
                                 {/* Header */}
@@ -291,7 +292,10 @@ export default function AdminLayout() {
 
                                     {unreadCount > 0 && (
                                         <button
-                                            onClick={markAllAsRead}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                markAllAsRead();
+                                            }}
                                             className="text-xs text-[#38bdf8] hover:text-sky-300 font-medium"
                                         >
                                             Mark all read
@@ -321,25 +325,25 @@ export default function AdminLayout() {
                                                 <div
                                                     key={n._id}
                                                     className={`
-                                                        px-4 py-3
-                                                        border-b border-[#1e2d3d]
-                                                        hover:bg-white/[0.03]
-                                                        transition
-                                                        cursor-pointer
-                                                        ${!n.read ? 'bg-[#38bdf8]/5' : ''}
-                                                    `}
+                                px-4 py-3
+                                border-b border-[#1e2d3d]
+                                hover:bg-white/[0.03]
+                                transition
+                                cursor-pointer
+                                ${!n.read ? 'bg-[#38bdf8]/5' : ''}
+                            `}
                                                 >
 
                                                     <div className="flex items-start gap-3">
 
                                                         <div
                                                             className={`
-                                                                mt-1.5
-                                                                w-2 h-2
-                                                                rounded-full
-                                                                flex-shrink-0
-                                                                ${style.dot}
-                                                            `}
+                                        mt-1.5
+                                        w-2 h-2
+                                        rounded-full
+                                        flex-shrink-0
+                                        ${style.dot}
+                                    `}
                                                         />
 
                                                         <div className="min-w-0 flex-1">
@@ -347,11 +351,11 @@ export default function AdminLayout() {
                                                             <div className="flex items-center justify-between gap-2">
 
                                                                 <p className={`
-                                                                    text-sm truncate
-                                                                    ${!n.read
+                                            text-sm truncate
+                                            ${!n.read
                                                                         ? 'text-white font-semibold'
                                                                         : 'text-slate-400 font-medium'}
-                                                                `}>
+                                        `}>
                                                                     {n.title}
                                                                 </p>
 
@@ -367,13 +371,13 @@ export default function AdminLayout() {
                                                             <div className="mt-2">
 
                                                                 <span className={`
-                                                                    inline-flex items-center
-                                                                    px-2 py-1 rounded-md
-                                                                    text-[10px]
-                                                                    uppercase tracking-wide
-                                                                    font-semibold border
-                                                                    ${style.badge}
-                                                                `}>
+                                            inline-flex items-center
+                                            px-2 py-1 rounded-md
+                                            text-[10px]
+                                            uppercase tracking-wide
+                                            font-semibold border
+                                            ${style.badge}
+                                        `}>
                                                                     {n.type || 'system'}
                                                                 </span>
 
@@ -387,14 +391,29 @@ export default function AdminLayout() {
                                 </div>
 
                                 {/* Footer */}
-                                <div className="p-3 border-t border-[#1e2d3d]">
+                                <div className="p-3 border-t border-[#1e2d3d] relative z-[10000]">
 
                                     <button
-                                        onClick={() => {
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
                                             setShowNotifications(false);
                                             navigate('/admin/notifications');
                                         }}
-                                        className="w-full text-xs bg-[#38bdf8]/10 hover:bg-[#38bdf8]/20 text-[#38bdf8] py-2 rounded-lg transition font-bold"
+                                        className="
+                    relative
+                    z-[10001]
+                    w-full
+                    text-xs
+                    bg-[#38bdf8]/10
+                    hover:bg-[#38bdf8]/20
+                    text-[#38bdf8]
+                    py-2
+                    rounded-lg
+                    transition
+                    font-bold
+                    pointer-events-auto
+                "
                                     >
                                         View Full Logs
                                     </button>
@@ -402,18 +421,16 @@ export default function AdminLayout() {
                                 </div>
                             </div>
                         )}
-                    </div>
-
-                    {/* View Site */}
-                    <a
-                        href="/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#38bdf8] border border-[#1e2d3d] hover:border-[#38bdf8]/30 px-3 py-1.5 rounded-lg transition-all"
-                    >
-                        <Ic d={ICONS.eye} size={12} />
-                        View Site
-                    </a>
+                        {/* View Site */}
+                        <a
+                            href="/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#38bdf8] border border-[#1e2d3d] hover:border-[#38bdf8]/30 px-3 py-1.5 rounded-lg transition-all"
+                        >
+                            <Ic d={ICONS.eye} size={12} />
+                            View Site
+                        </a>
                 </header>
 
                 {/* Content */}
