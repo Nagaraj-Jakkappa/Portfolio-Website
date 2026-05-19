@@ -1,14 +1,6 @@
 /**
  * AdminLayout.jsx
  * Path: client/src/pages/admin/AdminLayout.jsx
- *
- * UPDATED FIXES:
- * ✅ Notification dropdown max height
- * ✅ Internal scroll only
- * ✅ Better positioning
- * ✅ Glassmorphism blur effect
- * ✅ Cleaner SaaS spacing
- * ✅ Prevent dashboard overlap feeling
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -64,11 +56,11 @@ const PAGE_NAMES = {
 export default function AdminLayout() {
 
     const { logout } = useAuth();
+
     const navigate = useNavigate();
     const { pathname } = useLocation();
 
     const [expanded, setExpanded] = useState(true);
-    const [mobileOpen, setMobileOpen] = useState(false);
 
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -100,6 +92,7 @@ export default function AdminLayout() {
     };
 
     const fetchNotificationsData = async () => {
+
         try {
 
             const [listRes, countRes] = await Promise.all([
@@ -149,7 +142,7 @@ export default function AdminLayout() {
 
     useEffect(() => {
 
-        const handleClickOutside = e => {
+        const handleClickOutside = (e) => {
 
             if (
                 notificationRef.current &&
@@ -167,22 +160,45 @@ export default function AdminLayout() {
 
     }, []);
 
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+
     return (
+
         <div className="flex h-screen bg-[#060d1a] text-slate-200 overflow-hidden">
 
             {/* Sidebar */}
-            <aside className={`hidden md:flex flex-col bg-[#0a1628] border-r border-[#1e2d3d] transition-all duration-300 ${expanded ? 'w-56' : 'w-14'}`}>
+            <aside
+                className={`
+                    hidden md:flex flex-col
+                    bg-[#0a1628]
+                    border-r border-[#1e2d3d]
+                    transition-all duration-300
+                    ${expanded ? 'w-56' : 'w-14'}
+                `}
+            >
 
                 <div className="flex flex-col h-full">
 
-                    <div className={`h-16 flex items-center border-b border-[#1e2d3d] ${expanded ? 'px-5' : 'justify-center'}`}>
+                    {/* Logo */}
+                    <div
+                        className={`
+                            h-16 flex items-center border-b border-[#1e2d3d]
+                            ${expanded ? 'px-5' : 'justify-center'}
+                        `}
+                    >
 
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center">
-                            <span className="text-xs font-bold text-white">NJ</span>
+                            <span className="text-xs font-bold text-white">
+                                NJ
+                            </span>
                         </div>
 
                         {expanded && (
                             <div className="ml-2.5">
+
                                 <div className="text-sm font-semibold text-white">
                                     Techartistry
                                 </div>
@@ -190,10 +206,12 @@ export default function AdminLayout() {
                                 <div className="text-[10px] text-slate-600">
                                     Portfolio OS
                                 </div>
+
                             </div>
                         )}
                     </div>
 
+                    {/* Nav */}
                     <nav className="flex-1 py-4 px-2">
 
                         {NAV_MAIN.map(item => (
@@ -203,27 +221,37 @@ export default function AdminLayout() {
                                 to={item.path}
                                 end={item.end}
                                 className={({ isActive }) =>
-                                    `flex items-center gap-3 rounded-lg px-3 py-2.5 mb-1 transition
+                                    `
+                                    flex items-center gap-3
+                                    rounded-lg px-3 py-2.5 mb-1
+                                    transition
                                     ${isActive
                                         ? 'bg-[#38bdf8]/10 text-[#38bdf8]'
                                         : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
-                                    }`
+                                    }
+                                `
                                 }
                             >
                                 <Ic d={ICONS[item.icon]} size={15} />
+
                                 {expanded && item.label}
+
                             </NavLink>
                         ))}
+
                     </nav>
+
                 </div>
+
             </aside>
 
             {/* Main */}
             <div className="flex-1 flex flex-col overflow-hidden">
 
                 {/* Header */}
-                <header className="h-16 border-b border-[#1e2d3d] bg-[#0a1628]/80 backdrop-blur-sm flex items-center gap-4 px-6">
+                <header className="relative z-40 h-16 border-b border-[#1e2d3d] bg-[#0a1628]/80 backdrop-blur-sm flex items-center gap-4 px-6">
 
+                    {/* Sidebar Toggle */}
                     <button
                         onClick={() => setExpanded(v => !v)}
                         className="p-1.5 text-slate-500 hover:text-white"
@@ -231,6 +259,7 @@ export default function AdminLayout() {
                         <Ic d={ICONS.menu} size={17} />
                     </button>
 
+                    {/* Breadcrumb */}
                     <div className="text-sm">
 
                         <span className="text-slate-700">
@@ -244,12 +273,16 @@ export default function AdminLayout() {
                         <span className="text-slate-300 font-medium">
                             {PAGE_NAMES[pathname] ?? 'Dashboard'}
                         </span>
+
                     </div>
 
                     <div className="flex-1" />
 
-                    {/* NOTIFICATIONS */}
-                    <div className="relative" ref={notificationRef}>
+                    {/* Notifications */}
+                    <div
+                        className="relative"
+                        ref={notificationRef}
+                    >
 
                         <button
                             onClick={() => setShowNotifications(v => !v)}
@@ -262,25 +295,26 @@ export default function AdminLayout() {
                                     {unreadCount}
                                 </span>
                             )}
+
                         </button>
 
                         {showNotifications && (
 
                             <div
                                 className="
-            absolute
-            top-[60px]
-            right-0
-            w-[360px]
-            z-[9999]
-            rounded-2xl
-            border border-white/10
-            bg-[#0a1628]/90
-            backdrop-blur-[18px]
-            shadow-[0_10px_40px_rgba(0,0,0,0.45)]
-            overflow-hidden
-            pointer-events-auto
-        "
+                                    absolute
+                                    top-[60px]
+                                    right-0
+                                    w-[360px]
+                                    max-h-[520px]
+                                    z-[9999]
+                                    rounded-2xl
+                                    border border-white/10
+                                    bg-[#0a1628]/90
+                                    backdrop-blur-[18px]
+                                    shadow-[0_10px_40px_rgba(0,0,0,0.45)]
+                                    overflow-hidden
+                                "
                             >
 
                                 {/* Header */}
@@ -301,9 +335,10 @@ export default function AdminLayout() {
                                             Mark all read
                                         </button>
                                     )}
+
                                 </div>
 
-                                {/* Scroll Area */}
+                                {/* Notification List */}
                                 <div className="max-h-[420px] overflow-y-auto">
 
                                     {notifications.length === 0 ? (
@@ -314,7 +349,7 @@ export default function AdminLayout() {
 
                                     ) : (
 
-                                        notifications.map(n => {
+                                        notifications.map((n) => {
 
                                             const style =
                                                 TYPE_STYLES[n.type] ||
@@ -325,43 +360,47 @@ export default function AdminLayout() {
                                                 <div
                                                     key={n._id}
                                                     className={`
-                                px-4 py-3
-                                border-b border-[#1e2d3d]
-                                hover:bg-white/[0.03]
-                                transition
-                                cursor-pointer
-                                ${!n.read ? 'bg-[#38bdf8]/5' : ''}
-                            `}
+                                                        px-4 py-3
+                                                        border-b border-[#1e2d3d]
+                                                        hover:bg-white/[0.03]
+                                                        transition
+                                                        cursor-pointer
+                                                        ${!n.read ? 'bg-[#38bdf8]/5' : ''}
+                                                    `}
                                                 >
 
                                                     <div className="flex items-start gap-3">
 
                                                         <div
                                                             className={`
-                                        mt-1.5
-                                        w-2 h-2
-                                        rounded-full
-                                        flex-shrink-0
-                                        ${style.dot}
-                                    `}
+                                                                mt-1.5
+                                                                w-2 h-2
+                                                                rounded-full
+                                                                flex-shrink-0
+                                                                ${style.dot}
+                                                            `}
                                                         />
 
                                                         <div className="min-w-0 flex-1">
 
                                                             <div className="flex items-center justify-between gap-2">
 
-                                                                <p className={`
-                                            text-sm truncate
-                                            ${!n.read
-                                                                        ? 'text-white font-semibold'
-                                                                        : 'text-slate-400 font-medium'}
-                                        `}>
+                                                                <p
+                                                                    className={`
+                                                                        text-sm truncate
+                                                                        ${!n.read
+                                                                            ? 'text-white font-semibold'
+                                                                            : 'text-slate-400 font-medium'
+                                                                        }
+                                                                    `}
+                                                                >
                                                                     {n.title}
                                                                 </p>
 
                                                                 <span className="text-[10px] text-slate-600 whitespace-nowrap">
                                                                     {new Date(n.createdAt).toLocaleDateString()}
                                                                 </span>
+
                                                             </div>
 
                                                             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
@@ -370,28 +409,34 @@ export default function AdminLayout() {
 
                                                             <div className="mt-2">
 
-                                                                <span className={`
-                                            inline-flex items-center
-                                            px-2 py-1 rounded-md
-                                            text-[10px]
-                                            uppercase tracking-wide
-                                            font-semibold border
-                                            ${style.badge}
-                                        `}>
+                                                                <span
+                                                                    className={`
+                                                                        inline-flex items-center
+                                                                        px-2 py-1 rounded-md
+                                                                        text-[10px]
+                                                                        uppercase tracking-wide
+                                                                        font-semibold border
+                                                                        ${style.badge}
+                                                                    `}
+                                                                >
                                                                     {n.type || 'system'}
                                                                 </span>
 
                                                             </div>
+
                                                         </div>
+
                                                     </div>
+
                                                 </div>
                                             );
                                         })
                                     )}
+
                                 </div>
 
                                 {/* Footer */}
-                                <div className="p-3 border-t border-[#1e2d3d] relative z-[10000]">
+                                <div className="p-3 border-t border-[#1e2d3d]">
 
                                     <button
                                         type="button"
@@ -401,43 +446,48 @@ export default function AdminLayout() {
                                             navigate('/admin/notifications');
                                         }}
                                         className="
-                    relative
-                    z-[10001]
-                    w-full
-                    text-xs
-                    bg-[#38bdf8]/10
-                    hover:bg-[#38bdf8]/20
-                    text-[#38bdf8]
-                    py-2
-                    rounded-lg
-                    transition
-                    font-bold
-                    pointer-events-auto
-                "
+                                            w-full
+                                            text-xs
+                                            bg-[#38bdf8]/10
+                                            hover:bg-[#38bdf8]/20
+                                            text-[#38bdf8]
+                                            py-2
+                                            rounded-lg
+                                            transition
+                                            font-bold
+                                        "
                                     >
                                         View Full Logs
                                     </button>
 
                                 </div>
+
                             </div>
+
                         )}
-                        {/* View Site */}
-                        <a
-                            href="/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#38bdf8] border border-[#1e2d3d] hover:border-[#38bdf8]/30 px-3 py-1.5 rounded-lg transition-all"
-                        >
-                            <Ic d={ICONS.eye} size={12} />
-                            View Site
-                        </a>
+
+                    </div>
+
+                    {/* View Site */}
+                    <a
+                        href="/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#38bdf8] border border-[#1e2d3d] hover:border-[#38bdf8]/30 px-3 py-1.5 rounded-lg transition-all"
+                    >
+                        <Ic d={ICONS.eye} size={12} />
+                        View Site
+                    </a>
+
                 </header>
 
                 {/* Content */}
                 <main className="flex-1 overflow-y-auto">
                     <Outlet />
                 </main>
+
             </div>
+
         </div>
     );
 }
