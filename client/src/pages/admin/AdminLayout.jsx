@@ -2,13 +2,13 @@
  * AdminLayout.jsx
  * Path: client/src/pages/admin/AdminLayout.jsx
  *
- * Full-screen SaaS shell: collapsible sidebar + sticky topbar.
- * UPDATED:
- * ✅ Real MERN notification system
- * ✅ Real-time polling
- * ✅ Notification type colors
- * ✅ SaaS-style notification dropdown
- * ✅ Auto unread badge refresh
+ * UPDATED FIXES:
+ * ✅ Notification dropdown max height
+ * ✅ Internal scroll only
+ * ✅ Better positioning
+ * ✅ Glassmorphism blur effect
+ * ✅ Cleaner SaaS spacing
+ * ✅ Prevent dashboard overlap feeling
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -52,11 +52,6 @@ const NAV_MAIN = [
     { label: 'Messages', path: '/admin/messages', icon: 'messages' },
 ];
 
-const NAV_SYSTEM = [
-    { label: 'Certificates', path: '/admin/certificates', icon: 'certs' },
-    { label: 'Settings', path: '/admin/settings', icon: 'settings' },
-];
-
 const PAGE_NAMES = {
     '/admin': 'Dashboard',
     '/admin/analytics': 'Analytics',
@@ -67,30 +62,19 @@ const PAGE_NAMES = {
 };
 
 export default function AdminLayout() {
-    const { admin, logout } = useAuth();
+
+    const { logout } = useAuth();
     const navigate = useNavigate();
     const { pathname } = useLocation();
 
     const [expanded, setExpanded] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
 
-    /**
-     * ==========================================
-     * ✅ UPDATED: REAL NOTIFICATION STATES
-     * ==========================================
-     */
-
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
 
     const notificationRef = useRef(null);
-
-    /**
-     * ==========================================
-     * ✅ UPDATED: TYPE COLORS
-     * ==========================================
-     */
 
     const TYPE_STYLES = {
         system: {
@@ -115,14 +99,9 @@ export default function AdminLayout() {
         },
     };
 
-    /**
-     * ==========================================
-     * ✅ UPDATED: FETCH NOTIFICATIONS
-     * ==========================================
-     */
-
     const fetchNotificationsData = async () => {
         try {
+
             const [listRes, countRes] = await Promise.all([
                 axios.get('/notifications'),
                 axios.get('/notifications/unread-count')
@@ -136,13 +115,8 @@ export default function AdminLayout() {
         }
     };
 
-    /**
-     * ==========================================
-     * ✅ UPDATED: REAL-TIME POLLING
-     * ==========================================
-     */
-
     useEffect(() => {
+
         fetchNotificationsData();
 
         const interval = setInterval(() => {
@@ -150,16 +124,13 @@ export default function AdminLayout() {
         }, 10000);
 
         return () => clearInterval(interval);
+
     }, []);
 
-    /**
-     * ==========================================
-     * ✅ UPDATED: MARK ALL READ
-     * ==========================================
-     */
-
     const markAllAsRead = async () => {
+
         try {
+
             await axios.put('/notifications/mark-all-read');
 
             setNotifications(prev =>
@@ -176,34 +147,10 @@ export default function AdminLayout() {
         }
     };
 
-    /**
-     * Sidebar responsive
-     */
-
     useEffect(() => {
-        const mq = window.matchMedia('(max-width: 768px)');
 
-        if (mq.matches) setExpanded(false);
-
-        const h = e => {
-            if (e.matches) setExpanded(false);
-        };
-
-        mq.addEventListener('change', h);
-
-        return () => mq.removeEventListener('change', h);
-    }, []);
-
-    useEffect(() => {
-        setMobileOpen(false);
-    }, [pathname]);
-
-    /**
-     * Close notification dropdown outside click
-     */
-
-    useEffect(() => {
         const handleClickOutside = e => {
+
             if (
                 notificationRef.current &&
                 !notificationRef.current.contains(e.target)
@@ -217,29 +164,19 @@ export default function AdminLayout() {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
 
-    const handleLogout = () => {
-        logout();
-        navigate('/');
-    };
+    }, []);
 
     return (
         <div className="flex h-screen bg-[#060d1a] text-slate-200 overflow-hidden">
 
-            {/* Mobile overlay */}
-            {mobileOpen && (
-                <div
-                    className="fixed inset-0 bg-black/60 z-40 md:hidden"
-                    onClick={() => setMobileOpen(false)}
-                />
-            )}
-
             {/* Sidebar */}
             <aside className={`hidden md:flex flex-col bg-[#0a1628] border-r border-[#1e2d3d] transition-all duration-300 ${expanded ? 'w-56' : 'w-14'}`}>
+
                 <div className="flex flex-col h-full">
 
                     <div className={`h-16 flex items-center border-b border-[#1e2d3d] ${expanded ? 'px-5' : 'justify-center'}`}>
+
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center">
                             <span className="text-xs font-bold text-white">NJ</span>
                         </div>
@@ -249,6 +186,7 @@ export default function AdminLayout() {
                                 <div className="text-sm font-semibold text-white">
                                     Techartistry
                                 </div>
+
                                 <div className="text-[10px] text-slate-600">
                                     Portfolio OS
                                 </div>
@@ -257,7 +195,9 @@ export default function AdminLayout() {
                     </div>
 
                     <nav className="flex-1 py-4 px-2">
+
                         {NAV_MAIN.map(item => (
+
                             <NavLink
                                 key={item.path}
                                 to={item.path}
@@ -292,8 +232,15 @@ export default function AdminLayout() {
                     </button>
 
                     <div className="text-sm">
-                        <span className="text-slate-700">Admin</span>
-                        <span className="mx-2 text-slate-800">/</span>
+
+                        <span className="text-slate-700">
+                            Admin
+                        </span>
+
+                        <span className="mx-2 text-slate-800">
+                            /
+                        </span>
+
                         <span className="text-slate-300 font-medium">
                             {PAGE_NAMES[pathname] ?? 'Dashboard'}
                         </span>
@@ -301,10 +248,7 @@ export default function AdminLayout() {
 
                     <div className="flex-1" />
 
-                    {/* ==========================================
-                        ✅ UPDATED: NOTIFICATION DROPDOWN
-                    ========================================== */}
-
+                    {/* NOTIFICATIONS */}
                     <div className="relative" ref={notificationRef}>
 
                         <button
@@ -321,10 +265,26 @@ export default function AdminLayout() {
                         </button>
 
                         {showNotifications && (
-                            <div className="absolute right-0 mt-3 w-96 bg-[#0a1628] border border-[#1e2d3d] rounded-2xl shadow-2xl overflow-hidden z-50">
+
+                            <div
+                                className="
+                                    absolute
+                                    top-[60px]
+                                    right-0
+                                    w-[360px]
+                                    z-50
+                                    rounded-2xl
+                                    border border-white/10
+                                    bg-[#0a1628]/90
+                                    backdrop-blur-[18px]
+                                    shadow-[0_10px_40px_rgba(0,0,0,0.45)]
+                                    overflow-hidden
+                                "
+                            >
 
                                 {/* Header */}
                                 <div className="flex items-center justify-between px-4 py-3 border-b border-[#1e2d3d]">
+
                                     <h3 className="text-sm font-semibold text-white">
                                         Notifications
                                     </h3>
@@ -339,20 +299,16 @@ export default function AdminLayout() {
                                     )}
                                 </div>
 
-                                {/* Notification List */}
+                                {/* Scroll Area */}
                                 <div className="max-h-[420px] overflow-y-auto">
 
                                     {notifications.length === 0 ? (
+
                                         <div className="p-8 text-center text-sm text-slate-600 italic">
                                             No new activity
                                         </div>
-                                    ) : (
 
-                                        /**
-                                         * ==========================================
-                                         * ✅ UPDATED: COLORFUL NOTIFICATION TYPES
-                                         * ==========================================
-                                         */
+                                    ) : (
 
                                         notifications.map(n => {
 
@@ -361,22 +317,26 @@ export default function AdminLayout() {
                                                 TYPE_STYLES.system;
 
                                             return (
+
                                                 <div
                                                     key={n._id}
                                                     className={`
-                                                        px-4 py-3 border-b border-[#1e2d3d]
+                                                        px-4 py-3
+                                                        border-b border-[#1e2d3d]
                                                         hover:bg-white/[0.03]
-                                                        transition cursor-pointer
+                                                        transition
+                                                        cursor-pointer
                                                         ${!n.read ? 'bg-[#38bdf8]/5' : ''}
                                                     `}
                                                 >
 
                                                     <div className="flex items-start gap-3">
 
-                                                        {/* Colored Dot */}
                                                         <div
                                                             className={`
-                                                                mt-1.5 w-2 h-2 rounded-full
+                                                                mt-1.5
+                                                                w-2 h-2
+                                                                rounded-full
                                                                 flex-shrink-0
                                                                 ${style.dot}
                                                             `}
@@ -384,7 +344,6 @@ export default function AdminLayout() {
 
                                                         <div className="min-w-0 flex-1">
 
-                                                            {/* Top Row */}
                                                             <div className="flex items-center justify-between gap-2">
 
                                                                 <p className={`
@@ -399,15 +358,12 @@ export default function AdminLayout() {
                                                                 <span className="text-[10px] text-slate-600 whitespace-nowrap">
                                                                     {new Date(n.createdAt).toLocaleDateString()}
                                                                 </span>
-
                                                             </div>
 
-                                                            {/* Message */}
                                                             <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                                                                 {n.message}
                                                             </p>
 
-                                                            {/* Type Badge */}
                                                             <div className="mt-2">
 
                                                                 <span className={`
@@ -432,6 +388,7 @@ export default function AdminLayout() {
 
                                 {/* Footer */}
                                 <div className="p-3 border-t border-[#1e2d3d]">
+
                                     <button
                                         onClick={() => {
                                             setShowNotifications(false);
@@ -441,8 +398,8 @@ export default function AdminLayout() {
                                     >
                                         View Full Logs
                                     </button>
-                                </div>
 
+                                </div>
                             </div>
                         )}
                     </div>
@@ -459,11 +416,10 @@ export default function AdminLayout() {
                     </a>
                 </header>
 
-                {/* Main Content */}
+                {/* Content */}
                 <main className="flex-1 overflow-y-auto">
                     <Outlet />
                 </main>
-
             </div>
         </div>
     );
