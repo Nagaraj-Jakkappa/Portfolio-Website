@@ -169,26 +169,31 @@ export default function AdminLayout() {
 
         <div className="flex h-screen bg-[#060d1a] text-slate-200 overflow-hidden">
 
-            {/* Sidebar */}
-            <aside
+            {/* Mobile Overlay */}
+            {mobileOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 z-40 md:hidden"
+                    onClick={() => setMobileOpen(false)}
+                />
+            )}
+
+            {/* Mobile Sidebar */}
+            <div
                 className={`
-                    hidden md:flex flex-col
-                    bg-[#0a1628]
-                    border-r border-[#1e2d3d]
-                    transition-all duration-300
-                    ${expanded ? 'w-56' : 'w-14'}
-                `}
+        fixed top-0 left-0 h-full w-64
+        bg-[#0a1628]
+        border-r border-[#1e2d3d]
+        z-50
+        transform transition-transform duration-300
+        md:hidden
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+    `}
             >
 
                 <div className="flex flex-col h-full">
 
                     {/* Logo */}
-                    <div
-                        className={`
-                            h-16 flex items-center border-b border-[#1e2d3d]
-                            ${expanded ? 'px-5' : 'justify-center'}
-                        `}
-                    >
+                    <div className="h-16 flex items-center px-5 border-b border-[#1e2d3d]">
 
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center">
                             <span className="text-xs font-bold text-white">
@@ -196,19 +201,17 @@ export default function AdminLayout() {
                             </span>
                         </div>
 
-                        {expanded && (
-                            <div className="ml-2.5">
+                        <div className="ml-2.5">
 
-                                <div className="text-sm font-semibold text-white">
-                                    Techartistry
-                                </div>
-
-                                <div className="text-[10px] text-slate-600">
-                                    Portfolio OS
-                                </div>
-
+                            <div className="text-sm font-semibold text-white">
+                                Techartistry
                             </div>
-                        )}
+
+                            <div className="text-[10px] text-slate-600">
+                                Portfolio OS
+                            </div>
+
+                        </div>
                     </div>
 
                     {/* Nav */}
@@ -220,21 +223,22 @@ export default function AdminLayout() {
                                 key={item.path}
                                 to={item.path}
                                 end={item.end}
+                                onClick={() => setMobileOpen(false)}
                                 className={({ isActive }) =>
                                     `
-                                    flex items-center gap-3
-                                    rounded-lg px-3 py-2.5 mb-1
-                                    transition
-                                    ${isActive
+                        flex items-center gap-3
+                        rounded-lg px-3 py-2.5 mb-1
+                        transition
+                        ${isActive
                                         ? 'bg-[#38bdf8]/10 text-[#38bdf8]'
                                         : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
                                     }
-                                `
+                    `
                                 }
                             >
                                 <Ic d={ICONS[item.icon]} size={15} />
 
-                                {expanded && item.label}
+                                {item.label}
 
                             </NavLink>
                         ))}
@@ -243,7 +247,7 @@ export default function AdminLayout() {
 
                 </div>
 
-            </aside>
+            </div>
 
             {/* Main */}
             <div className="flex-1 flex flex-col overflow-hidden">
@@ -253,7 +257,13 @@ export default function AdminLayout() {
 
                     {/* Sidebar Toggle */}
                     <button
-                        onClick={() => setExpanded(v => !v)}
+                        onClick={() => {
+                            if (window.innerWidth < 768) {
+                                setMobileOpen(true);
+                            } else {
+                                setExpanded(v => !v);
+                            }
+                        }}
                         className="p-1.5 text-slate-500 hover:text-white"
                     >
                         <Ic d={ICONS.menu} size={17} />
