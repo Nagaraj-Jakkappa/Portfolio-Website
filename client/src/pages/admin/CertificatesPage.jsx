@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
-import { PageHeader, Btn, Input, Textarea, Modal, Ic, Spinner, ConfirmModal } from '../../components/admin/ui/ui';
+import { PageHeader, Btn, Input, Textarea, Modal, Ic, Spinner, ConfirmModal, EmptyState } from '../../components/admin/ui/ui';
 import toast from 'react-hot-toast';
 
 const IC = {
