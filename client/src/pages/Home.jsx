@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 import Hero from '../components/sections/Hero';
+import CurrentlyBuilding from '../components/sections/CurrentlyBuilding';
 
 import About from '../components/sections/About';
 
@@ -49,6 +50,7 @@ export default function Home() {
       </Helmet>
 
       <Hero />
+      <CurrentlyBuilding />
 
       <About />
 

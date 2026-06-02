@@ -1,202 +1,127 @@
-# Techartistry - MERN Portfolio
+# 🚀 Nagaraj Jakkappa — MERN Portfolio
 
-A full-stack MERN portfolio with public portfolio pages and a secure admin dashboard for managing projects, skills, certificates, messages, notifications, and analytics.
+A full-stack portfolio application built with MongoDB, Express, React, and Node.js.
 
-## Live Demo
+---
 
-- **Public Website:** [https://www.techartistry.in/](https://www.techartistry.in/)
-- **Admin Panel:** [https://www.techartistry.in/admin/](https://www.techartistry.in/admin/)
-- _Note: Admin access is private and not publicly shared._
+## 📁 Project Structure
 
-## Features
-
-**Public:**
-
-- Responsive portfolio homepage
-- Projects showcase
-- Skills section
-- Certificates section
-- Contact form
-- Resume download
-- SEO/meta tags
-
-**Admin:**
-
-- Secure JWT login
-- Admin dashboard
-- Projects CRUD
-- Skills management
-- Certificates management
-- Message inbox
-- Notifications
-- Analytics/stats dashboard
-
-**Security:**
-
-- Dedicated MongoDB database user
-- JWT protected admin routes
-- 4-hour admin token expiry
-- Rate limiting
-- Security headers
-- Input validation using express-validator
-- Secrets stored in `.env` and ignored by Git
-
-## Tech Stack
-
-**Frontend:**
-
-- React
-- Vite
-- Tailwind CSS
-- React Router
-- Axios
-- Recharts
-
-**Backend:**
-
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT (jsonwebtoken)
-- bcryptjs
-- express-validator
-- express-rate-limit
-
-**Deployment:**
-
-- Vercel (Frontend)
-- Render / VPS (Backend)
-- MongoDB Atlas
-
-## Architecture
-
-The application is structured as a monorepo with separate `client` and `server` directories:
-
-- **`client/`**: Contains the React frontend built with Vite. It consumes the REST API and handles routing, state, and UI.
-- **`server/`**: Contains the Express.js backend. It connects to MongoDB Atlas, serves RESTful endpoints, and handles authentication.
-- **REST API**: Follows standard CRUD operations returning JSON responses.
-- **Protected Admin Routes**: Authenticated using a Bearer token (JWT) via custom auth middleware.
-- **MongoDB Models**: Defined using Mongoose schemas for structured data validation at the database level (`Admin`, `Project`, `Skill`, `Certificate`, `Message`, `Notification`).
-
-## Folder Structure
-
-```text
+```
 mern-portfolio/
-├── client/
-│   ├── public/
+├── client/                  # React + Vite + Tailwind frontend
 │   ├── src/
-│   │   ├── api/
+│   │   ├── api/             # Axios instance with interceptors
 │   │   ├── components/
-│   │   ├── context/
-│   │   ├── hooks/
-│   │   ├── pages/
-│   │   └── App.jsx
-│   └── package.json
-├── server/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── index.js
-│   └── package.json
-├── package.json
-└── README.md
+│   │   │   ├── layout/      # Navbar, Footer, ProtectedRoute
+│   │   │   └── sections/    # Hero, About, Skills, Projects, Contact
+│   │   ├── context/         # AuthContext (JWT state)
+│   │   ├── hooks/           # useProjects, useMessages (data hooks)
+│   │   └── pages/           # Home, AdminLogin, AdminDashboard, NotFound
+│   └── .env.example
+└── server/                  # Express + MongoDB backend
+    ├── models/              # Project, Message, Admin (Mongoose)
+    ├── routes/              # /api/auth, /api/projects, /api/messages
+    ├── middleware/          # JWT auth guard
+    └── .env.example
 ```
 
-## Environment Variables
+---
 
-Create a `.env` file in the `server` directory. Use the following placeholders:
+## ⚡ Quick Start
 
-```env
-MONGO_URI=mongodb+srv://<db_username>:<db_password>@cluster.mongodb.net/<db_name>?retryWrites=true&w=majority
-JWT_SECRET=your_super_secret_jwt_key
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=your_secure_admin_password
-EMAIL_USER=your_smtp_email@gmail.com
-EMAIL_PASS=your_smtp_app_password
-CLIENT_URL=http://localhost:5173
-NODE_ENV=development
-PORT=5180
+### 1. Install dependencies
+
+```bash
+npm run install:all
 ```
 
-_Note: Never commit real secrets or credentials to version control._
+### 2. Configure environment variables
 
-## Local Setup
+```bash
+# Server
+cp server/.env.example server/.env
+# Fill in: MONGODB_URI, JWT_SECRET, ADMIN_USERNAME, ADMIN_PASSWORD
 
-1. **Clone repo**
-   ```bash
-   git clone https://github.com/Nagaraj-Jakkappa/mern-portfolio.git
-   cd mern-portfolio
-   ```
-2. **Install root dependencies**
-   ```bash
-   npm install
-   ```
-3. **Install client and server dependencies** (if not handled by root)
-   ```bash
-   cd client && npm install
-   cd ../server && npm install
-   ```
-4. **Create `server/.env`** using the placeholders provided above.
-5. **Run the development server** (from the root directory)
-   ```bash
-   npm run dev
-   ```
-6. **Open in browser**
-   - Frontend: `http://localhost:5173`
-   - Backend API: `http://localhost:5180`
+# Client
+cp client/.env.example client/.env
+# Fill in: VITE_API_URL (default: http://localhost:5000/api)
+```
 
-## API Overview
+### 3. Create admin account (run once)
 
-- `GET /api/auth` - Admin authentication and password rotation
-- `GET /api/projects` - Project CRUD operations
-- `GET /api/skills` - Skill CRUD operations
-- `GET /api/certificates` - Certificate CRUD operations
-- `GET /api/messages` - Contact form submissions and inbox management
-- `GET /api/notifications` - Admin alerts and notifications
-- `GET /api/stats` - Dashboard analytics data
+```bash
+# With the server running:
+curl -X POST http://localhost:5000/api/auth/seed
+```
 
-## Security Notes
+### 4. Start development servers
 
-- **No public reset route**: Admin seeding and destructive actions are removed from the public API.
-- **.env ignored**: Environment variables are strictly ignored by `.gitignore`.
-- **Admin credentials private**: Authentication is securely hashed using `bcryptjs`.
-- **Credential Rotation**: Old exposed credentials have been safely rotated.
-- **Least Privilege**: Database users are separated with scoped permissions for this specific application.
+```bash
+npm run dev
+# Client → http://localhost:5173
+# Server → http://localhost:5000
+```
 
-## Screenshots
+---
 
-![Homepage Screenshot](./docs/screenshots/homepage.png)
-_Homepage View_
+## 🔑 API Endpoints
 
-![Admin Dashboard Screenshot](./docs/screenshots/admin-dashboard.png)
-_Admin Analytics Dashboard_
+| Method | Route                         | Auth          | Description         |
+| ------ | ----------------------------- | ------------- | ------------------- |
+| POST   | `/api/auth/login`             | ❌            | Admin login → JWT   |
+| GET    | `/api/auth/me`                | ✅            | Verify token        |
+| POST   | `/api/auth/seed`              | ❌ (dev only) | Create admin        |
+| GET    | `/api/projects`               | ❌            | All projects        |
+| GET    | `/api/projects?featured=true` | ❌            | Featured only       |
+| POST   | `/api/projects`               | ✅            | Create project      |
+| PUT    | `/api/projects/:id`           | ✅            | Update project      |
+| DELETE | `/api/projects/:id`           | ✅            | Delete project      |
+| POST   | `/api/messages`               | ❌            | Submit contact form |
+| GET    | `/api/messages`               | ✅            | View all messages   |
+| PATCH  | `/api/messages/:id/read`      | ✅            | Mark read           |
+| DELETE | `/api/messages/:id`           | ✅            | Delete message      |
 
-![Projects Management Screenshot](./docs/screenshots/projects-management.png)
-_Projects CMS Management_
+---
 
-## What I Learned
+## 🛡️ Security Features
 
-- **MERN Architecture**: Designing and integrating a decoupled React frontend with an Express/MongoDB backend.
-- **Authentication**: Implementing secure, stateless JWT authentication with token expiration and protected route middleware.
-- **REST APIs**: Building scalable and predictable RESTful API endpoints for a Custom Management System (CMS).
-- **Admin Dashboards**: Creating a secure administrative interface to manage portfolio content dynamically without touching code.
-- **MongoDB Modeling**: Structuring relational and non-relational data efficiently using Mongoose schemas.
-- **Security Cleanup**: Auditing code for vulnerabilities, rotating exposed credentials, and removing dangerous public routes.
-- **Production Readiness**: Adding input validation (`express-validator`), rate limiting, and security headers for robust deployment.
+- **JWT Bearer tokens** — 7-day expiry, verified on every protected route
+- **bcrypt** — Admin password hashed at 12 rounds
+- **Rate limiting** — Contact form: max 5 submissions per 15 minutes
+- **CORS** — Origin whitelist via `CLIENT_URL` env var
+- **Admin seed** — Disabled in production (`NODE_ENV=production`)
 
-## Future Improvements
+---
 
-- Migrate the codebase to TypeScript for better type safety.
-- Implement a refresh token authentication flow.
-- Add comprehensive Unit and Integration tests.
-- Optimize Lighthouse scores (accessibility, performance).
-- Add more detailed analytics charts and visitor tracking.
+## 🎨 Design System
 
-## Author
+| Token        | Value                |
+| ------------ | -------------------- |
+| Background   | `#0f172a` (navy-900) |
+| Surface      | `#1e293b` (navy-800) |
+| Accent       | `#38bdf8` (blue-400) |
+| Display font | Syne                 |
+| Body font    | DM Sans              |
+| Mono font    | JetBrains Mono       |
 
-**Nagaraj Jakkappa**
+---
 
-- **Portfolio:** [https://www.techartistry.in/](https://www.techartistry.in/)
-- **GitHub:** [https://github.com/Nagaraj-Jakkappa](https://github.com/Nagaraj-Jakkappa)
-- **LinkedIn:** [www.linkedin.com/in/nagaraj-jakkappa-661401268](http://www.linkedin.com/in/nagaraj-jakkappa-661401268)
+## 🚀 Deployment
+
+**Frontend** → Vercel / Netlify (set `VITE_API_URL` to your production API)
+
+**Backend** → Railway / Render / Fly.io (set all env vars from `.env.example`)
+
+**Database** → MongoDB Atlas (free tier works great)
+
+---
+
+## 👤 Admin Dashboard
+
+Visit `/admin` → redirects to `/admin/login` if not authenticated.
+
+Features:
+
+- 📊 Stats overview (total projects, featured, messages, unread)
+- ➕ Add / ✏️ Edit / 🗑️ Delete projects
+- 📬 View contact messages, mark read, reply via email, delete
