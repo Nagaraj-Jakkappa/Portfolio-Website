@@ -1,16 +1,22 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const { body } = require('express-validator');
 const Admin = require('../models/Admin');
 const { protect } = require('../middleware/auth');
+const { validate } = require('../middleware/validate');
 const router = express.Router();
 
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password are required' });
-    }
+router.post(
+  '/login',
+  [
+    body('username').trim().notEmpty().withMessage('Username is required'),
+    body('password').notEmpty().withMessage('Password is required'),
+  ],
+  validate,
+  async (req, res) => {
+    try {
+      const { username, password } = req.body;
 
     const admin = await Admin.findOne({ username: username.toLowerCase() });
     if (!admin || !(await admin.comparePassword(password))) {

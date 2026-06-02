@@ -10,12 +10,11 @@
 
 const express = require('express');
 const nodemailer = require('nodemailer');
-
+const { body } = require('express-validator');
 const Message = require('../models/Message');
 const Notification = require('../models/Notification');
-
 const { protect } = require('../middleware/auth');
-
+const { validate } = require('../middleware/validate');
 const router = express.Router();
 
 const transporter = nodemailer.createTransport({
@@ -26,47 +25,21 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function validateMessage(body) {
-  const errors = {};
-
-  if (!body.name?.trim()) {
-    errors.name = 'Name is required';
-  }
-
-  if (!body.email?.trim()) {
-    errors.email = 'Email is required';
-  } else if (!EMAIL_RE.test(body.email)) {
-    errors.email = 'Invalid email format';
-  }
-
-  if (!body.message?.trim()) {
-    errors.message = 'Message is required';
-  } else if (body.message.trim().length < 10) {
-    errors.message = 'Message must be at least 10 characters';
-  }
-
-  return errors;
-}
+const messageValidationRules = [
+  body('name').trim().isLength({ min: 2, max: 80 }).withMessage('Name must be between 2 and 80 characters'),
+  body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('subject').optional({ checkFalsy: true }).isString().withMessage('Subject must be a string'),
+  body('message').trim().isLength({ min: 10, max: 2000 }).withMessage('Message must be between 10 and 2000 characters'),
+];
 
 /* =========================================================
    POST /api/messages
    Public Contact Form
 ========================================================= */
 
-router.post('/', async (req, res) => {
+router.post('/', messageValidationRules, validate, async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
-
-    const errors = validateMessage(req.body);
-
-    if (Object.keys(errors).length) {
-      return res.status(400).json({
-        error: 'Validation failed',
-        errors,
-      });
-    }
 
     // Save Message
     const saved = await Message.create({

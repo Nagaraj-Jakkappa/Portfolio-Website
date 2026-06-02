@@ -1,17 +1,21 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { body } = require('express-validator');
 const Project = require('../models/Project');
 const { protect } = require('../middleware/auth');
+const { validate } = require('../middleware/validate');
 const router = express.Router();
 
-function validateProject(body) {
-  const errors = {};
-  if (!body.title?.trim()) errors.title = 'Title is required';
-  if (!body.description?.trim()) errors.description = 'Description is required';
-  if (body.category && !['web', 'ml', 'fullstack', 'other'].includes(body.category))
-    errors.category = 'Invalid category';
-  return errors;
-}
+const projectValidationRules = [
+  body('title').trim().notEmpty().withMessage('Title is required'),
+  body('description').trim().notEmpty().withMessage('Description is required'),
+  body('techStack').optional().isArray().withMessage('Tech stack must be an array'),
+  body('liveUrl').optional({ checkFalsy: true }).isURL().withMessage('Live URL must be a valid URL'),
+  body('githubUrl').optional({ checkFalsy: true }).isURL().withMessage('GitHub URL must be a valid URL'),
+  body('imageUrl').optional({ checkFalsy: true }).isString().withMessage('Image URL must be a string'),
+  body('featured').optional().isBoolean().withMessage('Featured must be a boolean'),
+  body('category').optional().isIn(['web', 'ml', 'fullstack', 'other']).withMessage('Invalid category'),
+];
 
 // GET /api/projects  — supports ?featured=true, ?category=ml, ?search=react, ?page=1, ?limit=100
 router.get('/', async (req, res) => {
@@ -72,11 +76,8 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/projects
-router.post('/', protect, async (req, res) => {
+router.post('/', protect, projectValidationRules, validate, async (req, res) => {
   try {
-    const errors = validateProject(req.body);
-    if (Object.keys(errors).length)
-      return res.status(400).json({ error: 'Validation failed', errors });
     const project = await Project.create({
       title: req.body.title.trim(),
       description: req.body.description.trim(),
@@ -96,13 +97,10 @@ router.post('/', protect, async (req, res) => {
 });
 
 // PUT /api/projects/:id
-router.put('/:id', protect, async (req, res) => {
+router.put('/:id', protect, projectValidationRules, validate, async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id))
       return res.status(400).json({ error: 'Invalid project ID' });
-    const errors = validateProject(req.body);
-    if (Object.keys(errors).length)
-      return res.status(400).json({ error: 'Validation failed', errors });
     const updated = await Project.findByIdAndUpdate(
       req.params.id,
       {

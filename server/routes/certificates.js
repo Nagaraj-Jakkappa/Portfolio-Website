@@ -1,15 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { body } = require('express-validator');
 const Certificate = require('../models/Certificate');
 const { protect } = require('../middleware/auth');
+const { validate } = require('../middleware/validate');
 const router = express.Router();
 
-function validateCert(body) {
-  const errors = {};
-  if (!body.title?.trim()) errors.title = 'Title is required';
-  if (!body.organization?.trim()) errors.organization = 'Organization is required';
-  return errors;
-}
+const certValidationRules = [
+  body('title').trim().notEmpty().withMessage('Title is required'),
+  body('organization').trim().notEmpty().withMessage('Organization is required'),
+  body('organizationLogo').optional({ checkFalsy: true }).isString().withMessage('Logo must be a string'),
+  body('date').optional({ checkFalsy: true }).isString().withMessage('Date must be a string'),
+  body('link').optional({ checkFalsy: true }).isURL().withMessage('Link must be a valid URL'),
+  body('description').optional({ checkFalsy: true }).isString().withMessage('Description must be a string'),
+];
 
 // GET /api/certificates
 router.get('/', async (req, res) => {
@@ -22,11 +26,8 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/certificates (protected)
-router.post('/', protect, async (req, res) => {
+router.post('/', protect, certValidationRules, validate, async (req, res) => {
   try {
-    const errors = validateCert(req.body);
-    if (Object.keys(errors).length)
-      return res.status(400).json({ error: 'Validation failed', errors });
 
     const cert = await Certificate.create({
       title: req.body.title.trim(),
@@ -43,14 +44,10 @@ router.post('/', protect, async (req, res) => {
 });
 
 // PUT /api/certificates/:id (protected)
-router.put('/:id', protect, async (req, res) => {
+router.put('/:id', protect, certValidationRules, validate, async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id))
       return res.status(400).json({ error: 'Invalid ID' });
-
-    const errors = validateCert(req.body);
-    if (Object.keys(errors).length)
-      return res.status(400).json({ error: 'Validation failed', errors });
 
     const updated = await Certificate.findByIdAndUpdate(
       req.params.id,
