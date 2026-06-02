@@ -124,7 +124,7 @@ router.post('/', async (req, res) => {
             </div>
           `,
         })
-        .catch(err => {
+        .catch((err) => {
           console.error('[Email] Failed:', err.message);
         });
     }
@@ -158,19 +158,12 @@ router.get('/', protect, async (req, res) => {
 
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
 
-    const limitNum = Math.min(
-      100,
-      parseInt(limit, 10) || 50
-    );
+    const limitNum = Math.min(100, parseInt(limit, 10) || 50);
 
     const skip = (pageNum - 1) * limitNum;
 
     const [items, total, unreadCount] = await Promise.all([
-      Message.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limitNum)
-        .lean(),
+      Message.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
 
       Message.countDocuments(filter),
 
@@ -201,10 +194,7 @@ router.get('/', protect, async (req, res) => {
 
 router.patch('/read-all', protect, async (req, res) => {
   try {
-    const result = await Message.updateMany(
-      { read: false },
-      { read: true }
-    );
+    const result = await Message.updateMany({ read: false }, { read: true });
 
     res.json({
       success: true,
@@ -223,11 +213,7 @@ router.patch('/read-all', protect, async (req, res) => {
 
 router.patch('/:id/read', protect, async (req, res) => {
   try {
-    const msg = await Message.findByIdAndUpdate(
-      req.params.id,
-      { read: true },
-      { new: true }
-    );
+    const msg = await Message.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
 
     if (!msg) {
       return res.status(404).json({
@@ -269,8 +255,7 @@ router.delete('/', protect, async (req, res) => {
   try {
     if (req.headers['x-confirm-delete'] !== 'yes') {
       return res.status(400).json({
-        error:
-          'Send header x-confirm-delete: yes to confirm',
+        error: 'Send header x-confirm-delete: yes to confirm',
       });
     }
 

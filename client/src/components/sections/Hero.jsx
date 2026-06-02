@@ -72,7 +72,12 @@ export default function Hero() {
             >
               Explore Work
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </button>
 
@@ -83,7 +88,12 @@ export default function Hero() {
             >
               Download CV
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
               </svg>
             </button>
           </div>
@@ -101,7 +111,9 @@ export default function Hero() {
             ].map(({ val, label }) => (
               <div key={label}>
                 <div className="font-display font-bold text-2xl text-white">{val}</div>
-                <div className="text-[10px] text-blue-400/60 mt-0.5 tracking-widest uppercase font-mono">{label}</div>
+                <div className="text-[10px] text-blue-400/60 mt-0.5 tracking-widest uppercase font-mono">
+                  {label}
+                </div>
               </div>
             ))}
           </div>
@@ -113,7 +125,9 @@ export default function Hero() {
         onClick={() => handleScroll('#about')}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500 hover:text-blue-400 transition-colors animate-bounce"
       >
-        <span className="text-[10px] font-mono tracking-tighter uppercase opacity-50">Discovery</span>
+        <span className="text-[10px] font-mono tracking-tighter uppercase opacity-50">
+          Discovery
+        </span>
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>

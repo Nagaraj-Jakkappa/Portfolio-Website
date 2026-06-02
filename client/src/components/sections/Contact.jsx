@@ -6,7 +6,12 @@ const CONTACT_INFO = [
   {
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+        />
       </svg>
     ),
     label: 'Email',
@@ -16,7 +21,12 @@ const CONTACT_INFO = [
   {
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+        />
       </svg>
     ),
     label: 'Phone', // UPDATED FROM LOCATION
@@ -26,8 +36,18 @@ const CONTACT_INFO = [
   {
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+        />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+        />
       </svg>
     ),
     label: 'Location',
@@ -62,7 +82,7 @@ export default function Contact() {
     setSubmitting(true);
     try {
       await api.post('/messages', form);
-      toast.success('Message sent! I\'ll get back to you soon.');
+      toast.success("Message sent! I'll get back to you soon.");
       setSent(true);
       setForm({ name: '', email: '', subject: '', message: '' });
     } catch (err) {
@@ -78,12 +98,15 @@ export default function Contact() {
 
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
-          <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">04 / Contact</p>
+          <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
+            04 / Contact
+          </p>
           <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
             Let's <span className="gradient-text">work together</span>
           </h2>
           <p className="text-slate-400 mt-4 max-w-xl">
-            Open to frontend roles, internships, and interesting projects. Drop me a message and I'll reply within 24 hours.
+            Open to frontend roles, internships, and interesting projects. Drop me a message and
+            I'll reply within 24 hours.
           </p>
         </div>
 
@@ -91,13 +114,20 @@ export default function Contact() {
           {/* Contact info */}
           <div className="lg:col-span-2 space-y-4">
             {CONTACT_INFO.map((item) => (
-              <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer"
-                className="card-base card-hover p-4 flex items-center gap-4 block">
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card-base card-hover p-4 flex items-center gap-4 block"
+              >
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-blue-400 flex-shrink-0">
                   {item.icon}
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-0.5 font-mono uppercase tracking-wide">{item.label}</p>
+                  <p className="text-xs text-slate-500 mb-0.5 font-mono uppercase tracking-wide">
+                    {item.label}
+                  </p>
                   <p className="text-slate-300 text-sm">{item.value}</p>
                 </div>
               </a>
@@ -110,8 +140,8 @@ export default function Contact() {
                 <span className="text-emerald-400 text-sm font-medium">Available for work</span>
               </div>
               <p className="text-slate-400 text-xs leading-relaxed">
-                Actively looking for junior frontend / full-stack roles and internships.
-                Based in Karnataka, open to remote.
+                Actively looking for junior frontend / full-stack roles and internships. Based in
+                Karnataka, open to remote.
               </p>
             </div>
           </div>
@@ -121,12 +151,26 @@ export default function Contact() {
             {sent ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-10">
                 <div className="w-16 h-16 rounded-full bg-blue-500/10 border border-blue-400/20 flex items-center justify-center mb-4">
-                  <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-8 h-8 text-blue-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
-                <h3 className="font-display font-semibold text-white text-xl mb-2">Message Sent!</h3>
-                <p className="text-slate-400 text-sm mb-6">Thanks for reaching out. I'll get back to you soon.</p>
+                <h3 className="font-display font-semibold text-white text-xl mb-2">
+                  Message Sent!
+                </h3>
+                <p className="text-slate-400 text-sm mb-6">
+                  Thanks for reaching out. I'll get back to you soon.
+                </p>
                 <button onClick={() => setSent(false)} className="btn-ghost text-sm py-2 px-4">
                   Send Another
                 </button>
@@ -139,8 +183,13 @@ export default function Contact() {
                       Name <span className="text-red-400">*</span>
                     </label>
                     <input
-                      type="text" name="name" value={form.name} onChange={handleChange}
-                      placeholder="Recruiter Name" className="input-base" required
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="Recruiter Name"
+                      className="input-base"
+                      required
                     />
                   </div>
                   <div>
@@ -148,17 +197,28 @@ export default function Contact() {
                       Email <span className="text-red-400">*</span>
                     </label>
                     <input
-                      type="email" name="email" value={form.email} onChange={handleChange}
-                      placeholder="hello@company.com" className="input-base" required
+                      type="email"
+                      name="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      placeholder="hello@company.com"
+                      className="input-base"
+                      required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs text-slate-400 font-mono uppercase tracking-wide mb-2">Subject</label>
+                  <label className="block text-xs text-slate-400 font-mono uppercase tracking-wide mb-2">
+                    Subject
+                  </label>
                   <input
-                    type="text" name="subject" value={form.subject} onChange={handleChange}
-                    placeholder="Job Opportunity / Collaboration" className="input-base"
+                    type="text"
+                    name="subject"
+                    value={form.subject}
+                    onChange={handleChange}
+                    placeholder="Job Opportunity / Collaboration"
+                    className="input-base"
                   />
                 </div>
 
@@ -167,13 +227,21 @@ export default function Contact() {
                     Message <span className="text-red-400">*</span>
                   </label>
                   <textarea
-                    name="message" value={form.message} onChange={handleChange}
-                    rows={5} placeholder="Tell me about the role or project..."
-                    className="input-base resize-none" required
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    rows={5}
+                    placeholder="Tell me about the role or project..."
+                    className="input-base resize-none"
+                    required
                   />
                 </div>
 
-                <button type="submit" disabled={submitting} className="btn-primary w-full justify-center disabled:opacity-60 disabled:cursor-not-allowed">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="btn-primary w-full justify-center disabled:opacity-60 disabled:cursor-not-allowed"
+                >
                   {submitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -182,8 +250,18 @@ export default function Contact() {
                   ) : (
                     <>
                       Send Message
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                        />
                       </svg>
                     </>
                   )}

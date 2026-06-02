@@ -1,22 +1,22 @@
-import React from 'react'
+import React from 'react';
 
 const highlights = [
   {
     title: 'AI Road Intelligence System',
     description:
-      'Built an AI-powered pothole detection platform using YOLO and GPS mapping to improve road condition monitoring and real-time detection workflows.'
+      'Built an AI-powered pothole detection platform using YOLO and GPS mapping to improve road condition monitoring and real-time detection workflows.',
   },
   {
     title: 'Production Engineering Stack',
     description:
-      'Experience building full-stack applications with React, Node.js, Express, MongoDB, JWT authentication, REST APIs, responsive UI systems, and deployment workflows.'
+      'Experience building full-stack applications with React, Node.js, Express, MongoDB, JWT authentication, REST APIs, responsive UI systems, and deployment workflows.',
   },
   {
     title: 'System & Performance Thinking',
     description:
-      'Focused on scalable architecture, reusable component systems, accessibility, optimized frontend performance, and maintainable engineering practices.'
-  }
-]
+      'Focused on scalable architecture, reusable component systems, accessibility, optimized frontend performance, and maintainable engineering practices.',
+  },
+];
 
 export default function RecruiterMode() {
   return (
@@ -39,9 +39,8 @@ export default function RecruiterMode() {
 
           <div className="bg-cyan-500/10 border border-cyan-400/20 rounded-2xl p-5 max-w-md">
             <p className="text-slate-300 text-sm leading-relaxed">
-              Focused on real-world engineering, scalable product development,
-              modern frontend architecture, and AI-integrated applications with
-              production-oriented thinking.
+              Focused on real-world engineering, scalable product development, modern frontend
+              architecture, and AI-integrated applications with production-oriented thinking.
             </p>
           </div>
         </div>
@@ -57,17 +56,13 @@ export default function RecruiterMode() {
                 <div className="w-3 h-3 rounded-full bg-cyan-400 group-hover:scale-125 transition-transform duration-300" />
               </div>
 
-              <h3 className="text-xl font-bold text-white mb-4 leading-snug">
-                {item.title}
-              </h3>
+              <h3 className="text-xl font-bold text-white mb-4 leading-snug">{item.title}</h3>
 
-              <p className="text-slate-400 leading-relaxed text-sm">
-                {item.description}
-              </p>
+              <p className="text-slate-400 leading-relaxed text-sm">{item.description}</p>
             </article>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -17,16 +17,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign(
-      { id: admin._id, username: admin.username },
-      process.env.JWT_SECRET,
-      { expiresIn: '4h' }
-    );
+    const token = jwt.sign({ id: admin._id, username: admin.username }, process.env.JWT_SECRET, {
+      expiresIn: '4h',
+    });
 
     res.json({
       token,
       username: admin.username,
-      admin: { id: admin._id, username: admin.username }
+      admin: { id: admin._id, username: admin.username },
     });
   } catch (err) {
     console.error('[Auth] Login error:', err);
@@ -68,7 +66,5 @@ router.put('/password', protect, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 module.exports = router;

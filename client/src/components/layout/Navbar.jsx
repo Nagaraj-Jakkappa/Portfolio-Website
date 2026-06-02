@@ -35,15 +35,20 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-navy-900/95 backdrop-blur-md border-b border-navy-800 shadow-xl shadow-black/20' : 'bg-transparent'
-        }`}
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-navy-900/95 backdrop-blur-md border-b border-navy-800 shadow-xl shadow-black/20'
+          : 'bg-transparent'
+      }`}
     >
       <nav className="max-w-6xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-1 group">
           <span className="font-display font-black text-xl tracking-tighter text-white uppercase italic">
             Tech
-            <span className="text-blue-400 group-hover:text-blue-300 transition-colors">Artistry</span>
+            <span className="text-blue-400 group-hover:text-blue-300 transition-colors">
+              Artistry
+            </span>
           </span>
           <span className="font-mono text-xs text-slate-500 mt-1">.in</span>
         </Link>
@@ -89,16 +94,23 @@ export default function Navbar() {
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
-          <span className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? 'rotate-45 translate-y-2' : ''}`} />
-          <span className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? 'opacity-0' : ''}`} />
-          <span className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? '-rotate-45 -translate-y-2' : ''}`} />
+          <span
+            className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? 'rotate-45 translate-y-2' : ''}`}
+          />
+          <span
+            className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? 'opacity-0' : ''}`}
+          />
+          <span
+            className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? '-rotate-45 -translate-y-2' : ''}`}
+          />
         </button>
       </nav>
 
       {/* Mobile menu */}
       <div
-        className={`lg:hidden transition-all duration-300 overflow-hidden ${open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          } bg-navy-900/98 backdrop-blur-md border-b border-navy-800`}
+        className={`lg:hidden transition-all duration-300 overflow-hidden ${
+          open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        } bg-navy-900/98 backdrop-blur-md border-b border-navy-800`}
       >
         <ul className="px-6 py-4 flex flex-col gap-4">
           {NAV_LINKS.map(({ label, href }) => (

@@ -2,11 +2,11 @@ import axios from 'axios';
 
 /**
  * Since we moved vercel.json to the root, Vercel now acts as a proxy.
- * Requests sent to '/api' will be automatically forwarded to your 
+ * Requests sent to '/api' will be automatically forwarded to your
  * Render backend (https://techartistry-api.onrender.com/api).
  */
 const api = axios.create({
-  baseURL: '/api', 
+  baseURL: '/api',
   timeout: 10000,
   withCredentials: true,
 });

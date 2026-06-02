@@ -15,15 +15,12 @@ export default function Footer() {
             Tech<span className="text-blue-400">Artistry</span>
           </span>
 
-          <span className="font-mono text-[10px] text-slate-600 mt-1">
-            .in
-          </span>
+          <span className="font-mono text-[10px] text-slate-600 mt-1">.in</span>
         </div>
 
         {/* Copyright */}
         <p className="text-slate-500 text-xs font-mono tracking-tight text-center md:order-none order-last">
-          © {year}{' '}
-          <span className="text-slate-400">Techartistry.in</span> | Built with{' '}
+          © {year} <span className="text-slate-400">Techartistry.in</span> | Built with{' '}
           <span className="text-blue-400/80">React</span> +
           <span className="text-emerald-400/80"> Node.js</span> +
           <span className="text-slate-300"> MongoDB</span>
@@ -53,7 +50,7 @@ export default function Footer() {
             onClick={() =>
               window.scrollTo({
                 top: 0,
-                behavior: 'smooth'
+                behavior: 'smooth',
               })
             }
             className="hover:text-white transition-all duration-300 hover:-translate-y-1"

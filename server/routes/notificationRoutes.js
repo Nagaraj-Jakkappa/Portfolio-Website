@@ -11,19 +11,18 @@ const router = express.Router();
 |--------------------------------------------------------------------------
 */
 router.get('/', async (req, res) => {
-    try {
-        const notifications = await Notification.find()
-            .sort({ createdAt: -1 });
+  try {
+    const notifications = await Notification.find().sort({ createdAt: -1 });
 
-        res.json(notifications);
-    } catch (error) {
-        console.error('GET Notifications Error:', error);
+    res.json(notifications);
+  } catch (error) {
+    console.error('GET Notifications Error:', error);
 
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 /*
@@ -32,20 +31,20 @@ router.get('/', async (req, res) => {
 |--------------------------------------------------------------------------
 */
 router.get('/unread-count', async (req, res) => {
-    try {
-        const count = await Notification.countDocuments({
-            read: false,
-        });
+  try {
+    const count = await Notification.countDocuments({
+      read: false,
+    });
 
-        res.json({ count });
-    } catch (error) {
-        console.error('Unread Count Error:', error);
+    res.json({ count });
+  } catch (error) {
+    console.error('Unread Count Error:', error);
 
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 /*
@@ -54,24 +53,21 @@ router.get('/unread-count', async (req, res) => {
 |--------------------------------------------------------------------------
 */
 router.put('/mark-all-read', async (req, res) => {
-    try {
-        await Notification.updateMany(
-            { read: false },
-            { read: true }
-        );
+  try {
+    await Notification.updateMany({ read: false }, { read: true });
 
-        res.json({
-            success: true,
-            message: 'All notifications marked as read',
-        });
-    } catch (error) {
-        console.error('Mark Read Error:', error);
+    res.json({
+      success: true,
+      message: 'All notifications marked as read',
+    });
+  } catch (error) {
+    console.error('Mark Read Error:', error);
 
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 /*
@@ -80,37 +76,32 @@ router.put('/mark-all-read', async (req, res) => {
 |--------------------------------------------------------------------------
 */
 router.post('/', async (req, res) => {
-    try {
-        const {
-            title,
-            message,
-            type,
-        } = req.body;
+  try {
+    const { title, message, type } = req.body;
 
-        // Validation
-        if (!title || !message) {
-            return res.status(400).json({
-                success: false,
-                message: 'Title and message are required',
-            });
-        }
-
-        const notification = await Notification.create({
-            title,
-            message,
-            type: type || 'system',
-        });
-
-        res.status(201).json(notification);
-
-    } catch (error) {
-        console.error('Create Notification Error:', error);
-
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+    // Validation
+    if (!title || !message) {
+      return res.status(400).json({
+        success: false,
+        message: 'Title and message are required',
+      });
     }
+
+    const notification = await Notification.create({
+      title,
+      message,
+      type: type || 'system',
+    });
+
+    res.status(201).json(notification);
+  } catch (error) {
+    console.error('Create Notification Error:', error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 module.exports = router;

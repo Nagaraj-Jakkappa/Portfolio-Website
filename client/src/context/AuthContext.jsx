@@ -11,7 +11,8 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem('adminToken');
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      api.get('/auth/me')
+      api
+        .get('/auth/me')
         .then(({ data }) => setAdmin(data.admin))
         .catch(() => logout())
         .finally(() => setLoading(false));

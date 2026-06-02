@@ -66,20 +66,20 @@ npm run dev
 
 ## 🔑 API Endpoints
 
-| Method | Route | Auth | Description |
-|--------|-------|------|-------------|
-| POST | `/api/auth/login` | ❌ | Admin login → JWT |
-| GET | `/api/auth/me` | ✅ | Verify token |
-| POST | `/api/auth/seed` | ❌ (dev only) | Create admin |
-| GET | `/api/projects` | ❌ | All projects |
-| GET | `/api/projects?featured=true` | ❌ | Featured only |
-| POST | `/api/projects` | ✅ | Create project |
-| PUT | `/api/projects/:id` | ✅ | Update project |
-| DELETE | `/api/projects/:id` | ✅ | Delete project |
-| POST | `/api/messages` | ❌ | Submit contact form |
-| GET | `/api/messages` | ✅ | View all messages |
-| PATCH | `/api/messages/:id/read` | ✅ | Mark read |
-| DELETE | `/api/messages/:id` | ✅ | Delete message |
+| Method | Route                         | Auth          | Description         |
+| ------ | ----------------------------- | ------------- | ------------------- |
+| POST   | `/api/auth/login`             | ❌            | Admin login → JWT   |
+| GET    | `/api/auth/me`                | ✅            | Verify token        |
+| POST   | `/api/auth/seed`              | ❌ (dev only) | Create admin        |
+| GET    | `/api/projects`               | ❌            | All projects        |
+| GET    | `/api/projects?featured=true` | ❌            | Featured only       |
+| POST   | `/api/projects`               | ✅            | Create project      |
+| PUT    | `/api/projects/:id`           | ✅            | Update project      |
+| DELETE | `/api/projects/:id`           | ✅            | Delete project      |
+| POST   | `/api/messages`               | ❌            | Submit contact form |
+| GET    | `/api/messages`               | ✅            | View all messages   |
+| PATCH  | `/api/messages/:id/read`      | ✅            | Mark read           |
+| DELETE | `/api/messages/:id`           | ✅            | Delete message      |
 
 ---
 
@@ -95,14 +95,14 @@ npm run dev
 
 ## 🎨 Design System
 
-| Token | Value |
-|-------|-------|
-| Background | `#0f172a` (navy-900) |
-| Surface | `#1e293b` (navy-800) |
-| Accent | `#38bdf8` (blue-400) |
-| Display font | Syne |
-| Body font | DM Sans |
-| Mono font | JetBrains Mono |
+| Token        | Value                |
+| ------------ | -------------------- |
+| Background   | `#0f172a` (navy-900) |
+| Surface      | `#1e293b` (navy-800) |
+| Accent       | `#38bdf8` (blue-400) |
+| Display font | Syne                 |
+| Body font    | DM Sans              |
+| Mono font    | JetBrains Mono       |
 
 ---
 
@@ -121,6 +121,7 @@ npm run dev
 Visit `/admin` → redirects to `/admin/login` if not authenticated.
 
 Features:
+
 - 📊 Stats overview (total projects, featured, messages, unread)
 - ➕ Add / ✏️ Edit / 🗑️ Delete projects
 - 📬 View contact messages, mark read, reply via email, delete

@@ -54,21 +54,26 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 // 4. Rate Limiting
-app.use('/api', rateLimit({
-  windowMs: 10 * 60 * 1000,
-  max: 500,
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => req.method === 'OPTIONS' || process.env.NODE_ENV !== 'production',
-  message: { error: 'Too many requests — please slow down.' },
-}));
+app.use(
+  '/api',
+  rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 500,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => req.method === 'OPTIONS' || process.env.NODE_ENV !== 'production',
+    message: { error: 'Too many requests — please slow down.' },
+  })
+);
 
 // 5. Public/Global Routes
-app.get('/api/health', (req, res) => res.json({
-  status: 'ok',
-  uptime: Math.floor(process.uptime()),
-  timestamp: new Date().toISOString(),
-}));
+app.get('/api/health', (req, res) =>
+  res.json({
+    status: 'ok',
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+  })
+);
 
 // 6. Protected Stats Route
 app.get('/api/stats', protect, async (req, res) => {
@@ -76,14 +81,14 @@ app.get('/api/stats', protect, async (req, res) => {
     const [projects, messages, certificates] = await Promise.all([
       Project.find().sort({ createdAt: -1 }).limit(5),
       Message.find().sort({ createdAt: -1 }).limit(10),
-      Certificate.find().sort({ createdAt: -1 })
+      Certificate.find().sort({ createdAt: -1 }),
     ]);
 
     const counts = {
       projectCount: await Project.countDocuments(),
       messageCount: await Message.countDocuments(),
       unreadMessages: await Message.countDocuments({ read: false }),
-      certCount: await Certificate.countDocuments()
+      certCount: await Certificate.countDocuments(),
     };
 
     res.json({ projects, messages, certificates, counts });
@@ -110,19 +115,20 @@ app.use((err, req, res, next) => {
   const status = err.status || err.statusCode || 500;
   res.status(status).json({
     error: err.message || 'Internal server error',
-    details: process.env.NODE_ENV === 'production' ? null : err.stack
+    details: process.env.NODE_ENV === 'production' ? null : err.stack,
   });
 });
 
 // 9. Server & DB Connection
 const PORT = parseInt(process.env.PORT) || 5180;
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('❌ MongoDB failed:', err.message);
     process.exit(1);
   });

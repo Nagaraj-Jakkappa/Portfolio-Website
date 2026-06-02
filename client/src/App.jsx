@@ -22,9 +22,7 @@ const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage'));
 
 // NEW Notification Page
-const NotificationsPage = lazy(() =>
-  import('./pages/admin/NotificationsPage')
-);
+const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage'));
 
 function PageSpinner() {
   return (
@@ -38,7 +36,6 @@ export default function App() {
   return (
     <Suspense fallback={<PageSpinner />}>
       <Routes>
-
         {/* PUBLIC WEBSITE */}
         <Route
           path="/"
@@ -78,24 +75,17 @@ export default function App() {
           <Route path="messages" element={<MessagesPage />} />
 
           {/* Certificates */}
-          <Route
-            path="certificates"
-            element={<CertificatesPage />}
-          />
+          <Route path="certificates" element={<CertificatesPage />} />
 
           {/* Settings */}
           <Route path="settings" element={<SettingsPage />} />
 
           {/* NEW Notifications Route */}
-          <Route
-            path="notifications"
-            element={<NotificationsPage />}
-          />
+          <Route path="notifications" element={<NotificationsPage />} />
         </Route>
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
-
       </Routes>
     </Suspense>
   );

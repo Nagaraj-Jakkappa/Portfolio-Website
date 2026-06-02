@@ -18,7 +18,7 @@ export default function Skills() {
         const res = await api.get('skills');
         setSkills(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Error loading skills:", err);
+        console.error('Error loading skills:', err);
         setSkills([]);
       } finally {
         setLoading(false);
@@ -34,18 +34,21 @@ export default function Skills() {
     return acc;
   }, {});
 
-  if (loading) return (
-    <div className="min-h-[400px] flex items-center justify-center bg-navy-950">
-      <div className="text-blue-400 font-mono animate-pulse">Loading Stack...</div>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="min-h-[400px] flex items-center justify-center bg-navy-950">
+        <div className="text-blue-400 font-mono animate-pulse">Loading Stack...</div>
+      </div>
+    );
 
   return (
     <section id="skills" className="section-padding bg-navy-950 relative overflow-hidden">
       <div className="orb w-72 h-72 bg-purple-500 bottom-0 left-10 opacity-5" />
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
-          <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">02 / Skills</p>
+          <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
+            02 / Skills
+          </p>
           <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
             My <span className="gradient-text">tech stack</span>
           </h2>
@@ -54,7 +57,9 @@ export default function Skills() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {Object.entries(groupedSkills).map(([category, items]) => (
             <div key={category} className="card-base card-hover p-6">
-              <h3 className={`font-display font-semibold uppercase tracking-widest mb-5 px-2 py-1 rounded-md border w-fit text-xs ${LEVEL_COLORS[category] || 'text-slate-400 border-slate-400/20 bg-slate-500/10'}`}>
+              <h3
+                className={`font-display font-semibold uppercase tracking-widest mb-5 px-2 py-1 rounded-md border w-fit text-xs ${LEVEL_COLORS[category] || 'text-slate-400 border-slate-400/20 bg-slate-500/10'}`}
+              >
                 {category}
               </h3>
               <ul className="space-y-3">

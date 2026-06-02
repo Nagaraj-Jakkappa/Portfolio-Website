@@ -16,7 +16,15 @@ function validateProject(body) {
 // GET /api/projects  — supports ?featured=true, ?category=ml, ?search=react, ?page=1, ?limit=100
 router.get('/', async (req, res) => {
   try {
-    const { featured, category, search, page = 1, limit = 100, sort = 'order', dir = 'asc' } = req.query;
+    const {
+      featured,
+      category,
+      search,
+      page = 1,
+      limit = 100,
+      sort = 'order',
+      dir = 'asc',
+    } = req.query;
     const filter = {};
     if (featured !== undefined) filter.featured = featured === 'true';
     if (category) filter.category = category;
@@ -34,11 +42,20 @@ router.get('/', async (req, res) => {
     const skip = (pageNum - 1) * limitNum;
 
     const [items, total] = await Promise.all([
-      Project.find(filter).sort({ [sortField]: sortDir, createdAt: -1 }).skip(skip).limit(limitNum).lean(),
+      Project.find(filter)
+        .sort({ [sortField]: sortDir, createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
       Project.countDocuments(filter),
     ]);
-    res.json({ data: items, meta: { total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) } });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+    res.json({
+      data: items,
+      meta: { total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET /api/projects/:id
@@ -49,14 +66,17 @@ router.get('/:id', async (req, res) => {
     const project = await Project.findById(req.params.id).lean();
     if (!project) return res.status(404).json({ error: 'Project not found' });
     res.json(project);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // POST /api/projects
 router.post('/', protect, async (req, res) => {
   try {
     const errors = validateProject(req.body);
-    if (Object.keys(errors).length) return res.status(400).json({ error: 'Validation failed', errors });
+    if (Object.keys(errors).length)
+      return res.status(400).json({ error: 'Validation failed', errors });
     const project = await Project.create({
       title: req.body.title.trim(),
       description: req.body.description.trim(),
@@ -70,7 +90,9 @@ router.post('/', protect, async (req, res) => {
       order: Number(req.body.order) || 0,
     });
     res.status(201).json(project);
-  } catch (err) { res.status(400).json({ error: err.message }); }
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
 // PUT /api/projects/:id
@@ -79,18 +101,29 @@ router.put('/:id', protect, async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id))
       return res.status(400).json({ error: 'Invalid project ID' });
     const errors = validateProject(req.body);
-    if (Object.keys(errors).length) return res.status(400).json({ error: 'Validation failed', errors });
-    const updated = await Project.findByIdAndUpdate(req.params.id, {
-      title: req.body.title.trim(), description: req.body.description.trim(),
-      longDescription: req.body.longDescription?.trim() || '',
-      techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
-      imageUrl: req.body.imageUrl?.trim() || '', liveUrl: req.body.liveUrl?.trim() || '',
-      githubUrl: req.body.githubUrl?.trim() || '', featured: Boolean(req.body.featured),
-      category: req.body.category || 'web', order: Number(req.body.order) || 0,
-    }, { new: true, runValidators: true });
+    if (Object.keys(errors).length)
+      return res.status(400).json({ error: 'Validation failed', errors });
+    const updated = await Project.findByIdAndUpdate(
+      req.params.id,
+      {
+        title: req.body.title.trim(),
+        description: req.body.description.trim(),
+        longDescription: req.body.longDescription?.trim() || '',
+        techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
+        imageUrl: req.body.imageUrl?.trim() || '',
+        liveUrl: req.body.liveUrl?.trim() || '',
+        githubUrl: req.body.githubUrl?.trim() || '',
+        featured: Boolean(req.body.featured),
+        category: req.body.category || 'web',
+        order: Number(req.body.order) || 0,
+      },
+      { new: true, runValidators: true }
+    );
     if (!updated) return res.status(404).json({ error: 'Project not found' });
     res.json(updated);
-  } catch (err) { res.status(400).json({ error: err.message }); }
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
 // DELETE /api/projects/:id
@@ -101,7 +134,9 @@ router.delete('/:id', protect, async (req, res) => {
     const deleted = await Project.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Project not found' });
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
