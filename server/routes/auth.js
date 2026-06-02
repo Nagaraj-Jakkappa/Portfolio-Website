@@ -69,19 +69,6 @@ router.put('/password', protect, async (req, res) => {
   }
 });
 
-// GET /api/auth/nuclear-reset (Dev Only)
-router.get('/nuclear-reset', async (req, res) => {
-  try {
-    await Admin.deleteMany({});
-    const newAdmin = new Admin({
-      username: (process.env.ADMIN_USERNAME || 'admin').toLowerCase(),
-      password: process.env.ADMIN_PASSWORD || 'admin123',
-    });
-    await newAdmin.save();
-    res.json({ message: '✅ Database wiped and fresh admin created!' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+
 
 module.exports = router;
