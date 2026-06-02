@@ -35,12 +35,12 @@ export default function Hero() {
 
           {/* Heading */}
           <h1
-            className="font-display font-extrabold text-5xl md:text-7xl leading-tight text-white mb-6 animate-fade-up"
+            className="font-display font-extrabold text-5xl md:text-7xl lg:text-[5.5rem] tracking-tight leading-[1.1] text-white mb-6 animate-fade-up"
             style={{ animationDelay: '100ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             Crafting Digital
             <br />
-            <span className="gradient-text italic">Artistry</span> Through Code
+            <span className="gradient-text italic pr-2">Artistry</span> Through Code
           </h1>
 
           {/* Role / Sub-brand */}
@@ -53,11 +53,11 @@ export default function Hero() {
 
           {/* Targeted Description */}
           <p
-            className="text-slate-400 text-lg max-w-xl leading-relaxed mb-10 animate-fade-up"
+            className="text-slate-400 text-lg md:text-xl max-w-2xl leading-relaxed mb-10 animate-fade-up font-light"
             style={{ animationDelay: '300ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             BCA Graduate & Full-Stack Developer specializing in the MERN stack. I transform complex
-            logic into elegant, high-performance web experiences with a focus on Deep Learning
+            logic into elegant, high-performance web experiences with a focus on deep learning
             integration and minimalist UI.
           </p>
 
