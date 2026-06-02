@@ -64,7 +64,7 @@
   }
 
   .btn-ghost {
-    @apply inline-flex items-center gap-2 px-7 py-3.5 border border-navy-600 hover:border-blue-400/60 hover:bg-blue-500/5 text-slate-300 hover:text-white font-semibold rounded-xl transition-all duration-300 active:scale-95;
+    @apply inline-flex items-center gap-2 px-7 py-3.5 border border-navy-700 hover:border-blue-400/60 hover:bg-blue-500/5 text-slate-300 hover:text-white font-semibold rounded-xl transition-all duration-300 active:scale-95;
   }
 
   .input-base {
