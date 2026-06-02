@@ -19,6 +19,7 @@ import {
   Spinner,
   Ic,
   ConfirmModal,
+  Modal,
 } from '../../components/admin/ui/ui';
 import toast from 'react-hot-toast';
 
