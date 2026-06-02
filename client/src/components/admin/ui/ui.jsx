@@ -252,6 +252,33 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
   );
 }
 
+// ── ConfirmModal ──────────────────────────────────────────────
+export function ConfirmModal({ open, onClose, onConfirm, title, message, loading, confirmText = 'Delete' }) {
+  if (!open) return null;
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={title}
+      maxWidth="max-w-md"
+      footer={
+        <>
+          <Btn variant="ghost" onClick={onClose} disabled={loading}>
+            Cancel
+          </Btn>
+          <Btn variant="danger" onClick={onConfirm} disabled={loading}>
+            {loading ? <Spinner /> : confirmText}
+          </Btn>
+        </>
+      }
+    >
+      <p className="text-sm text-slate-300 leading-relaxed">
+        {message}
+      </p>
+    </Modal>
+  );
+}
+
 // ── Skeleton ──────────────────────────────────────────────────
 export function Skeleton({ className = '' }) {
   return <div className={`animate-pulse bg-navy-800 rounded ${className}`} />;

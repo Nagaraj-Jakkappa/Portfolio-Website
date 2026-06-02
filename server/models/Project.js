@@ -10,6 +10,11 @@ const projectSchema = new mongoose.Schema(
     liveUrl: { type: String },
     githubUrl: { type: String },
     featured: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ['live', 'draft', 'archived'],
+      default: 'live',
+    },
     order: { type: Number, default: 0 },
     category: {
       type: String,

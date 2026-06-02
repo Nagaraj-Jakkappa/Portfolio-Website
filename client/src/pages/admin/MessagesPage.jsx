@@ -14,6 +14,7 @@ import {
   PageHeader,
   Ic,
   Spinner,
+  ConfirmModal,
 } from '../../components/admin/ui/ui';
 import toast from 'react-hot-toast';
 
@@ -25,6 +26,7 @@ const IC = {
   search: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0',
   inbox:
     'M22 12h-6l-2 3H10l-2-3H2 M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z',
+  archive: 'M4 4h16v4H4V4zm2 4v12h12V8H6zm3 4h6v2H9v-2z',
 };
 
 function timeAgo(iso) {
@@ -87,8 +89,9 @@ function ListItem({ msg, selected, onClick }) {
 }
 
 // ── Right panel: message detail ───────────────────────────────
-function Detail({ msg, onMarkRead, onDelete }) {
+function Detail({ msg, onMarkRead, onArchive, onDelete }) {
   const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -127,20 +130,29 @@ function Detail({ msg, onMarkRead, onDelete }) {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {!msg.read && (
-              <Btn variant="success" size="sm" onClick={() => onMarkRead(msg._id)}>
-                <Ic d={IC.check} size={12} /> Mark Read
-              </Btn>
-            )}
-            <Btn variant="danger" size="sm" onClick={handleDelete} disabled={deleting}>
-              {deleting ? <Spinner size={12} /> : <Ic d={IC.trash} size={12} />}
-              Delete
+          <div className="flex items-center gap-2 flex-shrink-0 relative">
+            <Btn variant="ghost" size="sm" onClick={() => onMarkRead(msg._id)}>
+              <Ic d={IC.check} size={12} /> {msg.read ? 'Mark Unread' : 'Mark Read'}
             </Btn>
+            <Btn variant="ghost" size="sm" onClick={() => onArchive(msg._id)}>
+              <Ic d={IC.archive} size={12} /> {msg.archived ? 'Unarchive' : 'Archive'}
+            </Btn>
+            <Btn variant="danger" size="sm" onClick={() => setConfirmDelete(true)}>
+              <Ic d={IC.trash} size={12} /> Delete
+            </Btn>
+            <ConfirmModal
+              open={confirmDelete}
+              onClose={() => setConfirmDelete(false)}
+              onConfirm={handleDelete}
+              title="Delete Message"
+              message="Are you sure you want to permanently delete this message? This cannot be undone."
+              loading={deleting}
+            />
           </div>
         </div>
         <div className="flex gap-2">
           <Badge label={msg.read ? 'Read' : 'Unread'} variant={msg.read ? 'slate' : 'blue'} />
+          {msg.archived && <Badge label="Archived" variant="purple" />}
           {msg.subject && <Badge label="Has Subject" variant="green" />}
         </div>
       </div>
@@ -180,15 +192,20 @@ function Detail({ msg, onMarkRead, onDelete }) {
 
 // ── Main page ─────────────────────────────────────────────────
 export default function MessagesPage() {
-  const { messages, loading, markRead, deleteMessage } = useMessages();
+  const { messages, loading, markRead, archiveMessage, deleteMessage } = useMessages();
   const [selectedId, setSelectedId] = useState(null);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('all'); // all | unread | read
+  const [filter, setFilter] = useState('all'); // all | unread | read | archived
 
   const unread = messages.filter((m) => !m.read).length;
 
   const filtered = messages
-    .filter((m) => filter === 'all' || (filter === 'unread' ? !m.read : m.read))
+    .filter((m) => 
+      filter === 'all' ? !m.archived 
+      : filter === 'archived' ? m.archived 
+      : filter === 'unread' ? (!m.read && !m.archived) 
+      : (m.read && !m.archived)
+    )
     .filter(
       (m) =>
         !search ||
@@ -206,7 +223,11 @@ export default function MessagesPage() {
 
   const handleMarkRead = async (id) => {
     await markRead(id);
-    toast.success('Marked as read');
+  };
+
+  const handleArchive = async (id) => {
+    await archiveMessage(id);
+    toast.success('Message archive toggled');
   };
 
   const handleDelete = async (id) => {
@@ -234,7 +255,7 @@ export default function MessagesPage() {
               />
             </label>
             <div className="flex gap-1 bg-navy-950 border border-navy-800 rounded-lg p-0.5">
-              {['all', 'unread', 'read'].map((f) => (
+              {['all', 'unread', 'read', 'archived'].map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
@@ -287,7 +308,7 @@ export default function MessagesPage() {
         {/* Right — detail */}
         <Card padding={false} className="overflow-hidden">
           {selected ? (
-            <Detail msg={selected} onMarkRead={handleMarkRead} onDelete={handleDelete} />
+            <Detail msg={selected} onMarkRead={handleMarkRead} onArchive={handleArchive} onDelete={handleDelete} />
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center p-8">
               <div className="w-14 h-14 rounded-2xl bg-navy-800 flex items-center justify-center mb-4 text-slate-700">

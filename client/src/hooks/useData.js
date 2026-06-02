@@ -42,7 +42,7 @@ export function useAllProjects() {
     setLoading(true);
     setError(null);
     try {
-      const { data: res } = await api.get('/projects');
+      const { data: res } = await api.get('/projects?admin=true');
       setProjects(Array.isArray(res) ? res : (res.data ?? []));
     } catch (e) {
       setError(e?.response?.data?.error ?? 'Failed to load projects');
@@ -100,14 +100,18 @@ export function useMessages() {
 
   const markRead = async (id) => {
     await api.patch(`/messages/${id}/read`);
-    setMessages((prev) => prev.map((m) => (m._id === id ? { ...m, read: true } : m)));
+    setMessages((prev) => prev.map((m) => (m._id === id ? { ...m, read: !m.read } : m)));
+  };
+  const archiveMessage = async (id) => {
+    await api.patch(`/messages/${id}/archive`);
+    setMessages((prev) => prev.map((m) => (m._id === id ? { ...m, archived: !m.archived } : m)));
   };
   const deleteMessage = async (id) => {
     await api.delete(`/messages/${id}`);
     setMessages((prev) => prev.filter((m) => m._id !== id));
   };
 
-  return { messages, loading, error, refetch: fetch, markRead, deleteMessage };
+  return { messages, loading, error, refetch: fetch, markRead, archiveMessage, deleteMessage };
 }
 
 // ── CERTIFICATES ──────────────────────────────────────────────

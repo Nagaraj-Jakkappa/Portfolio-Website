@@ -14,11 +14,11 @@ import {
   Input,
   Select,
   Textarea,
-  Modal,
   Toggle,
   EmptyState,
   Spinner,
   Ic,
+  ConfirmModal,
 } from '../../components/admin/ui/ui';
 import toast from 'react-hot-toast';
 
@@ -48,6 +48,7 @@ const EMPTY_FORM = {
   githubUrl: '',
   featured: false,
   category: 'web',
+  status: 'live',
   order: 0,
 };
 
@@ -178,6 +179,17 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
               </option>
             ))}
           </Select>
+          <Select
+            label="Status"
+            value={form.status}
+            onChange={(e) => set('status', e.target.value)}
+          >
+            {['live', 'draft', 'archived'].map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </Select>
           <Input
             label="Display Order"
             type="number"
@@ -196,27 +208,7 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
   );
 }
 
-// ── Inline delete confirm ─────────────────────────────────────
-function DeleteConfirm({ onConfirm, onCancel }) {
-  return (
-    <div
-      className="absolute right-0 top-9 z-20 bg-navy-900 border border-red-500/20 rounded-xl p-4 shadow-2xl w-52"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <p className="text-xs text-slate-300 leading-relaxed mb-3">
-        Permanently delete this project?
-      </p>
-      <div className="flex gap-2">
-        <Btn variant="ghost" size="sm" onClick={onCancel} className="flex-1 justify-center">
-          Cancel
-        </Btn>
-        <Btn variant="danger" size="sm" onClick={onConfirm} className="flex-1 justify-center">
-          Delete
-        </Btn>
-      </div>
-    </div>
-  );
-}
+
 
 // ── Table row ─────────────────────────────────────────────────
 function ProjectRow({ project, onEdit, onDelete }) {
@@ -263,6 +255,13 @@ function ProjectRow({ project, onEdit, onDelete }) {
         <Badge
           label={project.category ?? 'web'}
           variant={CAT_VARIANT[project.category] ?? 'slate'}
+        />
+      </td>
+      {/* Status */}
+      <td className="px-4 py-3">
+        <Badge
+          label={project.status ?? 'live'}
+          variant={project.status === 'draft' ? 'slate' : project.status === 'archived' ? 'purple' : 'green'}
         />
       </td>
       {/* Featured */}
@@ -314,15 +313,16 @@ function ProjectRow({ project, onEdit, onDelete }) {
             >
               <Ic d={IC.trash} size={13} />
             </button>
-            {confirmOpen && (
-              <DeleteConfirm
-                onConfirm={() => {
-                  onDelete(project._id);
-                  setConfirmOpen(false);
-                }}
-                onCancel={() => setConfirmOpen(false)}
-              />
-            )}
+            <ConfirmModal
+              open={confirmOpen}
+              onClose={() => setConfirmOpen(false)}
+              onConfirm={() => {
+                onDelete(project._id);
+                setConfirmOpen(false);
+              }}
+              title="Delete Project"
+              message={`Are you sure you want to permanently delete "${project.title}"? This cannot be undone.`}
+            />
           </div>
         </div>
       </td>
@@ -463,7 +463,7 @@ export default function ProjectsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-navy-800">
-                {['Project', 'Tech Stack', 'Category', 'Status', 'Links', 'Actions'].map((h) => (
+                {['Project', 'Tech Stack', 'Category', 'Status', 'Featured', 'Links', 'Actions'].map((h) => (
                   <th
                     key={h}
                     className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider whitespace-nowrap"
@@ -477,7 +477,7 @@ export default function ProjectsPage() {
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-navy-800">
-                    {Array.from({ length: 6 }).map((_, j) => (
+                    {Array.from({ length: 7 }).map((_, j) => (
                       <td key={j} className="px-4 py-3">
                         <div className="h-8 bg-navy-800 rounded animate-pulse" />
                       </td>

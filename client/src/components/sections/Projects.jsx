@@ -60,6 +60,11 @@ function ProjectCard({ project }) {
         >
           {category}
         </span>
+        {project.featured && (
+          <span className="absolute top-3 right-3 text-[10px] font-bold uppercase px-2 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded">
+            Featured
+          </span>
+        )}
       </div>
 
       {/* Content */}

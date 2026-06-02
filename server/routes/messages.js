@@ -49,6 +49,7 @@ router.post('/', messageValidationRules, validate, async (req, res) => {
       message: message.trim(),
       ipAddress: req.ip,
       read: false,
+      archived: false,
     });
 
     /* =========================================================
@@ -121,12 +122,17 @@ router.post('/', messageValidationRules, validate, async (req, res) => {
 
 router.get('/', protect, async (req, res) => {
   try {
-    const { page = 1, limit = 50, unread } = req.query;
+    const { page = 1, limit = 50, filter: msgFilter } = req.query;
 
     const filter = {};
 
-    if (unread === 'true') {
+    if (msgFilter === 'unread') {
       filter.read = false;
+      filter.archived = false;
+    } else if (msgFilter === 'archived') {
+      filter.archived = true;
+    } else {
+      filter.archived = { $ne: true }; // default: not archived
     }
 
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
@@ -140,7 +146,7 @@ router.get('/', protect, async (req, res) => {
 
       Message.countDocuments(filter),
 
-      Message.countDocuments({ read: false }),
+      Message.countDocuments({ read: false, archived: { $ne: true } }),
     ]);
 
     res.json({
@@ -186,19 +192,33 @@ router.patch('/read-all', protect, async (req, res) => {
 
 router.patch('/:id/read', protect, async (req, res) => {
   try {
-    const msg = await Message.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
-
+    const msg = await Message.findById(req.params.id);
     if (!msg) {
-      return res.status(404).json({
-        error: 'Message not found',
-      });
+      return res.status(404).json({ error: 'Message not found' });
     }
-
+    msg.read = !msg.read;
+    await msg.save();
     res.json(msg);
   } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* =========================================================
+   TOGGLE ARCHIVE
+========================================================= */
+
+router.patch('/:id/archive', protect, async (req, res) => {
+  try {
+    const msg = await Message.findById(req.params.id);
+    if (!msg) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+    msg.archived = !msg.archived;
+    await msg.save();
+    res.json(msg);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

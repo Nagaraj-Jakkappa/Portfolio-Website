@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
-import { PageHeader, Btn, Input, Textarea, Modal, Ic, Spinner } from '../../components/admin/ui/ui';
+import { PageHeader, Btn, Input, Textarea, Modal, Ic, Spinner, ConfirmModal } from '../../components/admin/ui/ui';
 import toast from 'react-hot-toast';
 
 const IC = {
@@ -155,30 +155,23 @@ function CertCard({ cert, onEdit, onDelete }) {
         >
           <Ic d={IC.edit} size={13} />
         </button>
-        <div className="ml-auto">
-          {confirmDelete ? (
-            <div className="flex gap-2">
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="text-[10px] text-slate-500"
-              >
-                No
-              </button>
-              <button
-                onClick={() => onDelete(cert._id)}
-                className="text-[10px] text-red-400 font-bold"
-              >
-                Yes
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setConfirmDelete(true)}
-              className="p-1.5 text-slate-400 hover:text-red-400 transition-colors"
-            >
-              <Ic d={IC.trash} size={13} />
-            </button>
-          )}
+        <div className="ml-auto relative">
+          <button
+            onClick={() => setConfirmDelete(true)}
+            className="p-1.5 text-slate-400 hover:text-red-400 transition-colors"
+          >
+            <Ic d={IC.trash} size={13} />
+          </button>
+          <ConfirmModal
+            open={confirmDelete}
+            onClose={() => setConfirmDelete(false)}
+            onConfirm={() => {
+              onDelete(cert._id);
+              setConfirmDelete(false);
+            }}
+            title="Delete Certificate"
+            message={`Are you sure you want to delete "${cert.title}"?`}
+          />
         </div>
       </div>
     </div>

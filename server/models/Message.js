@@ -24,6 +24,7 @@ const messageSchema = new mongoose.Schema(
       required: [true, 'Message content is required'],
     },
     read: { type: Boolean, default: false },
+    archived: { type: Boolean, default: false },
     ipAddress: { type: String },
   },
   { timestamps: true }

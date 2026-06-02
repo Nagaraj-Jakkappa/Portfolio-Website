@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { body } = require('express-validator');
+const jwt = require('jsonwebtoken');
 const Project = require('../models/Project');
 const { protect } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
@@ -14,10 +15,11 @@ const projectValidationRules = [
   body('githubUrl').optional({ checkFalsy: true }).isURL().withMessage('GitHub URL must be a valid URL'),
   body('imageUrl').optional({ checkFalsy: true }).isString().withMessage('Image URL must be a string'),
   body('featured').optional().isBoolean().withMessage('Featured must be a boolean'),
+  body('status').optional().isIn(['live', 'draft', 'archived']).withMessage('Invalid status'),
   body('category').optional().isIn(['web', 'ml', 'fullstack', 'other']).withMessage('Invalid category'),
 ];
 
-// GET /api/projects  — supports ?featured=true, ?category=ml, ?search=react, ?page=1, ?limit=100
+// GET /api/projects  — supports ?featured=true, ?category=ml, ?search=react, ?page=1, ?limit=100, ?admin=true
 router.get('/', async (req, res) => {
   try {
     const {
@@ -28,15 +30,41 @@ router.get('/', async (req, res) => {
       limit = 100,
       sort = 'order',
       dir = 'asc',
+      admin,
     } = req.query;
+
+    let isAdmin = false;
+    if (admin === 'true' && req.headers.authorization?.startsWith('Bearer ')) {
+      try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded && decoded.id) isAdmin = true;
+      } catch (e) {
+        // invalid token, treat as public
+      }
+    }
+
     const filter = {};
+    if (!isAdmin) {
+      filter.$or = [{ status: 'live' }, { status: { $exists: false } }];
+    }
+
     if (featured !== undefined) filter.featured = featured === 'true';
     if (category) filter.category = category;
     if (search) {
-      filter.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { techStack: { $elemMatch: { $regex: search, $options: 'i' } } },
-      ];
+      const searchRegex = { $regex: search, $options: 'i' };
+      if (filter.$or) {
+        filter.$and = [
+          { $or: filter.$or },
+          { $or: [{ title: searchRegex }, { techStack: { $elemMatch: searchRegex } }] }
+        ];
+        delete filter.$or;
+      } else {
+        filter.$or = [
+          { title: searchRegex },
+          { techStack: { $elemMatch: searchRegex } }
+        ];
+      }
     }
     const SORTS = ['order', 'createdAt', 'title'];
     const sortField = SORTS.includes(sort) ? sort : 'order';
@@ -87,6 +115,7 @@ router.post('/', protect, projectValidationRules, validate, async (req, res) => 
       liveUrl: req.body.liveUrl?.trim() || '',
       githubUrl: req.body.githubUrl?.trim() || '',
       featured: Boolean(req.body.featured),
+      status: req.body.status || 'live',
       category: req.body.category || 'web',
       order: Number(req.body.order) || 0,
     });
@@ -112,6 +141,7 @@ router.put('/:id', protect, projectValidationRules, validate, async (req, res) =
         liveUrl: req.body.liveUrl?.trim() || '',
         githubUrl: req.body.githubUrl?.trim() || '',
         featured: Boolean(req.body.featured),
+        status: req.body.status || 'live',
         category: req.body.category || 'web',
         order: Number(req.body.order) || 0,
       },
