@@ -117,7 +117,7 @@ app.use((err, req, res, next) => {
 // 9. Server & DB Connection
 const PORT = parseInt(process.env.PORT) || 5180;
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));
