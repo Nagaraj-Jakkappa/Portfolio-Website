@@ -14,8 +14,6 @@ import Certifications from '../components/sections/Certifications';
 
 import Projects from '../components/sections/Projects';
 
-import DetectionPlayground from '../components/sections/DetectionPlayground';
-
 import RecruiterMode from '../components/sections/RecruiterMode'
 
 import Contact from '../components/sections/Contact';
@@ -63,8 +61,6 @@ export default function Home() {
       <Certifications />
 
       <Projects />
-
-      <DetectionPlayground />
 
       <RecruiterMode />
 
