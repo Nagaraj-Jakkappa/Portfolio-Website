@@ -38,13 +38,13 @@ export default function AdminLogin() {
 
         <div className="relative w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="font-display font-bold text-3xl text-white mb-2">
-              NJ<span className="text-blue-400">.</span>
+            <div className="font-display font-bold text-4xl text-white mb-2 tracking-tight">
+              NJ<span className="text-blue-500">.</span>
             </div>
-            <p className="text-slate-400 text-sm">Admin Dashboard</p>
+            <p className="text-slate-400 text-sm tracking-wide uppercase font-semibold">Admin Dashboard</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="card-base p-8 space-y-5">
+          <form onSubmit={handleSubmit} className="bg-navy-900/80 backdrop-blur-xl border border-navy-800 rounded-2xl p-8 space-y-6 shadow-2xl">
             <div>
               <label className="block text-xs font-mono text-slate-400 uppercase tracking-wide mb-2">
                 Username
@@ -55,8 +55,8 @@ export default function AdminLogin() {
                 required
                 value={form.username}
                 onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
-                placeholder="admin"
-                className="input-base"
+                placeholder="Enter username"
+                className="w-full bg-navy-950 border border-navy-800 focus:border-blue-500/50 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-600 outline-none transition-all duration-300 shadow-inner"
               />
             </div>
 
@@ -72,7 +72,7 @@ export default function AdminLogin() {
                   value={form.password}
                   onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                   placeholder="••••••••"
-                  className="input-base pr-10"
+                  className="w-full bg-navy-950 border border-navy-800 focus:border-blue-500/50 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-600 outline-none transition-all duration-300 shadow-inner pr-10"
                 />
                 <button
                   type="button"
@@ -111,7 +111,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full justify-center mt-2 disabled:opacity-60"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25 active:scale-95 mt-4 disabled:opacity-60"
             >
               {loading ? (
                 <>

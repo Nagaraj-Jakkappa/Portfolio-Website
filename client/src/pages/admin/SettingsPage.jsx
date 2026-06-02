@@ -145,7 +145,7 @@ export default function SettingsPage() {
           ].map(({ label, value }) => (
             <div
               key={label}
-              className="flex items-center gap-4 py-2 border-b border-[#1e2d3d] last:border-0"
+              className="flex items-center gap-4 py-2 border-b border-navy-800 last:border-0"
             >
               <span className="text-xs text-slate-600 w-28 flex-shrink-0">{label}</span>
               <span className="text-sm text-slate-300 font-mono">{value}</span>

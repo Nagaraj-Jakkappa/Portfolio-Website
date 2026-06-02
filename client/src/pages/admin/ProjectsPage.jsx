@@ -200,7 +200,7 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
 function DeleteConfirm({ onConfirm, onCancel }) {
   return (
     <div
-      className="absolute right-0 top-9 z-20 bg-[#0a1628] border border-red-500/20 rounded-xl p-4 shadow-2xl w-52"
+      className="absolute right-0 top-9 z-20 bg-navy-900 border border-red-500/20 rounded-xl p-4 shadow-2xl w-52"
       onClick={(e) => e.stopPropagation()}
     >
       <p className="text-xs text-slate-300 leading-relaxed mb-3">
@@ -222,11 +222,11 @@ function DeleteConfirm({ onConfirm, onCancel }) {
 function ProjectRow({ project, onEdit, onDelete }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   return (
-    <tr className="border-b border-[#1e2d3d] hover:bg-white/[0.015] transition-colors group">
+    <tr className="border-b border-navy-800 hover:bg-white/[0.015] transition-colors group">
       {/* Title */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#1e2d3d] flex-shrink-0 overflow-hidden flex items-center justify-center text-xs font-bold text-[#38bdf8]">
+          <div className="w-8 h-8 rounded-lg bg-navy-800 flex-shrink-0 overflow-hidden flex items-center justify-center text-xs font-bold text-blue-400">
             {project.imageUrl ? (
               <img src={project.imageUrl} alt="" className="w-full h-full object-cover" />
             ) : (
@@ -247,12 +247,12 @@ function ProjectRow({ project, onEdit, onDelete }) {
       <td className="px-4 py-3">
         <div className="flex flex-wrap gap-1 max-w-[180px]">
           {project.techStack?.slice(0, 3).map((t) => (
-            <span key={t} className="text-xs px-1.5 py-0.5 bg-[#1e2d3d] text-slate-500 rounded">
+            <span key={t} className="text-xs px-1.5 py-0.5 bg-navy-800 text-slate-500 rounded">
               {t}
             </span>
           ))}
           {(project.techStack?.length ?? 0) > 3 && (
-            <span className="text-xs px-1.5 py-0.5 bg-[#1e2d3d] text-slate-700 rounded">
+            <span className="text-xs px-1.5 py-0.5 bg-navy-800 text-slate-700 rounded">
               +{project.techStack.length - 3}
             </span>
           )}
@@ -281,7 +281,7 @@ function ProjectRow({ project, onEdit, onDelete }) {
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 text-slate-600 hover:text-[#38bdf8] hover:bg-[#38bdf8]/10 rounded-lg transition-all"
+              className="p-1.5 text-slate-600 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-all"
             >
               <Ic d={IC.link} size={12} />
             </a>
@@ -303,7 +303,7 @@ function ProjectRow({ project, onEdit, onDelete }) {
         <div className="flex items-center gap-1 relative">
           <button
             onClick={() => onEdit(project)}
-            className="p-1.5 text-slate-600 hover:text-[#38bdf8] hover:bg-[#38bdf8]/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+            className="p-1.5 text-slate-600 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
           >
             <Ic d={IC.edit} size={13} />
           </button>
@@ -397,7 +397,7 @@ export default function ProjectsPage() {
       <Card className="mb-4" padding={false}>
         <div className="flex flex-wrap items-center gap-3 p-4">
           {/* Search */}
-          <label className="flex items-center gap-2 bg-[#060d1a] border border-[#1e2d3d] focus-within:border-[#38bdf8]/40 rounded-lg px-3 py-2 flex-1 min-w-[200px] transition-colors cursor-text">
+          <label className="flex items-center gap-2 bg-navy-950 border border-navy-800 focus-within:border-blue-400/40 rounded-lg px-3 py-2 flex-1 min-w-[200px] transition-colors cursor-text">
             <Ic d={IC.search} size={13} />
             <input
               value={search}
@@ -422,7 +422,7 @@ export default function ProjectsPage() {
           </label>
 
           {/* Category pills */}
-          <div className="flex items-center gap-1 bg-[#060d1a] border border-[#1e2d3d] rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-navy-950 border border-navy-800 rounded-lg p-1">
             {CATS.map((c) => (
               <button
                 key={c}
@@ -430,7 +430,7 @@ export default function ProjectsPage() {
                   setCatFilter(c);
                   setPage(1);
                 }}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-all ${catFilter === c ? 'bg-[#38bdf8] text-white shadow-sm' : 'text-slate-600 hover:text-slate-300'}`}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-all ${catFilter === c ? 'bg-blue-400 text-white shadow-sm' : 'text-slate-600 hover:text-slate-300'}`}
               >
                 {c}
               </button>
@@ -444,7 +444,7 @@ export default function ProjectsPage() {
               setFeatFilter(e.target.value);
               setPage(1);
             }}
-            className="bg-[#060d1a] border border-[#1e2d3d] text-sm text-slate-400 rounded-lg px-3 py-2 outline-none"
+            className="bg-navy-950 border border-navy-800 text-sm text-slate-400 rounded-lg px-3 py-2 outline-none"
           >
             <option value="all">All Status</option>
             <option value="featured">Featured</option>
@@ -462,7 +462,7 @@ export default function ProjectsPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#1e2d3d]">
+              <tr className="border-b border-navy-800">
                 {['Project', 'Tech Stack', 'Category', 'Status', 'Links', 'Actions'].map((h) => (
                   <th
                     key={h}
@@ -476,10 +476,10 @@ export default function ProjectsPage() {
             <tbody>
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="border-b border-[#1e2d3d]">
+                  <tr key={i} className="border-b border-navy-800">
                     {Array.from({ length: 6 }).map((_, j) => (
                       <td key={j} className="px-4 py-3">
-                        <div className="h-8 bg-[#1e2d3d] rounded animate-pulse" />
+                        <div className="h-8 bg-navy-800 rounded animate-pulse" />
                       </td>
                     ))}
                   </tr>
@@ -520,7 +520,7 @@ export default function ProjectsPage() {
 
         {/* Pagination */}
         {!loading && filtered.length > PAGE_SIZE && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-[#1e2d3d]">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-navy-800">
             <span className="text-xs text-slate-700 tabular-nums">
               Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of{' '}
               {filtered.length}
@@ -537,7 +537,7 @@ export default function ProjectsPage() {
                 <button
                   key={n}
                   onClick={() => setPage(n)}
-                  className={`w-7 h-7 rounded-lg text-xs font-medium transition-all ${n === page ? 'bg-[#38bdf8] text-white' : 'text-slate-600 hover:text-slate-300 hover:bg-white/5'}`}
+                  className={`w-7 h-7 rounded-lg text-xs font-medium transition-all ${n === page ? 'bg-blue-400 text-white' : 'text-slate-600 hover:text-slate-300 hover:bg-white/5'}`}
                 >
                   {n}
                 </button>

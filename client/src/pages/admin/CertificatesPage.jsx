@@ -110,7 +110,7 @@ function CertCard({ cert, onEdit, onDelete }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl p-5 hover:border-[#38bdf8]/50 transition-all group flex flex-col h-full">
+    <div className="bg-navy-900 border border-navy-800 rounded-xl p-5 hover:border-blue-400/50 transition-all group flex flex-col h-full">
       <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 overflow-hidden shrink-0">
         {cert.organizationLogo && !imgError ? (
           <img
@@ -120,7 +120,7 @@ function CertCard({ cert, onEdit, onDelete }) {
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="text-[#38bdf8]">
+          <div className="text-blue-400">
             <Ic d={IC.cert} size={20} />
           </div>
         )}
@@ -130,7 +130,7 @@ function CertCard({ cert, onEdit, onDelete }) {
         <h3 className="text-sm font-semibold text-white mb-1 line-clamp-2 leading-snug">
           {cert.title}
         </h3>
-        <p className="text-xs text-[#38bdf8] mb-2 font-medium">{cert.organization}</p>
+        <p className="text-xs text-blue-400 mb-2 font-medium">{cert.organization}</p>
         {cert.description && (
           <p className="text-[11px] text-slate-500 line-clamp-2 mb-3 leading-relaxed">
             {cert.description}
@@ -138,13 +138,13 @@ function CertCard({ cert, onEdit, onDelete }) {
         )}
       </div>
 
-      <div className="flex items-center gap-2 pt-3 border-t border-[#1e2d3d] mt-auto">
+      <div className="flex items-center gap-2 pt-3 border-t border-navy-800 mt-auto">
         {cert.link && (
           <a
             href={cert.link}
             target="_blank"
             rel="noreferrer"
-            className="p-1.5 text-slate-400 hover:text-[#38bdf8] transition-colors"
+            className="p-1.5 text-slate-400 hover:text-blue-400 transition-colors"
           >
             <Ic d={IC.link} size={13} />
           </a>
@@ -245,7 +245,7 @@ export default function CertificatesPage() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="h-48 bg-[#0d1b2a] rounded-xl animate-pulse border border-[#1e2d3d]"
+              className="h-48 bg-navy-900 rounded-xl animate-pulse border border-navy-800"
             />
           ))}
         </div>

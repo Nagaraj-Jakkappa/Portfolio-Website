@@ -46,7 +46,7 @@ const SOURCES = [
 const Tip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl p-3 shadow-2xl text-xs">
+    <div className="bg-navy-900 border border-navy-800 rounded-xl p-3 shadow-2xl text-xs">
       <p className="text-slate-500 mb-2">{label}</p>
       {payload.map((p, i) => (
         <div key={i} className="flex items-center gap-2">
@@ -187,9 +187,9 @@ export default function AnalyticsPage() {
           {SOURCES.map(({ name, pct }) => (
             <div key={name} className="flex items-center gap-4">
               <span className="text-sm text-slate-400 w-20 flex-shrink-0">{name}</span>
-              <div className="flex-1 h-2 bg-[#1e2d3d] rounded-full overflow-hidden">
+              <div className="flex-1 h-2 bg-navy-800 rounded-full overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#38bdf8] to-[#6366f1]"
+                  className="h-full rounded-full bg-gradient-to-r from-blue-400 to-[#6366f1]"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -197,7 +197,7 @@ export default function AnalyticsPage() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-slate-800 mt-5 pt-4 border-t border-[#1e2d3d]">
+        <p className="text-xs text-slate-800 mt-5 pt-4 border-t border-navy-800">
           Connect Plausible, Umami, or Google Analytics to replace this seeded data with real
           numbers.
         </p>

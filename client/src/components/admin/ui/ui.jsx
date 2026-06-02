@@ -24,17 +24,17 @@ export const Ic = ({ d, size = 15 }) => (
 
 // ── StatCard ──────────────────────────────────────────────────
 export function StatCard({ label, value, delta, icon, accent = '#38bdf8', loading }) {
-  if (loading)
-    return (
-      <div className="bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl p-5 animate-pulse">
-        <div className="w-9 h-9 rounded-lg bg-[#1e2d3d] mb-4" />
-        <div className="h-7 w-14 bg-[#1e2d3d] rounded mb-2" />
-        <div className="h-3 w-24 bg-[#1e2d3d] rounded" />
-      </div>
-    );
+    if (loading)
+      return (
+        <div className="bg-navy-900 border border-navy-800 rounded-xl p-5 animate-pulse">
+          <div className="w-9 h-9 rounded-lg bg-navy-800 mb-4" />
+          <div className="h-7 w-14 bg-navy-800 rounded mb-2" />
+          <div className="h-3 w-24 bg-navy-800 rounded" />
+        </div>
+      );
   const positive = delta >= 0;
   return (
-    <div className="bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl p-5 hover:border-[#2a3f55] transition-colors duration-200">
+    <div className="bg-navy-900 border border-navy-800 rounded-xl p-5 hover:border-navy-700 transition-colors duration-200">
       <div className="flex items-start justify-between mb-4">
         <div
           className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -84,7 +84,7 @@ export function Badge({ label, variant = 'slate' }) {
 export function Card({ children, className = '', padding = true }) {
   return (
     <div
-      className={`bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl ${padding ? 'p-5' : ''} ${className}`}
+      className={`bg-navy-900 border border-navy-800 rounded-xl ${padding ? 'p-5' : ''} ${className}`}
     >
       {children}
     </div>
@@ -119,9 +119,9 @@ export function PageHeader({ title, description, action }) {
 
 // ── Btn ───────────────────────────────────────────────────────
 const BTN_VARIANTS = {
-  primary: 'bg-[#0ea5e9] hover:bg-[#38bdf8] text-white shadow-lg shadow-blue-500/20',
+  primary: 'bg-blue-500 hover:bg-blue-400 text-white shadow-lg shadow-blue-500/20',
   ghost:
-    'border border-[#1e2d3d] hover:border-[#2a3f55] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]',
+    'border border-navy-800 hover:border-navy-700 text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]',
   danger: 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20',
   success:
     'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20',
@@ -158,10 +158,10 @@ export function Input({ label, error, hint, className = '', ...props }) {
     <div className={className}>
       {label && <label className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
       <input
-        className={`w-full bg-[#060d1a] border rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-700 outline-none transition-colors duration-150 ${
+        className={`w-full bg-navy-950 border rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-700 outline-none transition-colors duration-150 ${
           error
             ? 'border-red-500/50 focus:border-red-400'
-            : 'border-[#1e2d3d] focus:border-[#38bdf8]/50'
+            : 'border-navy-800 focus:border-blue-400/50'
         }`}
         {...props}
       />
@@ -178,10 +178,10 @@ export function Textarea({ label, error, className = '', rows = 3, ...props }) {
       {label && <label className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
       <textarea
         rows={rows}
-        className={`w-full bg-[#060d1a] border rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-700 outline-none transition-colors duration-150 resize-none ${
+        className={`w-full bg-navy-950 border rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-700 outline-none transition-colors duration-150 resize-none ${
           error
             ? 'border-red-500/50 focus:border-red-400'
-            : 'border-[#1e2d3d] focus:border-[#38bdf8]/50'
+            : 'border-navy-800 focus:border-blue-400/50'
         }`}
         {...props}
       />
@@ -196,7 +196,7 @@ export function Select({ label, children, className = '', ...props }) {
     <div className={className}>
       {label && <label className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
       <select
-        className="w-full bg-[#060d1a] border border-[#1e2d3d] focus:border-[#38bdf8]/50 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none transition-colors duration-150"
+        className="w-full bg-navy-950 border border-navy-800 focus:border-blue-400/50 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none transition-colors duration-150"
         {...props}
       >
         {children}
@@ -214,11 +214,11 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
       onClick={onClose}
     >
       <div
-        className={`bg-[#0a1628] border border-[#1e2d3d] rounded-2xl w-full ${maxWidth} shadow-2xl`}
+        className={`bg-navy-900 border border-navy-800 rounded-2xl w-full ${maxWidth} shadow-2xl`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1e2d3d]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-navy-800">
           <div>
             <h2 className="text-sm font-semibold text-white">{title}</h2>
             {subtitle && <p className="text-xs text-slate-600 mt-0.5">{subtitle}</p>}
@@ -243,7 +243,7 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
         <div className="p-6">{children}</div>
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#1e2d3d]">
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-navy-800">
             {footer}
           </div>
         )}
@@ -254,14 +254,14 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
 
 // ── Skeleton ──────────────────────────────────────────────────
 export function Skeleton({ className = '' }) {
-  return <div className={`animate-pulse bg-[#1e2d3d] rounded ${className}`} />;
+  return <div className={`animate-pulse bg-navy-800 rounded ${className}`} />;
 }
 
 // ── EmptyState ────────────────────────────────────────────────
 export function EmptyState({ icon, title, description, action }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center px-4">
-      <div className="w-14 h-14 rounded-2xl bg-[#1e2d3d] flex items-center justify-center mb-4 text-slate-600">
+      <div className="w-14 h-14 rounded-2xl bg-navy-800 flex items-center justify-center mb-4 text-slate-600">
         {icon}
       </div>
       <h3 className="text-sm font-medium text-slate-300 mb-1">{title}</h3>
@@ -287,7 +287,7 @@ export function Toggle({ value, onChange, label }) {
     <label className="flex items-center gap-3 cursor-pointer select-none">
       <div
         onClick={() => onChange(!value)}
-        className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${value ? 'bg-[#0ea5e9]' : 'bg-[#1e2d3d]'}`}
+        className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${value ? 'bg-blue-500' : 'bg-navy-800'}`}
       >
         <div
           className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${value ? 'translate-x-4' : ''}`}

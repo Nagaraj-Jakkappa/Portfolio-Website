@@ -153,7 +153,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-[#060d1a] text-slate-200 overflow-hidden">
+    <div className="flex h-screen bg-navy-950 text-slate-200 overflow-hidden">
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
@@ -166,8 +166,8 @@ export default function AdminLayout() {
       <div
         className={`
         fixed top-0 left-0 h-full w-64
-        bg-[#0a1628]
-        border-r border-[#1e2d3d]
+        bg-navy-900
+        border-r border-navy-800
         z-50
         transform transition-transform duration-300
         md:hidden
@@ -176,8 +176,8 @@ export default function AdminLayout() {
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="h-16 flex items-center px-5 border-b border-[#1e2d3d]">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center">
+          <div className="h-16 flex items-center px-5 border-b border-navy-800">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center">
               <span className="text-xs font-bold text-white">NJ</span>
             </div>
 
@@ -203,7 +203,7 @@ export default function AdminLayout() {
                         transition
                         ${
                           isActive
-                            ? 'bg-[#38bdf8]/10 text-[#38bdf8]'
+                            ? 'bg-blue-500/10 text-blue-400'
                             : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
                         }
                     `
@@ -222,8 +222,8 @@ export default function AdminLayout() {
       <aside
         className={`
         hidden md:flex flex-col
-        bg-[#0a1628]
-        border-r border-[#1e2d3d]
+        bg-navy-900
+        border-r border-navy-800
         transition-all duration-300 ease-in-out
         overflow-hidden
         ${expanded ? 'w-56' : 'w-16'}
@@ -233,11 +233,11 @@ export default function AdminLayout() {
           {/* Logo */}
           <div
             className={`
-                h-16 flex items-center border-b border-[#1e2d3d]
+                h-16 flex items-center border-b border-navy-800
                 ${expanded ? 'px-5' : 'justify-center px-0'}
             `}
           >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center">
               <span className="text-xs font-bold text-white">NJ</span>
             </div>
 
@@ -264,7 +264,7 @@ export default function AdminLayout() {
                         transition
                         ${
                           isActive
-                            ? 'bg-[#38bdf8]/10 text-[#38bdf8]'
+                            ? 'bg-blue-500/10 text-blue-400'
                             : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
                         }
                     `
@@ -282,7 +282,7 @@ export default function AdminLayout() {
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="relative z-40 h-16 border-b border-[#1e2d3d] bg-[#0a1628]/80 backdrop-blur-sm flex items-center gap-4 px-6">
+        <header className="relative z-40 h-16 border-b border-navy-800 bg-navy-900/80 backdrop-blur-sm flex items-center gap-4 px-6">
           {/* Sidebar Toggle */}
           <button
             onClick={() => {
@@ -318,7 +318,7 @@ export default function AdminLayout() {
               <Ic d={ICONS.bell} size={16} />
 
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-[#38bdf8] text-[10px] font-bold text-white ring-2 ring-[#0a1628]">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-blue-400 text-[10px] font-bold text-white ring-2 ring-navy-900">
                   {unreadCount}
                 </span>
               )}
@@ -335,14 +335,14 @@ export default function AdminLayout() {
                                     z-[9999]
                                     rounded-2xl
                                     border border-white/10
-                                    bg-[#0a1628]/90
+                                    bg-navy-900/90
                                     backdrop-blur-[18px]
-                                    shadow-[0_10px_40px_rgba(0,0,0,0.45)]
+                                    shadow-2xl
                                     overflow-hidden
                                 "
               >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-[#1e2d3d]">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-navy-800">
                   <h3 className="text-sm font-semibold text-white">Notifications</h3>
 
                   {unreadCount > 0 && (
@@ -351,7 +351,7 @@ export default function AdminLayout() {
                         e.stopPropagation();
                         markAllAsRead();
                       }}
-                      className="text-xs text-[#38bdf8] hover:text-sky-300 font-medium"
+                      className="text-xs text-blue-400 hover:text-blue-300 font-medium"
                     >
                       Mark all read
                     </button>
@@ -373,11 +373,11 @@ export default function AdminLayout() {
                           key={n._id}
                           className={`
                                                         px-4 py-3
-                                                        border-b border-[#1e2d3d]
+                                                        border-b border-navy-800
                                                         hover:bg-white/[0.03]
                                                         transition
                                                         cursor-pointer
-                                                        ${!n.read ? 'bg-[#38bdf8]/5' : ''}
+                                                        ${!n.read ? 'bg-blue-500/5' : ''}
                                                     `}
                         >
                           <div className="flex items-start gap-3">
@@ -438,7 +438,7 @@ export default function AdminLayout() {
                 </div>
 
                 {/* Footer */}
-                <div className="p-3 border-t border-[#1e2d3d]">
+                <div className="p-3 border-t border-navy-800">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -449,9 +449,9 @@ export default function AdminLayout() {
                     className="
                                             w-full
                                             text-xs
-                                            bg-[#38bdf8]/10
-                                            hover:bg-[#38bdf8]/20
-                                            text-[#38bdf8]
+                                            bg-blue-500/10
+                                            hover:bg-blue-500/20
+                                            text-blue-400
                                             py-2
                                             rounded-lg
                                             transition
@@ -470,7 +470,7 @@ export default function AdminLayout() {
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#38bdf8] border border-[#1e2d3d] hover:border-[#38bdf8]/30 px-3 py-1.5 rounded-lg transition-all"
+            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-400 border border-navy-800 hover:border-blue-400/30 px-3 py-1.5 rounded-lg transition-all"
           >
             <Ic d={ICONS.eye} size={12} />
             View Site

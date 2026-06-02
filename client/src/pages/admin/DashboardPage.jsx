@@ -70,7 +70,7 @@ const PIE_COLORS = ['#38bdf8', '#0ea5e9', '#6366f1', '#8b5cf6'];
 const ChartTip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#0d1b2a] border border-[#1e2d3d] rounded-xl p-3 shadow-2xl text-xs">
+    <div className="bg-navy-900 border border-navy-800 rounded-xl p-3 shadow-2xl text-xs">
       <p className="text-slate-500 mb-2 font-medium">{label}</p>
       {payload.map((p, i) => (
         <div key={i} className="flex items-center gap-2 mb-0.5">
@@ -85,7 +85,7 @@ const ChartTip = ({ active, payload, label }) => {
 
 function ActivityRow({ color, icon, title, meta, time }) {
   return (
-    <div className="flex items-start gap-3 py-3 border-b border-[#1e2d3d] last:border-0">
+    <div className="flex items-start gap-3 py-3 border-b border-navy-800 last:border-0">
       <div
         className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
         style={{ background: `${color}12` }}
@@ -105,7 +105,7 @@ function QuickAction({ icon, accent, label, desc, href }) {
   return (
     <a
       href={href}
-      className="flex items-center gap-3 p-3 rounded-xl border border-[#1e2d3d] hover:border-[#2a3f55] hover:bg-white/[0.02] transition-all duration-150 group cursor-pointer"
+      className="flex items-center gap-3 p-3 rounded-xl border border-navy-800 hover:border-navy-700 hover:bg-white/[0.02] transition-all duration-150 group cursor-pointer"
     >
       <div
         className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -129,8 +129,8 @@ function QuickAction({ icon, accent, label, desc, href }) {
 function ProjectRow({ p }) {
   const CAT = { web: 'blue', fullstack: 'green', ml: 'purple', other: 'slate' };
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-[#1e2d3d] last:border-0 group">
-      <div className="w-8 h-8 rounded-lg bg-[#1e2d3d] flex items-center justify-center flex-shrink-0 text-xs font-bold text-[#38bdf8] overflow-hidden">
+    <div className="flex items-center gap-3 py-3 border-b border-navy-800 last:border-0 group">
+      <div className="w-8 h-8 rounded-lg bg-navy-800 flex items-center justify-center flex-shrink-0 text-xs font-bold text-blue-400 overflow-hidden">
         {p.imageUrl ? (
           <img src={p.imageUrl} alt="" className="w-full h-full object-cover" />
         ) : (
@@ -148,13 +148,13 @@ function ProjectRow({ p }) {
 
 function MsgRow({ m }) {
   const colors = [
-    'from-[#38bdf8] to-[#0284c7]',
+    'from-blue-400 to-blue-600',
     'from-[#6366f1] to-[#4f46e5]',
     'from-[#10b981] to-[#059669]',
   ];
   const ci = (m.name?.charCodeAt(0) ?? 0) % colors.length;
   return (
-    <div className="flex items-start gap-3 py-3 border-b border-[#1e2d3d] last:border-0">
+    <div className="flex items-start gap-3 py-3 border-b border-navy-800 last:border-0">
       <div
         className={`w-7 h-7 rounded-full bg-gradient-to-br ${colors[ci]} flex items-center justify-center text-xs font-bold text-white flex-shrink-0`}
       >
@@ -165,7 +165,7 @@ function MsgRow({ m }) {
           <span className={`text-sm font-medium ${m.read ? 'text-slate-400' : 'text-white'}`}>
             {m.name}
           </span>
-          {!m.read && <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8] flex-shrink-0" />}
+          {!m.read && <span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />}
         </div>
         <p className="text-xs text-slate-600 truncate">{m.message}</p>
       </div>
@@ -330,7 +330,7 @@ export default function DashboardPage() {
                   style={{ background: PIE_COLORS[i] }}
                 />
                 <span className="text-xs text-slate-400 flex-1">{name}</span>
-                <div className="w-20 h-1 bg-[#1e2d3d] rounded-full overflow-hidden">
+                <div className="w-20 h-1 bg-navy-800 rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{ width: `${value}%`, background: PIE_COLORS[i] }}
@@ -408,7 +408,7 @@ export default function DashboardPage() {
               action={
                 <a
                   href="/admin/projects"
-                  className="text-xs text-[#38bdf8] hover:text-[#7dd3fc] transition-colors"
+                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   View all →
                 </a>
@@ -418,11 +418,11 @@ export default function DashboardPage() {
           <div className="px-5">
             {loading ? (
               [1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-3 py-3 border-b border-[#1e2d3d]">
-                  <div className="w-8 h-8 rounded-lg bg-[#1e2d3d] animate-pulse flex-shrink-0" />
+                <div key={i} className="flex items-center gap-3 py-3 border-b border-navy-800">
+                  <div className="w-8 h-8 rounded-lg bg-navy-800 animate-pulse flex-shrink-0" />
                   <div className="flex-1 space-y-1.5">
-                    <div className="h-3 bg-[#1e2d3d] rounded animate-pulse w-3/4" />
-                    <div className="h-2.5 bg-[#1e2d3d] rounded animate-pulse w-1/2" />
+                    <div className="h-3 bg-navy-800 rounded animate-pulse w-3/4" />
+                    <div className="h-2.5 bg-navy-800 rounded animate-pulse w-1/2" />
                   </div>
                 </div>
               ))
@@ -442,7 +442,7 @@ export default function DashboardPage() {
               action={
                 <a
                   href="/admin/messages"
-                  className="text-xs text-[#38bdf8] hover:text-[#7dd3fc] transition-colors"
+                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   View all →
                 </a>
@@ -452,11 +452,11 @@ export default function DashboardPage() {
           <div className="px-5">
             {loading ? (
               [1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-3 py-3 border-b border-[#1e2d3d]">
-                  <div className="w-7 h-7 rounded-full bg-[#1e2d3d] animate-pulse flex-shrink-0" />
+                <div key={i} className="flex items-center gap-3 py-3 border-b border-navy-800">
+                  <div className="w-7 h-7 rounded-full bg-navy-800 animate-pulse flex-shrink-0" />
                   <div className="flex-1 space-y-1.5">
-                    <div className="h-3 bg-[#1e2d3d] rounded animate-pulse w-1/2" />
-                    <div className="h-2.5 bg-[#1e2d3d] rounded animate-pulse w-3/4" />
+                    <div className="h-3 bg-navy-800 rounded animate-pulse w-1/2" />
+                    <div className="h-2.5 bg-navy-800 rounded animate-pulse w-3/4" />
                   </div>
                 </div>
               ))
