@@ -3,6 +3,13 @@ const mongoose = require('mongoose');
 const projectSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
+    slug: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+      lowercase: true
+    },
     description: { type: String, required: true },
     longDescription: { type: String },
     techStack: [{ type: String }],

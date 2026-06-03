@@ -22,6 +22,35 @@ const projectValidationRules = [
   body('caseStudy.impact').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Impact max 1000 chars'),
 ];
 
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9 -]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+async function generateUniqueSlug(title, excludeId = null) {
+  let baseSlug = slugify(title) || 'project';
+  let slug = baseSlug;
+  
+  while (true) {
+    const query = { slug };
+    if (excludeId) query._id = { $ne: excludeId };
+    
+    const existing = await Project.findOne(query).lean();
+    if (!existing) break;
+    
+    const suffix = Math.random().toString(36).substring(2, 6);
+    slug = `${baseSlug}-${suffix}`;
+  }
+  return slug;
+}
+
 // GET /api/projects  — supports ?featured=true, ?category=ml, ?search=react, ?page=1, ?limit=100, ?admin=true
 router.get('/', async (req, res) => {
   try {
@@ -93,6 +122,33 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/projects/slug/:slug
+router.get('/slug/:slug', async (req, res) => {
+  try {
+    const project = await Project.findOne({ slug: req.params.slug }).lean();
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    
+    let isAdmin = false;
+    if (req.headers.authorization?.startsWith('Bearer ')) {
+      try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded && decoded.id) isAdmin = true;
+      } catch (e) {
+        // invalid token
+      }
+    }
+
+    if (!isAdmin && project.status !== 'live' && project.status !== undefined) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/projects/:id
 router.get('/:id', async (req, res) => {
   try {
@@ -109,8 +165,10 @@ router.get('/:id', async (req, res) => {
 // POST /api/projects
 router.post('/', protect, projectValidationRules, validate, async (req, res) => {
   try {
+    const slug = await generateUniqueSlug(req.body.title.trim());
     const project = await Project.create({
       title: req.body.title.trim(),
+      slug,
       description: req.body.description.trim(),
       longDescription: req.body.longDescription?.trim() || '',
       techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
@@ -138,10 +196,20 @@ router.put('/:id', protect, projectValidationRules, validate, async (req, res) =
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id))
       return res.status(400).json({ error: 'Invalid project ID' });
+      
+    const existing = await Project.findById(req.params.id);
+    if (!existing) return res.status(404).json({ error: 'Project not found' });
+
+    let slug = existing.slug;
+    if (req.body.title.trim() !== existing.title || !slug) {
+       slug = await generateUniqueSlug(req.body.title.trim(), existing._id);
+    }
+
     const updated = await Project.findByIdAndUpdate(
       req.params.id,
       {
         title: req.body.title.trim(),
+        slug,
         description: req.body.description.trim(),
         longDescription: req.body.longDescription?.trim() || '',
         techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
