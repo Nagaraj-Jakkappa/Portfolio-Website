@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 import {
@@ -18,18 +19,34 @@ import {
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
-  const { admin } = useAuth();
+  const { admin, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const [profile, setProfile] = useState({ username: admin?.username ?? '', email: '' });
+  const [profile, setProfile] = useState({ username: admin?.username ?? '', currentPassword: '' });
   const [pass, setPass] = useState({ current: '', next: '', confirm: '' });
   const [savingP, setSavingP] = useState(false);
   const [savingPw, setSavingPw] = useState(false);
 
   const handleProfileSave = async () => {
+    if (!profile.username || !profile.currentPassword) {
+      toast.error('Username and current password are required');
+      return;
+    }
     setSavingP(true);
-    await new Promise((r) => setTimeout(r, 700)); // mock — add PUT /api/auth/profile if needed
-    toast.success('Profile saved');
-    setSavingP(false);
+    try {
+      await api.put('/auth/profile', {
+        username: profile.username,
+        currentPassword: profile.currentPassword,
+      });
+      toast.success('Profile saved successfully');
+      setProfile((p) => ({ ...p, currentPassword: '' }));
+      // Reload to fetch fresh admin data globally
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (e) {
+      toast.error(e?.response?.data?.error ?? 'Profile update failed');
+    } finally {
+      setSavingP(false);
+    }
   };
 
   const handlePasswordSave = async () => {
@@ -48,8 +65,12 @@ export default function SettingsPage() {
     setSavingPw(true);
     try {
       await api.put('/auth/password', { currentPassword: pass.current, newPassword: pass.next });
-      toast.success('Password changed successfully');
+      toast.success('Password changed. Please login again.');
       setPass({ current: '', next: '', confirm: '' });
+      setTimeout(() => {
+        logout();
+        navigate('/admin/login');
+      }, 1500);
     } catch (e) {
       toast.error(e?.response?.data?.error ?? 'Change failed');
     } finally {
@@ -71,11 +92,11 @@ export default function SettingsPage() {
             onChange={(e) => setProfile((p) => ({ ...p, username: e.target.value }))}
           />
           <Input
-            label="Email (optional)"
-            type="email"
-            value={profile.email}
-            placeholder="admin@techartistry.in"
-            onChange={(e) => setProfile((p) => ({ ...p, email: e.target.value }))}
+            label="Current Password"
+            type="password"
+            value={profile.currentPassword}
+            placeholder="Required to save changes"
+            onChange={(e) => setProfile((p) => ({ ...p, currentPassword: e.target.value }))}
           />
           <div className="flex justify-end pt-2">
             <Btn variant="primary" onClick={handleProfileSave} disabled={savingP}>

@@ -73,4 +73,43 @@ router.put('/password', protect, async (req, res) => {
   }
 });
 
+// PUT /api/auth/profile
+router.put(
+  '/profile',
+  protect,
+  [
+    body('username')
+      .trim()
+      .notEmpty()
+      .withMessage('Username is required')
+      .isLength({ min: 3, max: 40 })
+      .withMessage('Username must be 3-40 characters'),
+    body('currentPassword').notEmpty().withMessage('Current password is required to change profile'),
+  ],
+  validate,
+  async (req, res) => {
+    try {
+      const { username, currentPassword } = req.body;
+      const admin = await Admin.findById(req.admin.id);
+      
+      if (!admin || !(await admin.comparePassword(currentPassword))) {
+        return res.status(401).json({ error: 'Current password is incorrect' });
+      }
+
+      // Check if username is taken by someone else
+      const existing = await Admin.findOne({ username: username.toLowerCase() });
+      if (existing && existing._id.toString() !== admin._id.toString()) {
+        return res.status(400).json({ error: 'Username is already taken' });
+      }
+
+      admin.username = username.toLowerCase();
+      await admin.save();
+      
+      res.json({ success: true, username: admin.username });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
 module.exports = router;
