@@ -279,7 +279,35 @@ function ProjectRow({ project, onEdit, onDelete }) {
             <p className="text-sm font-medium text-slate-200 truncate max-w-[160px]">
               {project.title}
             </p>
-            <p className="text-xs text-slate-600 truncate max-w-[160px]">
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-[10px] font-mono text-slate-500 truncate max-w-[140px]">
+                {project.slug ? `/projects/${project.slug}` : 'No slug yet'}
+              </span>
+              {project.slug && (
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`https://www.techartistry.in/projects/${project.slug}`);
+                      toast.success('URL copied');
+                    }}
+                    className="text-slate-500 hover:text-blue-400 transition-colors"
+                    title="Copy full URL"
+                  >
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                  </button>
+                  <a
+                    href={`/projects/${project.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-500 hover:text-emerald-400 transition-colors"
+                    title="Open public page"
+                  >
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                  </a>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-slate-600 truncate max-w-[160px] mt-1">
               {project.description?.slice(0, 48)}…
             </p>
           </div>
