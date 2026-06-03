@@ -1,127 +1,131 @@
-# 🚀 Nagaraj Jakkappa — MERN Portfolio
+# 🚀 Techartistry - MERN Portfolio CMS
 
-A full-stack portfolio application built with MongoDB, Express, React, and Node.js.
+A full-stack professional portfolio application built with MongoDB, Express, React, and Node.js.
+
+**Live website:** [https://www.techartistry.in/](https://www.techartistry.in/)  
+**Admin panel:** [https://www.techartistry.in/admin/](https://www.techartistry.in/admin/)  
+*(Note: Admin access is strictly private)*
 
 ---
 
-## 📁 Project Structure
+## 📸 Screenshots
+
+| Homepage | Projects |
+| :---: | :---: |
+| ![Homepage](./docs/screenshots/homepage.png) | ![Projects](./docs/screenshots/projects.png) |
+
+| Admin Dashboard | Admin Projects |
+| :---: | :---: |
+| ![Admin Dashboard](./docs/screenshots/admin-dashboard.png) | ![Admin Projects](./docs/screenshots/admin-projects.png) |
+
+---
+
+## ✨ Features
+
+### Public Portfolio
+- **Dynamic Hero Section:** Engaging introduction.
+- **Currently Building / About:** Professional background.
+- **Skills & Certificates:** Dynamic rendering of technical capabilities.
+- **Featured Projects:** Case studies, live filters, and featured badges.
+- **Contact Form:** Integrated messaging system.
+- **Responsive Design:** Fully mobile-optimized UI.
+
+### Admin CMS
+- **Dashboard Overview:** Analytics and quick stats.
+- **Projects Management:** Add, edit, delete, mark as featured, change status (Live/Draft/Archived).
+- **Certificates Management:** Full CRUD operations for certifications.
+- **Messages System:** Read, unread, archive, and delete contact inquiries.
+- **Notifications:** Real-time system updates and message alerts.
+- **Settings:** Admin profile and password rotation.
+
+---
+
+## 🛡️ Security Features
+- **JWT Authentication:** Secure token validation with short 4-hour expiry.
+- **Password Hashing:** Admin passwords secured using `bcrypt`.
+- **Role-Based Access:** Drafts and archived projects are protected from public API access.
+- **Backend Validation:** Robust input sanitization using `express-validator`.
+- **Clean Configuration:** Secrets separated using `.env` (no hardcoded credentials).
+- **No Nuclear Options:** Destructive debug routes are fully disabled.
+
+---
+
+## 💻 Tech Stack
+- **Frontend:** React, Vite, Tailwind CSS
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB, Mongoose
+- **Tooling:** Prettier, ESLint
+
+---
+
+## 📁 Folder Structure
 
 ```
 mern-portfolio/
 ├── client/                  # React + Vite + Tailwind frontend
 │   ├── src/
 │   │   ├── api/             # Axios instance with interceptors
-│   │   ├── components/
-│   │   │   ├── layout/      # Navbar, Footer, ProtectedRoute
-│   │   │   └── sections/    # Hero, About, Skills, Projects, Contact
-│   │   ├── context/         # AuthContext (JWT state)
-│   │   ├── hooks/           # useProjects, useMessages (data hooks)
-│   │   └── pages/           # Home, AdminLogin, AdminDashboard, NotFound
+│   │   ├── components/      # UI components (Admin & Public)
+│   │   ├── context/         # Auth context provider
+│   │   ├── pages/           # Route views
+│   │   └── index.css        # Global styles
 │   └── .env.example
-└── server/                  # Express + MongoDB backend
-    ├── models/              # Project, Message, Admin (Mongoose)
-    ├── routes/              # /api/auth, /api/projects, /api/messages
-    ├── middleware/          # JWT auth guard
-    └── .env.example
+├── server/                  # Express + MongoDB backend
+│   ├── models/              # Mongoose schemas (Project, Message, Certificate, etc.)
+│   ├── routes/              # API endpoints
+│   ├── middleware/          # JWT and Validation guards
+│   └── .env.example
+└── docs/                    # Documentation and screenshots
 ```
 
 ---
 
-## ⚡ Quick Start
+## ⚡ Local Setup
 
 ### 1. Install dependencies
-
 ```bash
+# Install server and client dependencies
 npm run install:all
 ```
 
 ### 2. Configure environment variables
+Create `.env` files based on the `.env.example` templates.
 
-```bash
-# Server
-cp server/.env.example server/.env
-# Fill in: MONGODB_URI, JWT_SECRET, ADMIN_USERNAME, ADMIN_PASSWORD
-
-# Client
-cp client/.env.example client/.env
-# Fill in: VITE_API_URL (default: http://localhost:5000/api)
+**`server/.env`**
+```env
+PORT=5180
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/<dbname>
+JWT_SECRET=your_super_secret_jwt_key
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password
 ```
 
-### 3. Create admin account (run once)
-
-```bash
-# With the server running:
-curl -X POST http://localhost:5000/api/auth/seed
+**`client/.env`**
+```env
+VITE_API_URL=http://localhost:5180/api
 ```
 
-### 4. Start development servers
-
+### 3. Start development servers
 ```bash
+# Runs both frontend (5173) and backend (5180) concurrently
 npm run dev
-# Client → http://localhost:5173
-# Server → http://localhost:5000
 ```
 
 ---
 
-## 🔑 API Endpoints
+## 🔑 API Overview
 
-| Method | Route                         | Auth          | Description         |
-| ------ | ----------------------------- | ------------- | ------------------- |
-| POST   | `/api/auth/login`             | ❌            | Admin login → JWT   |
-| GET    | `/api/auth/me`                | ✅            | Verify token        |
-| POST   | `/api/auth/seed`              | ❌ (dev only) | Create admin        |
-| GET    | `/api/projects`               | ❌            | All projects        |
-| GET    | `/api/projects?featured=true` | ❌            | Featured only       |
-| POST   | `/api/projects`               | ✅            | Create project      |
-| PUT    | `/api/projects/:id`           | ✅            | Update project      |
-| DELETE | `/api/projects/:id`           | ✅            | Delete project      |
-| POST   | `/api/messages`               | ❌            | Submit contact form |
-| GET    | `/api/messages`               | ✅            | View all messages   |
-| PATCH  | `/api/messages/:id/read`      | ✅            | Mark read           |
-| DELETE | `/api/messages/:id`           | ✅            | Delete message      |
+| Method | Route                         | Auth | Description                   |
+| ------ | ----------------------------- | ---- | ----------------------------- |
+| POST   | `/api/auth/login`             | ❌   | Admin login → JWT             |
+| GET    | `/api/auth/me`                | ✅   | Verify current admin          |
+| GET    | `/api/projects`               | ❌   | Get live projects             |
+| GET    | `/api/projects?admin=true`    | ✅   | Get all projects (inc. Drafts)|
+| POST   | `/api/projects`               | ✅   | Create project                |
+| PUT    | `/api/projects/:id`           | ✅   | Update project                |
+| DELETE | `/api/projects/:id`           | ✅   | Delete project                |
+| GET    | `/api/certificates`           | ❌   | Get certificates              |
+| POST   | `/api/messages`               | ❌   | Submit contact form           |
+| GET    | `/api/messages`               | ✅   | View all messages             |
 
 ---
-
-## 🛡️ Security Features
-
-- **JWT Bearer tokens** — 7-day expiry, verified on every protected route
-- **bcrypt** — Admin password hashed at 12 rounds
-- **Rate limiting** — Contact form: max 5 submissions per 15 minutes
-- **CORS** — Origin whitelist via `CLIENT_URL` env var
-- **Admin seed** — Disabled in production (`NODE_ENV=production`)
-
----
-
-## 🎨 Design System
-
-| Token        | Value                |
-| ------------ | -------------------- |
-| Background   | `#0f172a` (navy-900) |
-| Surface      | `#1e293b` (navy-800) |
-| Accent       | `#38bdf8` (blue-400) |
-| Display font | Syne                 |
-| Body font    | DM Sans              |
-| Mono font    | JetBrains Mono       |
-
----
-
-## 🚀 Deployment
-
-**Frontend** → Vercel / Netlify (set `VITE_API_URL` to your production API)
-
-**Backend** → Railway / Render / Fly.io (set all env vars from `.env.example`)
-
-**Database** → MongoDB Atlas (free tier works great)
-
----
-
-## 👤 Admin Dashboard
-
-Visit `/admin` → redirects to `/admin/login` if not authenticated.
-
-Features:
-
-- 📊 Stats overview (total projects, featured, messages, unread)
-- ➕ Add / ✏️ Edit / 🗑️ Delete projects
-- 📬 View contact messages, mark read, reply via email, delete
