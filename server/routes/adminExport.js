@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 
 // Models to export
 const Project = require('../models/Project');
@@ -13,7 +13,7 @@ const Notification = require('../models/Notification');
 // @route   GET /api/admin/export
 // @desc    Export a safe JSON backup of all public portfolio data
 // @access  Private (Admin only)
-router.get('/export', auth, async (req, res) => {
+router.get('/export', protect, async (req, res) => {
   try {
     const [projects, skills, certificates, messages, siteContent, notifications] = await Promise.all([
       Project.find().lean(),
