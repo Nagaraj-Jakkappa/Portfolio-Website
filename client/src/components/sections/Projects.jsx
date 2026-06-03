@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useData';
 
 function getCaseStudy(title) {
@@ -128,7 +129,18 @@ function ProjectCard({ project }) {
         </div>
 
         {/* Links */}
-        <div className="flex gap-4 pt-3">
+        <div className="flex flex-wrap gap-3 pt-3">
+          {project.slug && (
+            <Link
+              to={`/projects/${project.slug}`}
+              className="flex items-center gap-1.5 text-xs font-medium text-white bg-blue-500 hover:bg-blue-600 px-3 py-1.5 rounded transition-colors"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Read Case Study
+            </Link>
+          )}
           {liveUrl && (
             <a
               href={liveUrl}

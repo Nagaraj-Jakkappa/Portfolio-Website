@@ -1,7 +1,7 @@
 // client/src/App.jsx
 
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet, useOutletContext } from 'react-router-dom';
 
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -12,6 +12,7 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 
 // Lazy Pages
+const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 
@@ -56,11 +57,16 @@ function PublicLayout() {
     <div className="min-h-screen bg-navy-900 font-body flex flex-col">
       <Navbar content={siteContent} />
       <main className="flex-1">
-        <Home content={siteContent} loading={contentLoading} />
+        <Outlet context={{ siteContent, contentLoading }} />
       </main>
       <Footer content={siteContent} />
     </div>
   );
+}
+
+function HomeWithContext() {
+  const { siteContent, contentLoading } = useOutletContext();
+  return <Home content={siteContent} loading={contentLoading} />;
 }
 
 export default function App() {
@@ -68,7 +74,10 @@ export default function App() {
     <Suspense fallback={<PageSpinner />}>
       <Routes>
         {/* PUBLIC WEBSITE */}
-        <Route path="/" element={<PublicLayout />} />
+        <Route path="/" element={<PublicLayout />}>
+          <Route index element={<HomeWithContext />} />
+          <Route path="projects/:slug" element={<ProjectDetail />} />
+        </Route>
 
         {/* ADMIN LOGIN */}
         <Route path="/admin/login" element={<AdminLogin />} />
