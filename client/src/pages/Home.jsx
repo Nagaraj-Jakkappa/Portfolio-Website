@@ -19,7 +19,7 @@ export default function Home({ content, loading }) {
         <title>{content?.seo?.title || 'Nagaraj Jakkappa — Frontend Developer & React Specialist'}</title>
         <meta
           name="description"
-          content={content?.seo?.description || "Nagaraj Jakkappa is a BCA graduate and frontend developer from Karnataka, India. Specializing in React, TypeScript, Node.js, and ML applications."}
+          content={content?.seo?.description || "Explore Techartistry.in, the professional portfolio of Nagaraj Jakkappa, a MERN Stack Developer building React, Node.js, MongoDB, AI-powered applications, secure admin dashboards, and production-ready full-stack web experiences."}
         />
         <meta
           name="keywords"
@@ -28,7 +28,7 @@ export default function Home({ content, loading }) {
         <meta property="og:title" content={content?.seo?.title || "Nagaraj Jakkappa — Frontend Developer"} />
         <meta
           property="og:description"
-          content={content?.seo?.description || "Building fast, accessible web experiences with React and Node.js."}
+          content={content?.seo?.description || "Explore Techartistry.in, the professional portfolio of Nagaraj Jakkappa, a MERN Stack Developer building React, Node.js, MongoDB, AI-powered applications, secure admin dashboards, and production-ready full-stack web experiences."}
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.techartistry.in/" />
