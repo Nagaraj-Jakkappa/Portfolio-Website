@@ -51,13 +51,24 @@ const EMPTY_FORM = {
   category: 'web',
   status: 'live',
   order: 0,
+  caseStudy: {
+    problem: '',
+    solution: '',
+    impact: '',
+  },
 };
 
 // ── Project Form Modal ────────────────────────────────────────
 function ProjectModal({ project, onClose, onCreate, onUpdate }) {
   const editing = !!project?._id;
   const [form, setForm] = useState(
-    editing ? { ...project, techStack: project.techStack?.join(', ') ?? '' } : EMPTY_FORM
+    editing
+      ? {
+          ...project,
+          techStack: project.techStack?.join(', ') ?? '',
+          caseStudy: project.caseStudy ?? { problem: '', solution: '', impact: '' },
+        }
+      : EMPTY_FORM
   );
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -204,6 +215,34 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
           onChange={(v) => set('featured', v)}
           label="Mark as Featured"
         />
+
+        <div className="pt-4 border-t border-navy-800 space-y-4">
+          <h3 className="text-sm font-semibold text-white">Case Study (Optional)</h3>
+          <Textarea
+            label="Problem"
+            value={form.caseStudy?.problem || ''}
+            onChange={(e) =>
+              set('caseStudy', { ...form.caseStudy, problem: e.target.value })
+            }
+            placeholder="Describe the problem you were trying to solve..."
+          />
+          <Textarea
+            label="Solution"
+            value={form.caseStudy?.solution || ''}
+            onChange={(e) =>
+              set('caseStudy', { ...form.caseStudy, solution: e.target.value })
+            }
+            placeholder="Describe your technical solution..."
+          />
+          <Textarea
+            label="Impact"
+            value={form.caseStudy?.impact || ''}
+            onChange={(e) =>
+              set('caseStudy', { ...form.caseStudy, impact: e.target.value })
+            }
+            placeholder="Describe the results, metrics, or lessons learned..."
+          />
+        </div>
       </div>
     </Modal>
   );

@@ -9,6 +9,11 @@ const projectSchema = new mongoose.Schema(
     imageUrl: { type: String },
     liveUrl: { type: String },
     githubUrl: { type: String },
+    caseStudy: {
+      problem: { type: String, default: '' },
+      solution: { type: String, default: '' },
+      impact: { type: String, default: '' }
+    },
     featured: { type: Boolean, default: false },
     status: {
       type: String,

@@ -28,7 +28,9 @@ function ProjectCard({ project }) {
   const { title, description, techStack, imageUrl, liveUrl, githubUrl, category } = project;
   const [expanded, setExpanded] = useState(false);
   
-  const caseStudy = getCaseStudy(title);
+  const dbCaseStudy = project.caseStudy;
+  const hasDbCaseStudy = dbCaseStudy?.problem || dbCaseStudy?.solution || dbCaseStudy?.impact;
+  const caseStudy = hasDbCaseStudy ? dbCaseStudy : getCaseStudy(title);
 
   const CATEGORY_COLOR = {
     web: 'text-blue-400 bg-blue-500/10 border-blue-400/20',
@@ -97,18 +99,24 @@ function ProjectCard({ project }) {
           
           {expanded && (
             <div className="space-y-3 text-sm text-slate-300 bg-navy-900/50 p-4 rounded-lg border border-navy-700 mb-4 animate-fade-up">
-              <div>
-                <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Problem:</strong>
-                <span className="text-slate-400">{caseStudy.problem}</span>
-              </div>
-              <div>
-                <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Solution:</strong>
-                <span className="text-slate-400">{caseStudy.solution}</span>
-              </div>
-              <div>
-                <strong className="text-emerald-400 text-xs uppercase font-mono tracking-wider block mb-1">Impact:</strong>
-                <span className="text-emerald-400/80">{caseStudy.impact}</span>
-              </div>
+              {caseStudy.problem && (
+                <div>
+                  <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Problem:</strong>
+                  <span className="text-slate-400">{caseStudy.problem}</span>
+                </div>
+              )}
+              {caseStudy.solution && (
+                <div>
+                  <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Solution:</strong>
+                  <span className="text-slate-400">{caseStudy.solution}</span>
+                </div>
+              )}
+              {caseStudy.impact && (
+                <div>
+                  <strong className="text-emerald-400 text-xs uppercase font-mono tracking-wider block mb-1">Impact:</strong>
+                  <span className="text-emerald-400/80">{caseStudy.impact}</span>
+                </div>
+              )}
             </div>
           )}
         </div>

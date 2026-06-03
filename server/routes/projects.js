@@ -17,6 +17,9 @@ const projectValidationRules = [
   body('featured').optional().isBoolean().withMessage('Featured must be a boolean'),
   body('status').optional().isIn(['live', 'draft', 'archived']).withMessage('Invalid status'),
   body('category').optional().isIn(['web', 'ml', 'fullstack', 'other']).withMessage('Invalid category'),
+  body('caseStudy.problem').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Problem max 1000 chars'),
+  body('caseStudy.solution').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Solution max 1000 chars'),
+  body('caseStudy.impact').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Impact max 1000 chars'),
 ];
 
 // GET /api/projects  — supports ?featured=true, ?category=ml, ?search=react, ?page=1, ?limit=100, ?admin=true
@@ -118,6 +121,11 @@ router.post('/', protect, projectValidationRules, validate, async (req, res) => 
       status: req.body.status || 'live',
       category: req.body.category || 'web',
       order: Number(req.body.order) || 0,
+      caseStudy: {
+        problem: req.body.caseStudy?.problem?.trim() || '',
+        solution: req.body.caseStudy?.solution?.trim() || '',
+        impact: req.body.caseStudy?.impact?.trim() || '',
+      },
     });
     res.status(201).json(project);
   } catch (err) {
@@ -144,6 +152,11 @@ router.put('/:id', protect, projectValidationRules, validate, async (req, res) =
         status: req.body.status || 'live',
         category: req.body.category || 'web',
         order: Number(req.body.order) || 0,
+        caseStudy: {
+          problem: req.body.caseStudy?.problem?.trim() || '',
+          solution: req.body.caseStudy?.solution?.trim() || '',
+          impact: req.body.caseStudy?.impact?.trim() || '',
+        },
       },
       { new: true, runValidators: true }
     );
