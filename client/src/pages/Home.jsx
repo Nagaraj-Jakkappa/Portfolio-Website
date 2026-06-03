@@ -31,12 +31,41 @@ export default function Home({ content }) {
           content={content?.seo?.description || "Building fast, accessible web experiences with React and Node.js."}
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://techartistry.in" />
+        <meta property="og:url" content="https://www.techartistry.in/" />
         {content?.seo?.ogImage && <meta property="og:image" content={content.seo.ogImage} />}
         
-        {content?.seo?.twitterImage && <meta name="twitter:card" content="summary_large_image" />}
+        <meta name="twitter:card" content={content?.seo?.twitterImage ? "summary_large_image" : "summary"} />
         {content?.seo?.twitterImage && <meta name="twitter:image" content={content.seo.twitterImage} />}
-        <link rel="canonical" href="https://techartistry.in" />
+        <link rel="canonical" href="https://www.techartistry.in/" />
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Nagaraj Jakkappa Portfolio",
+            "url": "https://www.techartistry.in/"
+          })}
+        </script>
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Nagaraj Jakkappa",
+            "url": "https://www.techartistry.in/",
+            "jobTitle": "Frontend Developer",
+            "alumniOf": "Alva's College",
+            "address": {
+              "@type": "PostalAddress",
+              "addressRegion": "Karnataka",
+              "addressCountry": "IN"
+            },
+            "sameAs": [
+              "https://github.com/Nagaraj-Jakkappa",
+              "https://linkedin.com/in/nagaraj-jakkappa"
+            ]
+          })}
+        </script>
       </Helmet>
 
       <Hero content={content} />
