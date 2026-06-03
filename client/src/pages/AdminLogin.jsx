@@ -138,6 +138,9 @@ export default function AdminLogin() {
               </svg>
               This area is restricted to the site owner.
             </p>
+            <p className="text-center text-[10px] text-slate-600/60 uppercase tracking-wide font-medium cursor-default">
+              Forgot password? Use the private owner reset process.
+            </p>
             <Link 
               to="/" 
               className="text-xs text-slate-500 hover:text-blue-400 transition-colors flex items-center gap-1.5"

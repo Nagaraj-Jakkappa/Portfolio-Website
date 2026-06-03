@@ -80,6 +80,21 @@ mern-portfolio/
 
 ---
 
+## 🛠️ Admin Utilities
+
+### Admin password recovery:
+- Open `server/.env` locally
+- Set `ADMIN_USERNAME` and `ADMIN_PASSWORD`
+- Run:
+  ```bash
+  cd server
+  npm run reset-admin
+  ```
+- **Never expose this as a public route.**
+- Redeploy not required if it updates the same Atlas DB.
+
+---
+
 ## ⚡ Local Setup
 
 ### 1. Install dependencies
