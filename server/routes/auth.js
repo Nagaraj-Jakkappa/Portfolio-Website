@@ -1,14 +1,28 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body } = require('express-validator');
+const rateLimit = require('express-rate-limit');
 const Admin = require('../models/Admin');
 const { protect } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const router = express.Router();
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 login requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many login attempts. Please try again later.',
+  },
+  skip: (req) => req.method === 'OPTIONS',
+});
+
 // POST /api/auth/login
 router.post(
   '/login',
+  loginLimiter,
   [
     body('username').trim().notEmpty().withMessage('Username is required'),
     body('password').notEmpty().withMessage('Password is required'),

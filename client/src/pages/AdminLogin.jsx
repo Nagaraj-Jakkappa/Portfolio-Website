@@ -1,15 +1,21 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function AdminLogin() {
-  const { login } = useAuth();
+  const { admin, login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+
+  useEffect(() => {
+    if (admin) {
+      navigate('/admin');
+    }
+  }, [admin, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -124,9 +130,24 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          <p className="text-center text-xs text-slate-600 mt-6">
-            This area is restricted to the site owner.
-          </p>
+          <div className="flex flex-col items-center gap-4 mt-6">
+            <p className="text-center text-xs text-slate-600 flex items-center gap-1.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0110 0v4" />
+              </svg>
+              This area is restricted to the site owner.
+            </p>
+            <Link 
+              to="/" 
+              className="text-xs text-slate-500 hover:text-blue-400 transition-colors flex items-center gap-1.5"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back to Website
+            </Link>
+          </div>
         </div>
       </div>
     </>
