@@ -1,25 +1,32 @@
 import { Helmet } from 'react-helmet-async';
+import { useState, useEffect } from 'react';
+import api from '../api/axios';
 
 import Hero from '../components/sections/Hero';
 import CurrentlyBuilding from '../components/sections/CurrentlyBuilding';
-
 import About from '../components/sections/About';
-
 import NowSection from '../components/sections/NowSection';
-
 import Skills from '../components/sections/Skills';
-
 import GithubPulse from '../components/sections/GithubPulse';
-
 import Certifications from '../components/sections/Certifications';
-
 import Projects from '../components/sections/Projects';
-
 import RecruiterMode from '../components/sections/RecruiterMode';
-
 import Contact from '../components/sections/Contact';
 
 export default function Home() {
+  const [siteContent, setSiteContent] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await api.get('/site-content');
+        if (data) setSiteContent(data);
+      } catch {
+        // Silently fall back to hardcoded content
+      }
+    })();
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -49,10 +56,10 @@ export default function Home() {
         <link rel="canonical" href="https://techartistry.in" />
       </Helmet>
 
-      <Hero />
-      <CurrentlyBuilding />
+      <Hero content={siteContent} />
+      <CurrentlyBuilding content={siteContent} />
 
-      <About />
+      <About content={siteContent} />
 
       <NowSection />
 
@@ -66,7 +73,7 @@ export default function Home() {
 
       <RecruiterMode />
 
-      <Contact />
+      <Contact content={siteContent} />
     </>
   );
 }

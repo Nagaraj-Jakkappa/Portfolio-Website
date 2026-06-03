@@ -20,6 +20,8 @@ const MessagesPage = lazy(() => import('./pages/admin/MessagesPage'));
 const CertificatesPage = lazy(() => import('./pages/admin/CertificatesPage'));
 const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage'));
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage'));
+const ContentPage = lazy(() => import('./pages/admin/ContentPage'));
+const SkillsPage = lazy(() => import('./pages/admin/SkillsPage'));
 
 // NEW Notification Page
 const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage'));
@@ -79,6 +81,12 @@ export default function App() {
 
           {/* Settings */}
           <Route path="settings" element={<SettingsPage />} />
+
+          {/* Content Manager */}
+          <Route path="content" element={<ContentPage />} />
+
+          {/* Skills */}
+          <Route path="skills" element={<SkillsPage />} />
 
           {/* NEW Notifications Route */}
           <Route path="notifications" element={<NotificationsPage />} />

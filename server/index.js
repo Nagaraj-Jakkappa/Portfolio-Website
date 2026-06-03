@@ -12,6 +12,7 @@ const authRoutes = require('./routes/auth');
 const skillRoutes = require('./routes/skills');
 const certificateRoutes = require('./routes/certificates');
 const notificationRoutes = require('./routes/notificationRoutes');
+const siteContentRoutes = require('./routes/siteContent');
 
 // Models & Middleware
 const Project = require('./models/Project');
@@ -104,6 +105,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/site-content', siteContentRoutes);
 
 // 8. 404 & Error Handling
 app.use('/api/*', (req, res) => {

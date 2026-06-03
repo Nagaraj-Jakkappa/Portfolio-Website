@@ -2,7 +2,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import api from '../../api/axios';
 
-const CONTACT_INFO = [
+const DEFAULT_CONTACT = [
   {
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,9 +29,9 @@ const CONTACT_INFO = [
         />
       </svg>
     ),
-    label: 'Phone', // UPDATED FROM LOCATION
-    value: '+91 6362835904', // UPDATED
-    href: 'tel:+916362835904', // UPDATED
+    label: 'Phone',
+    value: '+91 6362835904',
+    href: 'tel:+916362835904',
   },
   {
     icon: (
@@ -66,7 +66,31 @@ const CONTACT_INFO = [
   },
 ];
 
-export default function Contact() {
+function buildContactInfo(content) {
+  const social = content?.socialLinks;
+  if (!social) return DEFAULT_CONTACT;
+
+  // Only override if admin has provided values
+  const items = DEFAULT_CONTACT.map((item) => {
+    if (item.label === 'Email' && social.email) {
+      return { ...item, value: social.email, href: `mailto:${social.email}` };
+    }
+    if (item.label === 'Phone' && social.phone) {
+      return { ...item, value: social.phone, href: `tel:${social.phone.replace(/\s/g, '')}` };
+    }
+    if (item.label === 'Location' && social.location) {
+      return { ...item, value: social.location, href: `https://maps.google.com/?q=${encodeURIComponent(social.location)}` };
+    }
+    if (item.label === 'GitHub' && social.github) {
+      const display = social.github.replace(/^https?:\/\//, '');
+      return { ...item, value: display, href: social.github };
+    }
+    return item;
+  });
+  return items;
+}
+
+export default function Contact({ content }) {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
@@ -113,7 +137,7 @@ export default function Contact() {
         <div className="grid lg:grid-cols-5 gap-10">
           {/* Contact info */}
           <div className="lg:col-span-2 space-y-4">
-            {CONTACT_INFO.map((item) => (
+            {buildContactInfo(content).map((item) => (
               <a
                 key={item.label}
                 href={item.href}

@@ -36,11 +36,15 @@ const ICONS = {
   menu: 'M3 12h18 M3 6h18 M3 18h18',
   bell: 'M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 01-3.46 0',
   eye: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 100 6 3 3 0 000-6z',
+  content: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
+  skills: 'M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5',
 };
 
 const NAV_MAIN = [
   { label: 'Dashboard', path: '/admin', icon: 'dashboard', end: true },
   { label: 'Analytics', path: '/admin/analytics', icon: 'analytics' },
+  { label: 'Content', path: '/admin/content', icon: 'content' },
+  { label: 'Skills', path: '/admin/skills', icon: 'skills' },
   { label: 'Projects', path: '/admin/projects', icon: 'projects' },
   { label: 'Certificates', path: '/admin/certificates', icon: 'certs' },
   { label: 'Messages', path: '/admin/messages', icon: 'messages' },
@@ -51,6 +55,8 @@ const NAV_MAIN = [
 const PAGE_NAMES = {
   '/admin': 'Dashboard',
   '/admin/analytics': 'Analytics',
+  '/admin/content': 'Content',
+  '/admin/skills': 'Skills',
   '/admin/projects': 'Projects',
   '/admin/messages': 'Messages',
   '/admin/certificates': 'Certificates',

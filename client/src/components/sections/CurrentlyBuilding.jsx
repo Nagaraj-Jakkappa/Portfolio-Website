@@ -1,6 +1,36 @@
 import React from 'react';
 
-export default function CurrentlyBuilding() {
+const DEFAULT_ITEMS = [
+  {
+    title: 'ResumeIQ',
+    description: 'AI-powered resume intelligence platform leveraging NLP for ATS scoring.',
+    status: 'Active',
+  },
+  {
+    title: 'Portfolio Security Upgrade',
+    description: 'Implementing FAANG-level backend validation, JWT hardening, and isolated DB roles.',
+    status: 'Improving',
+  },
+];
+
+const STATUS_STYLES = {
+  active: 'bg-blue-500/20 text-blue-400 border-blue-500/20',
+  improving: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/20',
+  planned: 'bg-amber-500/20 text-amber-400 border-amber-500/20',
+  paused: 'bg-slate-500/20 text-slate-400 border-slate-500/20',
+};
+
+function getStatusStyle(status) {
+  const key = (status || 'active').toLowerCase();
+  return STATUS_STYLES[key] || STATUS_STYLES.active;
+}
+
+export default function CurrentlyBuilding({ content }) {
+  const items =
+    Array.isArray(content?.currentlyBuilding) && content.currentlyBuilding.length > 0
+      ? content.currentlyBuilding
+      : DEFAULT_ITEMS;
+
   return (
     <section className="section-padding bg-navy-950 border-t border-navy-800">
       <div className="max-w-6xl mx-auto">
@@ -12,21 +42,19 @@ export default function CurrentlyBuilding() {
               Currently Building & Learning
             </h2>
             <div className="space-y-4">
-              <div className="card-base p-5 group">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-white font-semibold">ResumeIQ</h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/20">Active</span>
+              {items.map((item, i) => (
+                <div key={i} className="card-base p-5 group">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-white font-semibold">{item.title}</h3>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider border ${getStatusStyle(item.status)}`}
+                    >
+                      {item.status || 'Active'}
+                    </span>
+                  </div>
+                  <p className="text-slate-400 text-sm">{item.description}</p>
                 </div>
-                <p className="text-slate-400 text-sm">AI-powered resume intelligence platform leveraging NLP for ATS scoring.</p>
-              </div>
-              
-              <div className="card-base p-5 group">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-white font-semibold">Portfolio Security Upgrade</h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">Improving</span>
-                </div>
-                <p className="text-slate-400 text-sm">Implementing FAANG-level backend validation, JWT hardening, and isolated DB roles.</p>
-              </div>
+              ))}
             </div>
           </div>
 

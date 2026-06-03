@@ -1,14 +1,38 @@
 import React from 'react';
 
-export default function Hero() {
+export default function Hero({ content }) {
+  const hero = content?.hero || {};
+  const resume = content?.resume || {};
+
+  const headline = hero.headline || "Crafting Digital\nArtistry Through Code";
+  const role = hero.role || 'Nagaraj Jakkappa @ Techartistry.in';
+  const subtitle =
+    hero.subtitle ||
+    'BCA Graduate & Full-Stack Developer specializing in the MERN stack. I transform complex logic into elegant, high-performance web experiences with a focus on deep learning integration and minimalist UI.';
+
+  const primaryCtaText = hero.primaryCtaText || 'Explore Projects';
+  const primaryCtaHref = hero.primaryCtaHref || '#projects';
+  const secondaryCtaText = hero.secondaryCtaText || 'View Resume';
+  const resumeUrl = resume.resumeUrl || '/Nagaraj_Jakkappa_Resume_2026.pdf';
+
   const handleScroll = (id) => {
     document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Function to force open the PDF in a new tab
-  const viewResume = () => {
-    window.open('/Nagaraj_Jakkappa_Resume_2026.pdf', '_blank', 'noopener,noreferrer');
+  const handlePrimaryCta = () => {
+    if (primaryCtaHref.startsWith('#')) {
+      handleScroll(primaryCtaHref);
+    } else {
+      window.open(primaryCtaHref, '_blank', 'noopener,noreferrer');
+    }
   };
+
+  const viewResume = () => {
+    window.open(resumeUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  // Parse headline for gradient styling
+  const headlineParts = headline.split('\n');
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-navy-950">
@@ -38,9 +62,16 @@ export default function Hero() {
             className="font-display font-extrabold text-5xl md:text-7xl lg:text-[5.5rem] tracking-tight leading-[1.1] text-white mb-6 animate-fade-up"
             style={{ animationDelay: '100ms', opacity: 0, animationFillMode: 'forwards' }}
           >
-            Crafting Digital
-            <br />
-            <span className="gradient-text italic pr-2">Artistry</span> Through Code
+            {headlineParts.length > 1 ? (
+              <>
+                {headlineParts[0]}
+                <br />
+                <span className="gradient-text italic pr-2">{headlineParts[1].split(' ')[0]}</span>{' '}
+                {headlineParts[1].split(' ').slice(1).join(' ')}
+              </>
+            ) : (
+              headline
+            )}
           </h1>
 
           {/* Role / Sub-brand */}
@@ -48,7 +79,14 @@ export default function Hero() {
             className="font-display text-xl md:text-2xl text-slate-300 mb-4 animate-fade-up"
             style={{ animationDelay: '200ms', opacity: 0, animationFillMode: 'forwards' }}
           >
-            Nagaraj Jakkappa <span className="text-blue-500 font-bold">@ Techartistry.in</span>
+            {role.includes('@') ? (
+              <>
+                {role.split('@')[0]}
+                <span className="text-blue-500 font-bold">@ {role.split('@')[1]}</span>
+              </>
+            ) : (
+              role
+            )}
           </p>
 
           {/* Targeted Description */}
@@ -56,9 +94,7 @@ export default function Hero() {
             className="text-slate-400 text-lg md:text-xl max-w-2xl leading-relaxed mb-10 animate-fade-up font-light"
             style={{ animationDelay: '300ms', opacity: 0, animationFillMode: 'forwards' }}
           >
-            BCA Graduate & Full-Stack Developer specializing in the MERN stack. I transform complex
-            logic into elegant, high-performance web experiences with a focus on deep learning
-            integration and minimalist UI.
+            {subtitle}
           </p>
 
           {/* CTAs */}
@@ -67,10 +103,10 @@ export default function Hero() {
             style={{ animationDelay: '400ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             <button
-              onClick={() => handleScroll('#projects')}
+              onClick={handlePrimaryCta}
               className="btn-primary rounded-full px-8 flex items-center gap-2"
             >
-              Explore Projects
+              {primaryCtaText}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -80,7 +116,7 @@ export default function Hero() {
               onClick={viewResume}
               className="btn-ghost rounded-full px-8 flex items-center gap-2 border-blue-500/30 hover:border-blue-500/60"
             >
-              View Resume
+              {secondaryCtaText}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />

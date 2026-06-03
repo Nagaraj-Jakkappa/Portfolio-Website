@@ -9,6 +9,8 @@ const skillSchema = new mongoose.Schema({
   },
   icon: { type: String, default: 'code' },
   level: { type: Number, default: 80 },
+  order: { type: Number, default: 0 },
+  visible: { type: Boolean, default: true },
 });
 
 module.exports = mongoose.model('Skill', skillSchema);
