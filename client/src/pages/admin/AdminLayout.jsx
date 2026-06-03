@@ -42,7 +42,10 @@ const NAV_MAIN = [
   { label: 'Dashboard', path: '/admin', icon: 'dashboard', end: true },
   { label: 'Analytics', path: '/admin/analytics', icon: 'analytics' },
   { label: 'Projects', path: '/admin/projects', icon: 'projects' },
+  { label: 'Certificates', path: '/admin/certificates', icon: 'certs' },
   { label: 'Messages', path: '/admin/messages', icon: 'messages' },
+  { label: 'Notifications', path: '/admin/notifications', icon: 'bell' },
+  { label: 'Settings', path: '/admin/settings', icon: 'settings' },
 ];
 
 const PAGE_NAMES = {
