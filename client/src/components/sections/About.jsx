@@ -111,10 +111,13 @@ export default function About({ content }) {
               <div className="relative h-full w-full rounded-2xl overflow-hidden border border-white/10 bg-navy-800">
                 <img
                   src={profileImage}
-                  alt="Nagaraj Jakkappa"
+                  alt={about.title || "Nagaraj Jakkappa - Profile"}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-105 hover:scale-100"
                   onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/400x400?text=NJ';
+                    e.target.onerror = null;
+                    e.target.src = 'https://via.placeholder.com/400x400/0f172a/38bdf8?text=NJ';
                   }}
                 />
               </div>

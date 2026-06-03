@@ -113,11 +113,16 @@ function CertCard({ cert, onEdit, onDelete }) {
     <div className="bg-navy-900 border border-navy-800 rounded-xl p-5 hover:border-blue-400/50 transition-all group flex flex-col h-full">
       <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 overflow-hidden shrink-0">
         {cert.organizationLogo && !imgError ? (
-          <img
-            src={cert.organizationLogo}
-            alt={cert.organization}
-            className="w-full h-full object-contain p-2"
-            onError={() => setImgError(true)}
+          <img 
+            src={cert.organizationLogo} 
+            alt={`${cert.organization || 'Organization'} logo`}
+            loading="lazy" 
+            decoding="async" 
+            className="w-full h-full object-contain p-1"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.parentElement.innerHTML = '<span class="text-xl text-slate-500">📜</span>';
+            }} 
           />
         ) : (
           <div className="text-blue-400">

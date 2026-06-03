@@ -52,7 +52,9 @@ export default function Certifications() {
                     {cert.organizationLogo ? (
                       <img
                         src={cert.organizationLogo}
-                        alt={cert.organization}
+                        alt={`${cert.organization || 'Organization'} logo`}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-contain p-2"
                         onError={(e) => {
                           e.target.onerror = null;

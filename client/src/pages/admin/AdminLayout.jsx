@@ -302,6 +302,7 @@ export default function AdminLayout() {
               }
             }}
             className="p-1.5 text-slate-500 hover:text-white"
+            aria-label="Toggle sidebar"
           >
             <Ic d={ICONS.menu} size={17} />
           </button>
@@ -323,6 +324,7 @@ export default function AdminLayout() {
             <button
               onClick={() => setShowNotifications((v) => !v)}
               className="relative p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition"
+              aria-label="Toggle notifications"
             >
               <Ic d={ICONS.bell} size={16} />
 

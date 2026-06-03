@@ -132,7 +132,17 @@ function ProjectRow({ p }) {
     <div className="flex items-center gap-3 py-3 border-b border-navy-800 last:border-0 group">
       <div className="w-8 h-8 rounded-lg bg-navy-800 flex items-center justify-center flex-shrink-0 text-xs font-bold text-blue-400 overflow-hidden">
         {p.imageUrl ? (
-          <img src={p.imageUrl} alt="" className="w-full h-full object-cover" />
+          <img 
+            src={p.imageUrl} 
+            alt={p.title || 'Project'} 
+            loading="lazy" 
+            decoding="async" 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://via.placeholder.com/600x400/0f172a/38bdf8?text=No+Image';
+            }} 
+          />
         ) : (
           p.title?.[0]
         )}
