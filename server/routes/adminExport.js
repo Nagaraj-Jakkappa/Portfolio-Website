@@ -29,6 +29,8 @@ router.get('/export', protect, async (req, res) => {
     let finalMessages = messages;
     let finalNotifications = notifications;
 
+    let finalSiteContent = siteContent || {};
+
     if (mode === 'sanitized') {
       finalMessages = messages.map(m => ({
         _id: m._id,
@@ -45,6 +47,15 @@ router.get('/export', protect, async (req, res) => {
         read: n.read,
         createdAt: n.createdAt
       }));
+
+      // Sanitize siteContent to remove sensitive contact fields
+      if (finalSiteContent.socialLinks) {
+        // Deep clone to avoid mutating the original mongoose lean object directly,
+        // though strictly lean objects can be mutated, it's safer.
+        finalSiteContent = JSON.parse(JSON.stringify(finalSiteContent));
+        delete finalSiteContent.socialLinks.email;
+        delete finalSiteContent.socialLinks.phone;
+      }
     }
 
     const exportData = {
@@ -56,7 +67,7 @@ router.get('/export', protect, async (req, res) => {
         skills,
         certificates,
         messages: finalMessages,
-        siteContent: siteContent || {},
+        siteContent: finalSiteContent,
         notifications: finalNotifications
       }
     };
