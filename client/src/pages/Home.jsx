@@ -11,7 +11,7 @@ import Projects from '../components/sections/Projects';
 import RecruiterMode from '../components/sections/RecruiterMode';
 import Contact from '../components/sections/Contact';
 
-export default function Home({ content }) {
+export default function Home({ content, loading }) {
 
   return (
     <>
@@ -69,7 +69,7 @@ export default function Home({ content }) {
       </Helmet>
 
       <Hero content={content} />
-      <CurrentlyBuilding content={content} />
+      <CurrentlyBuilding content={content} loading={loading} />
 
       <About content={content} />
 

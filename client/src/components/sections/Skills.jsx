@@ -34,12 +34,32 @@ export default function Skills() {
     return acc;
   }, {});
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center bg-navy-950">
-        <div className="text-blue-400 font-mono animate-pulse">Loading Stack...</div>
-      </div>
+      <section id="skills" className="section-padding bg-navy-950 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-16">
+            <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">02 / Skills</p>
+            <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
+              My <span className="gradient-text">tech stack</span>
+            </h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="card-base p-6 animate-pulse">
+                <div className="h-6 w-24 bg-navy-700 rounded mb-5" />
+                <div className="space-y-3">
+                  {[...Array(4)].map((_, j) => (
+                    <div key={j} className="h-4 bg-navy-800 rounded w-full" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     );
+  }
 
   return (
     <section id="skills" className="section-padding bg-navy-950 relative overflow-hidden">

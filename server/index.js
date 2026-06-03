@@ -13,6 +13,7 @@ const skillRoutes = require('./routes/skills');
 const certificateRoutes = require('./routes/certificates');
 const notificationRoutes = require('./routes/notificationRoutes');
 const siteContentRoutes = require('./routes/siteContent');
+const adminExportRoutes = require('./routes/adminExport');
 
 // Models & Middleware
 const Project = require('./models/Project');
@@ -106,6 +107,7 @@ app.use('/api/skills', skillRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/site-content', siteContentRoutes);
+app.use('/api/admin', adminExportRoutes);
 
 // 8. 404 & Error Handling
 app.use('/api/*', (req, res) => {

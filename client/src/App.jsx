@@ -37,6 +37,7 @@ function PageSpinner() {
 
 function PublicLayout() {
   const [siteContent, setSiteContent] = useState(null);
+  const [contentLoading, setContentLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -45,6 +46,8 @@ function PublicLayout() {
         if (data) setSiteContent(data);
       } catch {
         // Silently fall back to hardcoded content
+      } finally {
+        setContentLoading(false);
       }
     })();
   }, []);
@@ -53,7 +56,7 @@ function PublicLayout() {
     <div className="min-h-screen bg-navy-900 font-body flex flex-col">
       <Navbar content={siteContent} />
       <main className="flex-1">
-        <Home content={siteContent} />
+        <Home content={siteContent} loading={contentLoading} />
       </main>
       <Footer content={siteContent} />
     </div>

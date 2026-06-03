@@ -196,8 +196,16 @@ export default function ContentPage() {
   // ── Render ─────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="p-5 md:p-7 max-w-[900px] mx-auto flex items-center justify-center min-h-[400px]">
-        <Spinner size={24} />
+      <div className="p-5 md:p-7 max-w-[900px] mx-auto">
+        <div className="mb-6 space-y-2">
+          <div className="h-8 w-48 bg-navy-800 rounded-lg animate-pulse" />
+          <div className="h-4 w-64 bg-navy-800 rounded animate-pulse" />
+        </div>
+        <div className="space-y-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-14 bg-navy-900 rounded-xl animate-pulse border border-navy-800" />
+          ))}
+        </div>
       </div>
     );
   }

@@ -26,6 +26,29 @@ export default function SettingsPage() {
   const [pass, setPass] = useState({ current: '', next: '', confirm: '' });
   const [savingP, setSavingP] = useState(false);
   const [savingPw, setSavingPw] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    const toastId = toast.loading('Generating backup...');
+    try {
+      const { data } = await api.get('/admin/export');
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `techartistry-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Backup downloaded successfully', { id: toastId });
+    } catch (e) {
+      toast.error(e?.response?.data?.message || 'Failed to export backup', { id: toastId });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const handleProfileSave = async () => {
     if (!profile.username || !profile.currentPassword) {
@@ -199,21 +222,20 @@ export default function SettingsPage() {
               Clear
             </Btn>
           </div>
-          <div className="flex items-center justify-between p-4 bg-red-500/[0.04] border border-red-500/20 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-navy-800/30 border border-navy-700/50 rounded-xl">
             <div>
               <p className="text-sm font-medium text-slate-300">Export data</p>
               <p className="text-xs text-slate-500 mt-0.5">
-                Download all projects and messages as JSON.
+                Download a safe JSON backup of all public portfolio data.
               </p>
             </div>
             <Btn
-              variant="ghost"
+              variant="secondary"
               size="sm"
-              onClick={() =>
-                toast.error('Not yet implemented — add GET /api/admin/export endpoint')
-              }
+              disabled={exporting}
+              onClick={handleExport}
             >
-              Export
+              {exporting ? <><Spinner size={12} /> Exporting...</> : 'Download Backup JSON'}
             </Btn>
           </div>
         </div>

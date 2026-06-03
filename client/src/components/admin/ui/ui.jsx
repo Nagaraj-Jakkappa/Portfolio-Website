@@ -284,6 +284,35 @@ export function Skeleton({ className = '' }) {
   return <div className={`animate-pulse bg-navy-800 rounded ${className}`} />;
 }
 
+// ── SkeletonRow ────────────────────────────────────────────────
+export function SkeletonRow({ columns = 3 }) {
+  return (
+    <div className="flex items-center gap-4 py-4 border-b border-navy-800 animate-pulse">
+      <div className="w-10 h-10 bg-navy-800 rounded-lg flex-shrink-0" />
+      <div className="flex-1 space-y-2">
+        <div className="h-4 bg-navy-800 rounded w-1/3" />
+        <div className="h-3 bg-navy-800/50 rounded w-1/4" />
+      </div>
+      {columns > 2 && <div className="hidden sm:block h-3 bg-navy-800/50 rounded w-20" />}
+      <div className="h-8 bg-navy-800 rounded w-16 ml-auto" />
+    </div>
+  );
+}
+
+// ── SkeletonCard ──────────────────────────────────────────────
+export function SkeletonCard() {
+  return (
+    <div className="bg-navy-900 border border-navy-800 rounded-xl p-5 animate-pulse">
+      <div className="h-4 bg-navy-800 rounded w-1/2 mb-4" />
+      <div className="space-y-2 mb-4">
+        <div className="h-3 bg-navy-800 rounded w-full" />
+        <div className="h-3 bg-navy-800 rounded w-5/6" />
+      </div>
+      <div className="h-8 bg-navy-800 rounded w-24 mt-4" />
+    </div>
+  );
+}
+
 // ── EmptyState ────────────────────────────────────────────────
 export function EmptyState({ icon, title, description, action }) {
   return (

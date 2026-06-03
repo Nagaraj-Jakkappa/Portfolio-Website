@@ -22,12 +22,38 @@ export default function Certifications() {
     fetchCerts();
   }, []);
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center bg-navy-950">
-        <div className="text-blue-400 font-mono animate-pulse">Loading Records...</div>
-      </div>
+      <section id="certifications" className="section-padding bg-navy-950">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-12">
+            <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">02 / Recognition</p>
+            <h2 className="font-display font-bold text-4xl text-white">Certifications & Education</h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="card-base p-6 border-l-4 border-navy-700 animate-pulse">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-14 h-14 bg-navy-800 rounded-xl" />
+                  <div className="flex-1">
+                    <div className="h-5 bg-navy-700 rounded w-3/4 mb-2" />
+                    <div className="h-3 bg-navy-800 rounded w-1/2" />
+                  </div>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="h-3 bg-navy-800 rounded w-full" />
+                  <div className="h-3 bg-navy-800 rounded w-5/6" />
+                </div>
+                <div className="pt-4 border-t border-white/5 flex justify-between">
+                  <div className="h-3 bg-navy-800 rounded w-16" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     );
+  }
 
   return (
     <section id="certifications" className="section-padding bg-navy-950">
