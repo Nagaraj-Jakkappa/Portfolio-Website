@@ -224,7 +224,7 @@ export default function AdminLayout() {
       {/* Desktop Sidebar */}
       <aside
         className={`
-        hidden md:flex flex-col
+        hidden md:flex flex-col flex-shrink-0
         bg-navy-900
         border-r border-navy-800
         transition-all duration-300 ease-in-out
