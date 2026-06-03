@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.techartistry.in/sitemap.xml
+# Sitemap refreshed after project slug update
