@@ -176,13 +176,18 @@ export default function SettingsPage() {
       </Card>
 
       {/* Danger zone */}
-      <Card className="border-red-500/20">
-        <CardHeader title="Danger Zone" subtitle="Irreversible actions — proceed with caution" />
+      <Card className="border-red-500/50 bg-red-950/20 shadow-lg shadow-red-500/10">
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h3 className="text-sm font-semibold text-red-400 leading-tight">Danger Zone</h3>
+            <p className="text-xs text-red-400/70 mt-0.5">Irreversible actions — proceed with caution</p>
+          </div>
+        </div>
         <div className="space-y-3">
-          <div className="flex items-center justify-between p-4 bg-red-500/[0.04] border border-red-500/10 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-red-500/[0.04] border border-red-500/20 rounded-xl">
             <div>
               <p className="text-sm font-medium text-slate-300">Clear all messages</p>
-              <p className="text-xs text-slate-600 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Permanently delete every contact message from the database.
               </p>
             </div>
@@ -194,10 +199,10 @@ export default function SettingsPage() {
               Clear
             </Btn>
           </div>
-          <div className="flex items-center justify-between p-4 bg-red-500/[0.04] border border-red-500/10 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-red-500/[0.04] border border-red-500/20 rounded-xl">
             <div>
               <p className="text-sm font-medium text-slate-300">Export data</p>
-              <p className="text-xs text-slate-600 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Download all projects and messages as JSON.
               </p>
             </div>
@@ -211,6 +216,25 @@ export default function SettingsPage() {
               Export
             </Btn>
           </div>
+        </div>
+      </Card>
+
+      {/* Logout */}
+      <Card>
+        <div className="flex items-center justify-between p-1">
+          <div>
+            <h3 className="text-sm font-semibold text-white leading-tight">Session</h3>
+            <p className="text-xs text-slate-600 mt-0.5">Log out of the admin panel on this device.</p>
+          </div>
+          <Btn 
+            variant="ghost" 
+            onClick={() => {
+              logout();
+              navigate('/admin/login');
+            }}
+          >
+            Logout
+          </Btn>
         </div>
       </Card>
     </div>
