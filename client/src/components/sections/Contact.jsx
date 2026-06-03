@@ -143,7 +143,7 @@ export default function Contact({ content }) {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="card-base card-hover p-4 flex items-center gap-4 block"
+                className="card-base card-hover p-4 flex items-center gap-4"
               >
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-blue-400 flex-shrink-0">
                   {item.icon}
