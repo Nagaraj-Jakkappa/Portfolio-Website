@@ -47,6 +47,35 @@ const siteContentSchema = new mongoose.Schema(
         status: { type: String, default: 'Active', maxlength: 50 },
       },
     ],
+    seo: {
+      title: { type: String, default: '', maxlength: 80 },
+      description: { type: String, default: '', maxlength: 180 },
+      keywords: { type: String, default: '', maxlength: 250 },
+      ogImage: { type: String, default: '', maxlength: 1000 },
+      twitterImage: { type: String, default: '', maxlength: 1000 },
+    },
+    impactMetrics: [
+      {
+        label: { type: String, default: '', maxlength: 80 },
+        value: { type: String, default: '', maxlength: 20 },
+        description: { type: String, default: '', maxlength: 160 },
+      },
+    ],
+    footer: {
+      brandName: { type: String, default: '', maxlength: 80 },
+      tagline: { type: String, default: '', maxlength: 160 },
+      copyrightText: { type: String, default: '', maxlength: 160 },
+      builtWithText: { type: String, default: '', maxlength: 160 },
+    },
+    navbar: [
+      {
+        label: { type: String, default: '', maxlength: 40 },
+        href: { type: String, default: '', maxlength: 500 },
+        type: { type: String, default: 'section', maxlength: 20 },
+        visible: { type: Boolean, default: true },
+        order: { type: Number, default: 0 },
+      },
+    ],
   },
   { timestamps: true }
 );

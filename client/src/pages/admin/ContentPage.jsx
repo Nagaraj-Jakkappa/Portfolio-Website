@@ -46,6 +46,10 @@ const EMPTY_CONTENT = {
   resume: { resumeUrl: '', updatedAtText: '' },
   socialLinks: { github: '', linkedin: '', email: '', phone: '', location: '' },
   currentlyBuilding: [],
+  seo: { title: '', description: '', keywords: '', ogImage: '', twitterImage: '' },
+  impactMetrics: [],
+  footer: { brandName: '', tagline: '', copyrightText: '', builtWithText: '' },
+  navbar: [],
 };
 
 // ── Collapsible Section ─────────────────────────────────────
@@ -82,6 +86,10 @@ export default function ContentPage() {
             resume: { ...EMPTY_CONTENT.resume, ...data.resume },
             socialLinks: { ...EMPTY_CONTENT.socialLinks, ...data.socialLinks },
             currentlyBuilding: Array.isArray(data.currentlyBuilding) ? data.currentlyBuilding : [],
+            seo: { ...EMPTY_CONTENT.seo, ...data.seo },
+            impactMetrics: Array.isArray(data.impactMetrics) ? data.impactMetrics : [],
+            footer: { ...EMPTY_CONTENT.footer, ...data.footer },
+            navbar: Array.isArray(data.navbar) ? data.navbar : [],
           });
         }
       } catch {
@@ -107,6 +115,10 @@ export default function ContentPage() {
         resume: { ...EMPTY_CONTENT.resume, ...data.resume },
         socialLinks: { ...EMPTY_CONTENT.socialLinks, ...data.socialLinks },
         currentlyBuilding: Array.isArray(data.currentlyBuilding) ? data.currentlyBuilding : [],
+        seo: { ...EMPTY_CONTENT.seo, ...data.seo },
+        impactMetrics: Array.isArray(data.impactMetrics) ? data.impactMetrics : [],
+        footer: { ...EMPTY_CONTENT.footer, ...data.footer },
+        navbar: Array.isArray(data.navbar) ? data.navbar : [],
       });
       toast.success('Content saved!');
     } catch (err) {
@@ -140,6 +152,22 @@ export default function ContentPage() {
       ...f,
       currentlyBuilding: f.currentlyBuilding.filter((_, idx) => idx !== i),
     }));
+
+  // ── Impact Metrics helpers ─────────────────────────────────
+  const addImpactMetric = () =>
+    setForm((f) => ({ ...f, impactMetrics: [...f.impactMetrics, { label: '', value: '', description: '' }] }));
+  const updateImpactMetric = (i, key, val) =>
+    setForm((f) => ({ ...f, impactMetrics: f.impactMetrics.map((item, idx) => (idx === i ? { ...item, [key]: val } : item)) }));
+  const removeImpactMetric = (i) =>
+    setForm((f) => ({ ...f, impactMetrics: f.impactMetrics.filter((_, idx) => idx !== i) }));
+
+  // ── Navbar helpers ─────────────────────────────────────────
+  const addNavbarLink = () =>
+    setForm((f) => ({ ...f, navbar: [...f.navbar, { label: '', href: '', type: 'section', visible: true, order: 0 }] }));
+  const updateNavbarLink = (i, key, val) =>
+    setForm((f) => ({ ...f, navbar: f.navbar.map((item, idx) => (idx === i ? { ...item, [key]: val } : item)) }));
+  const removeNavbarLink = (i) =>
+    setForm((f) => ({ ...f, navbar: f.navbar.filter((_, idx) => idx !== i) }));
 
   // ── About Highlights helpers ───────────────────────────────
   const addHighlight = () =>
@@ -406,6 +434,101 @@ export default function ContentPage() {
         ))}
         <Btn variant="ghost" onClick={addBuildItem}>
           <Ic d={IC.plus} size={13} /> Add Item
+        </Btn>
+      </Section>
+
+      {/* ── SEO ─────────────────────────────────────────── */}
+      <Section title="SEO Settings">
+        <Input label="Meta Title" value={form.seo.title} onChange={(e) => setNested('seo', 'title', e.target.value)} placeholder="Nagaraj Jakkappa — Frontend Developer" />
+        <Textarea label="Meta Description" value={form.seo.description} onChange={(e) => setNested('seo', 'description', e.target.value)} rows={2} />
+        <Textarea label="Keywords" value={form.seo.keywords} onChange={(e) => setNested('seo', 'keywords', e.target.value)} rows={2} />
+        <Input label="OG Image URL" value={form.seo.ogImage} onChange={(e) => setNested('seo', 'ogImage', e.target.value)} />
+        <Input label="Twitter Image URL" value={form.seo.twitterImage} onChange={(e) => setNested('seo', 'twitterImage', e.target.value)} />
+      </Section>
+
+      {/* ── Impact Metrics ──────────────────────────────── */}
+      <Section title="Impact Metrics">
+        {form.impactMetrics.map((item, i) => (
+          <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
+            <div className="flex items-start justify-between">
+              <span className="text-xs text-slate-500 font-mono">Metric #{i + 1}</span>
+              <button onClick={() => removeImpactMetric(i)} className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
+                <Ic d={IC.trash} size={13} />
+              </button>
+            </div>
+            <div className="grid grid-cols-[1fr_2fr] gap-3">
+              <Input label="Value (e.g. 3+)" value={item.value} onChange={(e) => updateImpactMetric(i, 'value', e.target.value)} />
+              <Input label="Label (e.g. Production Apps)" value={item.label} onChange={(e) => updateImpactMetric(i, 'label', e.target.value)} />
+            </div>
+            <Input label="Description" value={item.description} onChange={(e) => updateImpactMetric(i, 'description', e.target.value)} />
+          </div>
+        ))}
+        <Btn variant="ghost" onClick={addImpactMetric}>
+          <Ic d={IC.plus} size={13} /> Add Metric
+        </Btn>
+      </Section>
+
+      {/* ── Footer ──────────────────────────────────────── */}
+      <Section title="Footer Content">
+        <div className="grid grid-cols-2 gap-3">
+          <Input label="Brand Name" value={form.footer.brandName} onChange={(e) => setNested('footer', 'brandName', e.target.value)} placeholder="Techartistry" />
+          <Input label="Tagline" value={form.footer.tagline} onChange={(e) => setNested('footer', 'tagline', e.target.value)} placeholder="Handcrafted by Nagaraj Jakkappa" />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Input label="Copyright Text" value={form.footer.copyrightText} onChange={(e) => setNested('footer', 'copyrightText', e.target.value)} placeholder="Techartistry.in" />
+          <Input label="Built With Text" value={form.footer.builtWithText} onChange={(e) => setNested('footer', 'builtWithText', e.target.value)} placeholder="React + Node.js + MongoDB" />
+        </div>
+      </Section>
+
+      {/* ── Navbar Links ────────────────────────────────── */}
+      <Section title="Navbar Links">
+        {form.navbar.map((item, i) => (
+          <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-slate-500 font-mono">Link #{i + 1}</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={item.visible} onChange={(e) => updateNavbarLink(i, 'visible', e.target.checked)} className="w-4 h-4 rounded bg-navy-900 border-navy-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-navy-950" />
+                  <span className="text-xs text-slate-300">Visible</span>
+                </label>
+              </div>
+              <button onClick={() => removeNavbarLink(i)} className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
+                <Ic d={IC.trash} size={13} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-[1fr_1fr_auto] gap-3">
+              <Input label="Label" value={item.label} onChange={(e) => updateNavbarLink(i, 'label', e.target.value)} placeholder="About" />
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Type</label>
+                <select value={item.type} onChange={(e) => { updateNavbarLink(i, 'type', e.target.value); updateNavbarLink(i, 'href', ''); }} className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                  <option value="section">Internal Section</option>
+                  <option value="external">External URL</option>
+                </select>
+              </div>
+              <Input label="Order" value={item.order} onChange={(e) => updateNavbarLink(i, 'order', e.target.value)} type="number" />
+            </div>
+
+            {item.type === 'section' ? (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Section ID</label>
+                <select value={item.href} onChange={(e) => updateNavbarLink(i, 'href', e.target.value)} className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                  <option value="">Select a section...</option>
+                  <option value="#home">#home</option>
+                  <option value="#about">#about</option>
+                  <option value="#skills">#skills</option>
+                  <option value="#projects">#projects</option>
+                  <option value="#certificates">#certificates</option>
+                  <option value="#contact">#contact</option>
+                </select>
+              </div>
+            ) : (
+              <Input label="External URL" value={item.href} onChange={(e) => updateNavbarLink(i, 'href', e.target.value)} placeholder="https://..." />
+            )}
+          </div>
+        ))}
+        <Btn variant="ghost" onClick={addNavbarLink}>
+          <Ic d={IC.plus} size={13} /> Add Link
         </Btn>
       </Section>
 

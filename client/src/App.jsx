@@ -6,6 +6,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import api from './api/axios';
 
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
@@ -34,23 +35,37 @@ function PageSpinner() {
   );
 }
 
+function PublicLayout() {
+  const [siteContent, setSiteContent] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await api.get('/site-content');
+        if (data) setSiteContent(data);
+      } catch {
+        // Silently fall back to hardcoded content
+      }
+    })();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-navy-900 font-body flex flex-col">
+      <Navbar content={siteContent} />
+      <main className="flex-1">
+        <Home content={siteContent} />
+      </main>
+      <Footer content={siteContent} />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <Suspense fallback={<PageSpinner />}>
       <Routes>
         {/* PUBLIC WEBSITE */}
-        <Route
-          path="/"
-          element={
-            <div className="min-h-screen bg-navy-900 font-body">
-              <Navbar />
-              <main>
-                <Home />
-              </main>
-              <Footer />
-            </div>
-          }
-        />
+        <Route path="/" element={<PublicLayout />} />
 
         {/* ADMIN LOGIN */}
         <Route path="/admin/login" element={<AdminLogin />} />

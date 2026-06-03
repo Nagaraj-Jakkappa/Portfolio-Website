@@ -1,6 +1,4 @@
 import { Helmet } from 'react-helmet-async';
-import { useState, useEffect } from 'react';
-import api from '../api/axios';
 
 import Hero from '../components/sections/Hero';
 import CurrentlyBuilding from '../components/sections/CurrentlyBuilding';
@@ -13,53 +11,38 @@ import Projects from '../components/sections/Projects';
 import RecruiterMode from '../components/sections/RecruiterMode';
 import Contact from '../components/sections/Contact';
 
-export default function Home() {
-  const [siteContent, setSiteContent] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await api.get('/site-content');
-        if (data) setSiteContent(data);
-      } catch {
-        // Silently fall back to hardcoded content
-      }
-    })();
-  }, []);
+export default function Home({ content }) {
 
   return (
     <>
       <Helmet>
-        <title>Nagaraj Jakkappa — Frontend Developer & React Specialist</title>
-
+        <title>{content?.seo?.title || 'Nagaraj Jakkappa — Frontend Developer & React Specialist'}</title>
         <meta
           name="description"
-          content="Nagaraj Jakkappa is a BCA graduate and frontend developer from Karnataka, India. Specializing in React, TypeScript, Node.js, and ML applications."
+          content={content?.seo?.description || "Nagaraj Jakkappa is a BCA graduate and frontend developer from Karnataka, India. Specializing in React, TypeScript, Node.js, and ML applications."}
         />
-
         <meta
           name="keywords"
-          content="Nagaraj Jakkappa, frontend developer, React developer, JavaScript, TypeScript, Karnataka, hire developer"
+          content={content?.seo?.keywords || "Nagaraj Jakkappa, frontend developer, React developer, JavaScript, TypeScript, Karnataka, hire developer"}
         />
-
-        <meta property="og:title" content="Nagaraj Jakkappa — Frontend Developer" />
-
+        <meta property="og:title" content={content?.seo?.title || "Nagaraj Jakkappa — Frontend Developer"} />
         <meta
           property="og:description"
-          content="Building fast, accessible web experiences with React and Node.js."
+          content={content?.seo?.description || "Building fast, accessible web experiences with React and Node.js."}
         />
-
         <meta property="og:type" content="website" />
-
         <meta property="og:url" content="https://techartistry.in" />
-
+        {content?.seo?.ogImage && <meta property="og:image" content={content.seo.ogImage} />}
+        
+        {content?.seo?.twitterImage && <meta name="twitter:card" content="summary_large_image" />}
+        {content?.seo?.twitterImage && <meta name="twitter:image" content={content.seo.twitterImage} />}
         <link rel="canonical" href="https://techartistry.in" />
       </Helmet>
 
-      <Hero content={siteContent} />
-      <CurrentlyBuilding content={siteContent} />
+      <Hero content={content} />
+      <CurrentlyBuilding content={content} />
 
-      <About content={siteContent} />
+      <About content={content} />
 
       <NowSection />
 
@@ -73,7 +56,7 @@ export default function Home() {
 
       <RecruiterMode />
 
-      <Contact content={siteContent} />
+      <Contact content={content} />
     </>
   );
 }

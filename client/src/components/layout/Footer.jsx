@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom';
 
-export default function Footer() {
+export default function Footer({ content }) {
   const year = new Date().getFullYear();
+  const f = content?.footer || {};
+  
+  const brandName = f.brandName || "Techartistry";
+  const tagline = f.tagline || "Handcrafted by Nagaraj Jakkappa";
+  const copyrightText = f.copyrightText || "Techartistry.in";
 
   return (
     <footer className="bg-navy-950 border-t border-navy-900 py-12 px-6 md:px-12 relative overflow-hidden">
@@ -12,7 +17,7 @@ export default function Footer() {
         {/* Logo */}
         <div className="flex items-center gap-1">
           <span className="font-display font-black text-lg tracking-tighter text-white uppercase italic">
-            Tech<span className="text-blue-400">Artistry</span>
+            {brandName}
           </span>
 
           <span className="font-mono text-[10px] text-slate-600 mt-1">.in</span>
@@ -20,10 +25,16 @@ export default function Footer() {
 
         {/* Copyright */}
         <p className="text-slate-500 text-xs font-mono tracking-tight text-center md:order-none order-last">
-          © {year} <span className="text-slate-400">Techartistry.in</span> | Built with{' '}
-          <span className="text-blue-400/80">React</span> +
-          <span className="text-emerald-400/80"> Node.js</span> +
-          <span className="text-slate-300"> MongoDB</span>
+          © {year} <span className="text-slate-400">{copyrightText}</span> | Built with{' '}
+          {f.builtWithText ? (
+            <span className="text-slate-300">{f.builtWithText}</span>
+          ) : (
+            <>
+              <span className="text-blue-400/80">React</span> +
+              <span className="text-emerald-400/80"> Node.js</span> +
+              <span className="text-slate-300"> MongoDB</span>
+            </>
+          )}
         </p>
 
         {/* Social + Top */}
@@ -63,7 +74,7 @@ export default function Footer() {
       {/* Bottom Tagline */}
       <div className="max-w-6xl mx-auto mt-8 pt-8 border-t border-navy-900/50 flex justify-center">
         <p className="text-[10px] text-slate-700 uppercase tracking-[0.2em]">
-          Handcrafted by Nagaraj Jakkappa
+          {tagline}
         </p>
       </div>
     </footer>

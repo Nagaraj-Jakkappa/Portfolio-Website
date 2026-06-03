@@ -41,6 +41,51 @@ const contentValidationRules = [
   body('currentlyBuilding.*.title').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
   body('currentlyBuilding.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
   body('currentlyBuilding.*.status').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
+
+  // SEO
+  body('seo.title').optional({ checkFalsy: true }).isString().isLength({ max: 80 }),
+  body('seo.description').optional({ checkFalsy: true }).isString().isLength({ max: 180 }),
+  body('seo.keywords').optional({ checkFalsy: true }).isString().isLength({ max: 250 }),
+  body('seo.ogImage').optional({ checkFalsy: true }).isURL().withMessage('Invalid OG image URL'),
+  body('seo.twitterImage').optional({ checkFalsy: true }).isURL().withMessage('Invalid Twitter image URL'),
+
+  // Impact Metrics
+  body('impactMetrics').optional().isArray({ max: 10 }).withMessage('Too many metrics'),
+  body('impactMetrics.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 80 }),
+  body('impactMetrics.*.value').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
+  body('impactMetrics.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 160 }),
+
+  // Footer
+  body('footer.brandName').optional({ checkFalsy: true }).isString().isLength({ max: 80 }),
+  body('footer.tagline').optional({ checkFalsy: true }).isString().isLength({ max: 160 }),
+  body('footer.copyrightText').optional({ checkFalsy: true }).isString().isLength({ max: 160 }),
+  body('footer.builtWithText').optional({ checkFalsy: true }).isString().isLength({ max: 160 }),
+
+  // Navbar
+  body('navbar').optional().isArray({ max: 20 }).withMessage('Too many links'),
+  body('navbar.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 40 }),
+  body('navbar.*.href').optional({ checkFalsy: true }).isString().isLength({ max: 500 }).custom((value, { req, path }) => {
+    const match = path.match(/\d+/);
+    if (!match) return true;
+    const index = match[0];
+    const item = req.body.navbar[index];
+    if (item && item.type === 'section') {
+      const validSections = ['#home', '#about', '#skills', '#projects', '#certificates', '#contact'];
+      if (!validSections.includes(value)) {
+        throw new Error('Invalid section link');
+      }
+    } else if (item && item.type === 'external') {
+      try {
+        new URL(value);
+      } catch (err) {
+        throw new Error('Invalid external URL');
+      }
+    }
+    return true;
+  }),
+  body('navbar.*.type').optional({ checkFalsy: true }).isIn(['section', 'external']).withMessage('Type must be section or external'),
+  body('navbar.*.visible').optional().isBoolean(),
+  body('navbar.*.order').optional().isNumeric(),
 ];
 
 // ── GET /api/site-content — Public ───────────────────────────
@@ -113,6 +158,47 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         title: item.title?.trim() || '',
         description: item.description?.trim() || '',
         status: item.status?.trim() || 'Active',
+      }));
+    }
+
+    // SEO
+    if (req.body.seo) {
+      payload.seo = {
+        title: req.body.seo.title?.trim() || '',
+        description: req.body.seo.description?.trim() || '',
+        keywords: req.body.seo.keywords?.trim() || '',
+        ogImage: req.body.seo.ogImage?.trim() || '',
+        twitterImage: req.body.seo.twitterImage?.trim() || '',
+      };
+    }
+
+    // Impact Metrics
+    if (Array.isArray(req.body.impactMetrics)) {
+      payload.impactMetrics = req.body.impactMetrics.map((m) => ({
+        label: m.label?.trim() || '',
+        value: m.value?.trim() || '',
+        description: m.description?.trim() || '',
+      }));
+    }
+
+    // Footer
+    if (req.body.footer) {
+      payload.footer = {
+        brandName: req.body.footer.brandName?.trim() || '',
+        tagline: req.body.footer.tagline?.trim() || '',
+        copyrightText: req.body.footer.copyrightText?.trim() || '',
+        builtWithText: req.body.footer.builtWithText?.trim() || '',
+      };
+    }
+
+    // Navbar
+    if (Array.isArray(req.body.navbar)) {
+      payload.navbar = req.body.navbar.map((n) => ({
+        label: n.label?.trim() || '',
+        href: n.href?.trim() || '',
+        type: n.type === 'external' ? 'external' : 'section',
+        visible: typeof n.visible === 'boolean' ? n.visible : true,
+        order: Number(n.order) || 0,
       }));
     }
 

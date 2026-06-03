@@ -31,6 +31,19 @@ export default function CurrentlyBuilding({ content }) {
       ? content.currentlyBuilding
       : DEFAULT_ITEMS;
 
+  const defaultMetrics = [
+    { value: '3+', label: 'Production MERN Apps' },
+    { value: 'CMS', label: 'Secure Admin Panel' },
+    { value: 'JWT', label: 'Auth & Validation' },
+    { value: 'DB', label: 'Isolated Roles' }
+  ];
+
+  const metrics = Array.isArray(content?.impactMetrics) && content.impactMetrics.length > 0
+    ? content.impactMetrics
+    : defaultMetrics;
+
+  const COLORS = ['text-white', 'text-blue-400', 'text-emerald-400', 'text-purple-400', 'text-amber-400', 'text-pink-400'];
+
   return (
     <section className="section-padding bg-navy-950 border-t border-navy-800">
       <div className="max-w-6xl mx-auto">
@@ -64,22 +77,21 @@ export default function CurrentlyBuilding({ content }) {
               Engineering <span className="gradient-text">Impact</span>
             </h2>
             <div className="grid grid-cols-2 gap-4">
-              <div className="card-base p-6 flex flex-col justify-center items-center text-center group">
-                <span className="font-display text-4xl md:text-5xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">3+</span>
-                <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">Production MERN Apps</span>
-              </div>
-              <div className="card-base p-6 flex flex-col justify-center items-center text-center group">
-                <span className="font-display text-4xl md:text-5xl font-bold text-blue-400 mb-2 group-hover:scale-110 transition-transform duration-300">CMS</span>
-                <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">Secure Admin Panel</span>
-              </div>
-              <div className="card-base p-6 flex flex-col justify-center items-center text-center group">
-                <span className="font-display text-4xl md:text-5xl font-bold text-emerald-400 mb-2 group-hover:scale-110 transition-transform duration-300">JWT</span>
-                <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">Auth & Validation</span>
-              </div>
-              <div className="card-base p-6 flex flex-col justify-center items-center text-center group">
-                <span className="font-display text-4xl md:text-5xl font-bold text-purple-400 mb-2 group-hover:scale-110 transition-transform duration-300">DB</span>
-                <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">Isolated Roles</span>
-              </div>
+              {metrics.map((metric, i) => (
+                <div key={i} className="card-base p-6 flex flex-col justify-center items-center text-center group">
+                  <span className={`font-display text-4xl md:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300 ${COLORS[i % COLORS.length]}`}>
+                    {metric.value}
+                  </span>
+                  <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">
+                    {metric.label}
+                  </span>
+                  {metric.description && (
+                    <span className="text-[10px] text-slate-500 mt-2 block">
+                      {metric.description}
+                    </span>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>

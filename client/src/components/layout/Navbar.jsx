@@ -9,11 +9,17 @@ const NAV_LINKS = [
   { label: 'Contact', href: '#contact' },
 ];
 
-export default function Navbar() {
+export default function Navbar({ content }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
+
+  const navLinks = Array.isArray(content?.navbar) && content.navbar.length > 0
+    ? [...content.navbar]
+        .filter((n) => n.visible !== false)
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+    : NAV_LINKS;
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -55,14 +61,25 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <ul className="hidden lg:flex items-center gap-8">
-          {NAV_LINKS.map(({ label, href }) => (
-            <li key={label}>
-              <button
-                onClick={() => handleNav(href)}
-                className="nav-link cursor-pointer text-sm font-medium tracking-wide uppercase transition-colors hover:text-blue-400"
-              >
-                {label}
-              </button>
+          {navLinks.map((item) => (
+            <li key={item.label}>
+              {item.type === 'external' ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-link cursor-pointer text-sm font-medium tracking-wide uppercase transition-colors hover:text-blue-400"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <button
+                  onClick={() => handleNav(item.href)}
+                  className="nav-link cursor-pointer text-sm font-medium tracking-wide uppercase transition-colors hover:text-blue-400"
+                >
+                  {item.label}
+                </button>
+              )}
             </li>
           ))}
         </ul>
@@ -113,14 +130,25 @@ export default function Navbar() {
         } bg-navy-900/98 backdrop-blur-md border-b border-navy-800`}
       >
         <ul className="px-6 py-4 flex flex-col gap-4">
-          {NAV_LINKS.map(({ label, href }) => (
-            <li key={label}>
-              <button
-                onClick={() => handleNav(href)}
-                className="nav-link text-base w-full text-left py-2 font-medium transition-colors hover:text-blue-400"
-              >
-                {label}
-              </button>
+          {navLinks.map((item) => (
+            <li key={item.label}>
+              {item.type === 'external' ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-link text-base w-full text-left py-2 font-medium transition-colors hover:text-blue-400 block"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <button
+                  onClick={() => handleNav(item.href)}
+                  className="nav-link text-base w-full text-left py-2 font-medium transition-colors hover:text-blue-400"
+                >
+                  {item.label}
+                </button>
+              )}
             </li>
           ))}
           <li>
