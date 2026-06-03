@@ -15,6 +15,8 @@ const Notification = require('../models/Notification');
 // @access  Private (Admin only)
 router.get('/export', protect, async (req, res) => {
   try {
+    const mode = req.query.mode === 'sanitized' ? 'sanitized' : 'full';
+
     const [projects, skills, certificates, messages, siteContent, notifications] = await Promise.all([
       Project.find().lean(),
       Skill.find().lean(),
@@ -24,16 +26,38 @@ router.get('/export', protect, async (req, res) => {
       Notification.find().lean(),
     ]);
 
+    let finalMessages = messages;
+    let finalNotifications = notifications;
+
+    if (mode === 'sanitized') {
+      finalMessages = messages.map(m => ({
+        _id: m._id,
+        subject: m.subject,
+        read: m.read,
+        archived: m.archived,
+        createdAt: m.createdAt
+      }));
+      
+      finalNotifications = notifications.map(n => ({
+        _id: n._id,
+        title: n.title,
+        type: n.type,
+        read: n.read,
+        createdAt: n.createdAt
+      }));
+    }
+
     const exportData = {
       exportedAt: new Date().toISOString(),
       version: "1.0",
+      mode: mode,
       data: {
         projects,
         skills,
         certificates,
-        messages,
+        messages: finalMessages,
         siteContent: siteContent || {},
-        notifications
+        notifications: finalNotifications
       }
     };
 

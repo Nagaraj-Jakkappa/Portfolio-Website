@@ -28,17 +28,18 @@ export default function SettingsPage() {
   const [savingPw, setSavingPw] = useState(false);
   const [exporting, setExporting] = useState(false);
 
-  const handleExport = async () => {
+  const handleExport = async (mode = 'full') => {
     setExporting(true);
     const toastId = toast.loading('Generating backup...');
     try {
-      const { data } = await api.get('/admin/export');
+      const { data } = await api.get(`/admin/export?mode=${mode}`);
       
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `techartistry-backup-${new Date().toISOString().split('T')[0]}.json`;
+      const prefix = mode === 'sanitized' ? 'techartistry-sanitized-backup' : 'techartistry-backup';
+      a.download = `${prefix}-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       window.URL.revokeObjectURL(url);
       
@@ -228,15 +229,29 @@ export default function SettingsPage() {
               <p className="text-xs text-slate-500 mt-0.5">
                 Download a safe JSON backup of all public portfolio data.
               </p>
+              <p className="text-[10px] text-amber-500/80 mt-1.5">
+                Full backup may contain private contact messages and emails. Do not share publicly.
+              </p>
             </div>
-            <Btn
-              variant="secondary"
-              size="sm"
-              disabled={exporting}
-              onClick={handleExport}
-            >
-              {exporting ? <><Spinner size={12} /> Exporting...</> : 'Download Backup JSON'}
-            </Btn>
+            <div className="flex flex-col gap-2">
+              <Btn
+                variant="secondary"
+                size="sm"
+                disabled={exporting}
+                onClick={() => handleExport('full')}
+              >
+                {exporting ? <><Spinner size={12} /> Exporting...</> : 'Download Full Backup JSON'}
+              </Btn>
+              <Btn
+                variant="ghost"
+                size="sm"
+                disabled={exporting}
+                onClick={() => handleExport('sanitized')}
+                className="text-slate-400 hover:text-white"
+              >
+                Download Sanitized Backup JSON
+              </Btn>
+            </div>
           </div>
         </div>
       </Card>
