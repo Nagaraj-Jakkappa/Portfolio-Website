@@ -10,13 +10,21 @@ A full-stack professional portfolio application built with MongoDB, Express, Rea
 
 ## 📸 Screenshots
 
+### Public Portfolio
+
 | Homepage | Projects |
 | :---: | :---: |
 | ![Homepage](./docs/screenshots/homepage.png) | ![Projects](./docs/screenshots/projects.png) |
 
-| Admin Dashboard | Admin Projects |
+| Project Case Study | Admin Dashboard |
 | :---: | :---: |
-| ![Admin Dashboard](./docs/screenshots/admin-dashboard.png) | ![Admin Projects](./docs/screenshots/admin-projects.png) |
+| ![Project Detail](./docs/screenshots/project-detail.png) | ![Admin Dashboard](./docs/screenshots/admin-dashboard.png) |
+
+### Admin CMS
+
+| Admin Projects | Content Manager |
+| :---: | :---: |
+| ![Admin Projects](./docs/screenshots/admin-projects.png) | ![Content Manager](./docs/screenshots/admin-content.png) |
 
 ---
 
