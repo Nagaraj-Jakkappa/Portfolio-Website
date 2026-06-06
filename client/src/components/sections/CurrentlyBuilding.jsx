@@ -45,7 +45,7 @@ export default function CurrentlyBuilding({ content, loading }) {
   const COLORS = ['text-white', 'text-blue-400', 'text-emerald-400', 'text-purple-400', 'text-amber-400', 'text-pink-400'];
 
   return (
-    <section className="section-padding bg-navy-950 border-t border-navy-800">
+    <section id="currently-building" className="section-padding bg-navy-950 border-t border-navy-800">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-12 items-start">
           {/* Currently Building */}

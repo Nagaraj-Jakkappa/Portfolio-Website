@@ -46,7 +46,7 @@ export default function Hero({ content }) {
       {/* Radial gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-navy-950/50 via-transparent to-navy-900" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pt-20 pb-10">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pt-20 pb-32">
         <div className="max-w-3xl stagger-children">
           {/* Status Badge */}
           <div
@@ -154,17 +154,20 @@ export default function Hero({ content }) {
       </div>
 
       {/* Animated Scroll indicator */}
-      <button
-        onClick={() => handleScroll('#about')}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500 hover:text-blue-400 transition-colors animate-bounce"
-      >
-        <span className="text-[10px] font-mono tracking-tighter uppercase opacity-50">
-          Discovery
-        </span>
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full flex justify-center z-20">
+        <button
+          onClick={() => handleScroll('#currently-building')}
+          className="group flex flex-col items-center gap-3 p-2 focus:outline-none"
+          aria-label="Scroll down to discover more"
+        >
+          <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-slate-500 group-hover:text-blue-400 transition-colors">
+            Discover
+          </span>
+          <div className="w-5 h-8 rounded-full border-2 border-slate-700 flex justify-center p-1 group-hover:border-blue-500/50 transition-colors">
+            <div className="w-1 h-1.5 bg-slate-500 rounded-full animate-bounce group-hover:bg-blue-400 transition-colors" />
+          </div>
+        </button>
+      </div>
     </section>
   );
 }
