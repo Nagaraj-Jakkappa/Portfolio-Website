@@ -4,6 +4,7 @@ import api from '../../api/axios';
 export default function Certifications() {
   const [certs, setCerts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showOutcomes, setShowOutcomes] = useState({});
 
   useEffect(() => {
     const fetchCerts = async () => {
@@ -128,6 +129,23 @@ export default function Certifications() {
                 <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3">
                   {cert.description}
                 </p>
+
+                {/* Learning Outcomes Toggle */}
+                <div className="mb-4">
+                  <button
+                    onClick={() => setShowOutcomes(prev => ({ ...prev, [cert._id]: !prev[cert._id] }))}
+                    className="text-xs font-mono uppercase tracking-wider text-blue-400 hover:text-blue-300 flex items-center gap-2 mb-2"
+                  >
+                    {showOutcomes[cert._id] ? '- Hide Learning Outcomes' : '+ View Learning Outcomes'}
+                  </button>
+                  {showOutcomes[cert._id] && cert.learningOutcomes && cert.learningOutcomes.length > 0 && (
+                    <ul className="list-disc pl-5 text-slate-300 space-y-1 text-sm">
+                      {cert.learningOutcomes.map((out, i) => (
+                        <li key={i}>{out}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
 
                 <div className="flex justify-between items-center pt-4 border-t border-white/5">
                   <span className="text-slate-500 text-xs font-mono">
