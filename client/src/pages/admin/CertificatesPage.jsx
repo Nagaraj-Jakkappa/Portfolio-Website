@@ -21,11 +21,20 @@ const EMPTY = {
   date: '',
   link: '',
   description: '',
+  learningOutcomes: '', // newline-separated string for UI
 };
 
 function CertModal({ cert, onClose, onSave }) {
   const editing = !!cert?._id;
-  const [form, setForm] = useState(editing ? { ...cert } : EMPTY);
+  const [form, setForm] = useState(() => {
+    if (editing && cert) {
+      return {
+        ...cert,
+        learningOutcomes: Array.isArray(cert.learningOutcomes) ? cert.learningOutcomes.join('\n') : ''
+      };
+    }
+    return EMPTY;
+  });
   const [saving, setSaving] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -36,7 +45,14 @@ function CertModal({ cert, onClose, onSave }) {
     }
     setSaving(true);
     try {
-      await onSave(form, cert?._id);
+      // Convert learningOutcomes string to array
+      const payload = {
+        ...form,
+        learningOutcomes: form.learningOutcomes
+          ? form.learningOutcomes.split('\n').map((l) => l.trim()).filter((l) => l)
+          : []
+      };
+      await onSave(payload, cert?._id);
       onClose();
     } catch (error) {
       toast.error('Save failed. Check your connection.');
@@ -99,6 +115,12 @@ function CertModal({ cert, onClose, onSave }) {
           label="Description"
           value={form.description}
           onChange={(e) => set('description', e.target.value)}
+        />
+        <Textarea
+          label="Learning Outcomes"
+          value={form.learningOutcomes}
+          onChange={(e) => set('learningOutcomes', e.target.value)}
+          placeholder="Enter each outcome on a new line"
         />
       </div>
     </Modal>
