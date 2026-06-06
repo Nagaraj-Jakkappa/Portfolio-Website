@@ -138,9 +138,13 @@ export default function Certifications() {
                   >
                     {showOutcomes[cert._id] ? '- Hide Learning Outcomes' : '+ View Learning Outcomes'}
                   </button>
-                  {showOutcomes[cert._id] && cert.learningOutcomes && cert.learningOutcomes.length > 0 && (
+                  {showOutcomes[cert._id] && (
                     <ul className="list-disc pl-5 text-slate-300 space-y-1 text-sm">
-                      {cert.learningOutcomes.map((out, i) => (
+                      {(Array.isArray(cert.learningOutcomes)
+                        ? cert.learningOutcomes
+                        : typeof cert.learningOutcomes === 'string'
+                        ? cert.learningOutcomes.split('\n').filter(l => l.trim())
+                        : []).map((out, i) => (
                         <li key={i}>{out}</li>
                       ))}
                     </ul>

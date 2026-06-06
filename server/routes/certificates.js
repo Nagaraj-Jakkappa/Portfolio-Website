@@ -13,6 +13,16 @@ const certValidationRules = [
   body('date').optional({ checkFalsy: true }).isString().withMessage('Date must be a string'),
   body('link').optional({ checkFalsy: true }).isURL().withMessage('Link must be a valid URL'),
   body('description').optional({ checkFalsy: true }).isString().withMessage('Description must be a string'),
+  // Learning outcomes can be an empty array or array of strings
+  body('learningOutcomes')
+    .optional()
+    .isArray()
+    .withMessage('Learning outcomes must be an array'),
+  body('learningOutcomes.*')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 250 })
+    .withMessage('Each learning outcome must be between 2 and 250 characters')
 ];
 
 // GET /api/certificates
@@ -36,6 +46,7 @@ router.post('/', protect, certValidationRules, validate, async (req, res) => {
       date: req.body.date || null,
       link: req.body.link?.trim() || '',
       description: req.body.description?.trim() || '',
+      learningOutcomes: Array.isArray(req.body.learningOutcomes) ? req.body.learningOutcomes : [],
     });
     res.status(201).json(cert);
   } catch (err) {
@@ -58,6 +69,7 @@ router.put('/:id', protect, certValidationRules, validate, async (req, res) => {
         date: req.body.date || null,
         link: req.body.link?.trim() || '',
         description: req.body.description?.trim() || '',
+        learningOutcomes: Array.isArray(req.body.learningOutcomes) ? req.body.learningOutcomes : [],
       },
       { new: true, runValidators: true }
     );
