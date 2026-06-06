@@ -15,13 +15,15 @@ export default function Footer({ content }) {
 
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
         {/* Logo */}
-        <div className="flex items-center gap-1">
-          <span className="font-display font-black text-lg tracking-tighter text-white uppercase italic">
-            {brandName}
+        <Link to="/" className="flex items-center gap-1 group md:order-first">
+          <span className="font-display font-black text-xl tracking-tighter text-white uppercase italic">
+            Tech
+            <span className="text-blue-400 group-hover:text-blue-300 transition-colors">
+              Artistry
+            </span>
           </span>
-
-          <span className="font-mono text-[10px] text-slate-600 mt-1">.in</span>
-        </div>
+          <span className="font-mono text-xs text-slate-500 mt-1">.in</span>
+        </Link>
 
         {/* Copyright */}
         <p className="text-slate-500 text-xs font-mono tracking-tight text-center md:order-none order-last">
@@ -38,12 +40,12 @@ export default function Footer({ content }) {
         </p>
 
         {/* Social + Top */}
-        <div className="flex items-center gap-6 text-xs font-medium uppercase tracking-widest text-slate-500">
+        <div className="flex items-center gap-3 md:gap-4 text-xs font-medium uppercase tracking-widest text-slate-500">
           <a
             href="https://github.com/Nagaraj-Jakkappa"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-all duration-300 hover:-translate-y-1"
+            className="px-4 py-2 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300"
           >
             GitHub
           </a>
@@ -52,7 +54,7 @@ export default function Footer({ content }) {
             href="https://linkedin.com/in/nagaraj-jakkappa"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-all duration-300 hover:-translate-y-1"
+            className="px-4 py-2 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300"
           >
             LinkedIn
           </a>
@@ -64,9 +66,13 @@ export default function Footer({ content }) {
                 behavior: 'smooth',
               })
             }
-            className="hover:text-white transition-all duration-300 hover:-translate-y-1"
+            className="group px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-all duration-300 flex items-center gap-2 ml-2"
+            aria-label="Back to Top"
           >
-            ↑ Top
+            <svg className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+            Top
           </button>
         </div>
       </div>
