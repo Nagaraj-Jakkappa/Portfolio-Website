@@ -316,7 +316,7 @@ export default function Experience() {
         {/* Section header */}
         <div className="mb-12 sm:mb-16">
           <p className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-[0.35em] mb-3">
-            Experience
+            02 / Hands-on Experience
           </p>
           <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">
             Hands-on Experience

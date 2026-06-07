@@ -39,7 +39,7 @@ export default function Skills() {
       <section id="skills" className="section-padding bg-navy-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-16">
-            <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">02 / Skills</p>
+            <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">03 / Skills</p>
             <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
               My <span className="gradient-text">tech stack</span>
             </h2>
@@ -67,7 +67,7 @@ export default function Skills() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
-            02 / Skills
+            03 / Skills
           </p>
           <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
             My <span className="gradient-text">tech stack</span>

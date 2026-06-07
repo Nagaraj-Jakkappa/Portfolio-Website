@@ -123,7 +123,7 @@ export default function Contact({ content }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
-            04 / Contact
+            06 / Contact
           </p>
           <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
             Let's <span className="gradient-text">work together</span>
