@@ -96,9 +96,9 @@ function BreakdownPanel({ breakdown }) {
       {/* Skills Applied */}
       {hasSkills && (
         <div className="px-5 py-4 border-b border-slate-800/60 last:border-b-0">
-          <p className="text-[11px] font-bold text-violet-400 uppercase tracking-[0.2em] mb-3">
+          <h4 className="font-semibold text-slate-100 tracking-tight mb-3">
             Skills Applied
-          </p>
+          </h4>
           <div className="flex flex-wrap gap-2">
             {breakdown.skillsApplied.map((s, i) => (
               <SkillBadge key={i} label={s} />
@@ -110,9 +110,9 @@ function BreakdownPanel({ breakdown }) {
       {/* Development Practices */}
       {hasPractices && (
         <div className="px-5 py-4 border-b border-slate-800/60 last:border-b-0">
-          <p className="text-[11px] font-bold text-emerald-400 uppercase tracking-[0.2em] mb-3">
+          <h4 className="font-semibold text-slate-100 tracking-tight mb-3">
             Development Practices
-          </p>
+          </h4>
           <BulletList items={breakdown.practices} color="violet" />
         </div>
       )}
@@ -120,9 +120,9 @@ function BreakdownPanel({ breakdown }) {
       {/* Practical Takeaways */}
       {hasTakeaways && (
         <div className="px-5 py-4">
-          <p className="text-[11px] font-bold text-sky-400 uppercase tracking-[0.2em] mb-3">
+          <h4 className="font-semibold text-slate-100 tracking-tight mb-3">
             Practical Takeaways
-          </p>
+          </h4>
           <BulletList items={breakdown.takeaways} color="cyan" />
         </div>
       )}
@@ -218,32 +218,24 @@ function ExperienceCard({ item }) {
         </ul>
       )}
 
-      {/* Tech stack */}
-      {item.techStack?.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-800/80">
-          {item.techStack.map((t, i) => (
-            <TechBadge key={i} label={t} />
-          ))}
-        </div>
-      )}
+      {/* Footer row (Tech stack + Breakdown toggle) */}
+      {(item.techStack?.length > 0 || hasBreakdown) && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-5 pt-4 border-t border-slate-800/80">
+          <div className="flex flex-wrap gap-2">
+            {item.techStack?.map((t, i) => (
+              <TechBadge key={i} label={t} />
+            ))}
+          </div>
 
-      {/* Breakdown toggle button */}
-      {hasBreakdown && (
-        <div className="mt-5">
-          <button
-            type="button"
-            onClick={() => setShowBreakdown((v) => !v)}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-cyan-400 transition-colors duration-200 group/btn"
-            aria-expanded={showBreakdown}
-          >
-            {/* Chevron */}
-            <span
-              className={`w-4 h-4 rounded-full border border-slate-600 group-hover/btn:border-cyan-400/60 flex items-center justify-center transition-all duration-200 shrink-0 ${
-                showBreakdown ? 'bg-cyan-500/10 border-cyan-400/60' : ''
-              }`}
+          {hasBreakdown && (
+            <button
+              type="button"
+              onClick={() => setShowBreakdown((v) => !v)}
+              className="text-xs font-mono uppercase tracking-wider text-blue-400 hover:text-blue-300 flex items-center gap-2 shrink-0 transition-colors duration-200"
+              aria-expanded={showBreakdown}
             >
               <svg
-                className={`w-2.5 h-2.5 transition-transform duration-200 ${showBreakdown ? 'rotate-180 text-cyan-400' : ''}`}
+                className={`w-3.5 h-3.5 transition-transform duration-300 ${showBreakdown ? 'rotate-180' : ''}`}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.5"
@@ -251,12 +243,16 @@ function ExperienceCard({ item }) {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
-            </span>
-            {showBreakdown ? 'Hide Experience Breakdown' : 'View Experience Breakdown'}
-          </button>
+              {showBreakdown ? 'Hide Experience Breakdown' : 'View Experience Breakdown'}
+            </button>
+          )}
+        </div>
+      )}
 
-          {/* Animated breakdown panel */}
-          {showBreakdown && <BreakdownPanel breakdown={item.breakdown} />}
+      {/* Animated breakdown panel */}
+      {hasBreakdown && showBreakdown && (
+        <div className="mt-4">
+          <BreakdownPanel breakdown={item.breakdown} />
         </div>
       )}
     </div>
