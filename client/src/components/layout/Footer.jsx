@@ -9,7 +9,7 @@ export default function Footer({ content }) {
   const copyrightText = f.copyrightText || "Techartistry.in";
 
   return (
-    <footer className="bg-navy-950 border-t border-navy-900 py-12 px-6 md:px-12 relative overflow-hidden">
+    <footer className="bg-navy-950 border-t border-navy-900 py-12 px-6 md:px-12 relative overflow-hidden flex flex-col items-center md:flex-row md:justify-between">
       {/* Background Glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-24 bg-blue-500/5 blur-[120px] pointer-events-none" />
 
@@ -40,7 +40,7 @@ export default function Footer({ content }) {
         </p>
 
         {/* Social + Top */}
-        <div className="flex items-center gap-3 md:gap-4 text-xs font-medium uppercase tracking-widest text-slate-500">
+        <div className="flex flex-col md:flex-row items-center w-full justify-center gap-3 md:gap-4 text-xs font-medium uppercase tracking-widest text-slate-500">
           <a
             href="https://github.com/Nagaraj-Jakkappa"
             target="_blank"

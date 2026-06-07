@@ -107,9 +107,11 @@ export default function Navbar({ content }) {
 
         {/* Mobile hamburger */}
         <button
-          className="lg:hidden flex flex-col gap-1.5 p-2"
+          className="lg:hidden flex items-center p-3 focus:outline-none"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
         >
           <span
             className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? 'rotate-45 translate-y-2' : ''}`}
@@ -123,44 +125,32 @@ export default function Navbar({ content }) {
         </button>
       </nav>
 
-      {/* Mobile menu */}
-      <div
-        className={`lg:hidden transition-all duration-300 overflow-hidden ${
-          open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        } bg-navy-900/98 backdrop-blur-md border-b border-navy-800`}
-      >
-        <ul className="px-6 py-4 flex flex-col gap-4">
-          {navLinks.map((item) => (
-            <li key={item.label}>
-              {item.type === 'external' ? (
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="nav-link text-base w-full text-left py-2 font-medium transition-colors hover:text-blue-400 block"
-                >
-                  {item.label}
-                </a>
-              ) : (
-                <button
-                  onClick={() => handleNav(item.href)}
-                  className="nav-link text-base w-full text-left py-2 font-medium transition-colors hover:text-blue-400"
-                >
-                  {item.label}
-                </button>
-              )}
-            </li>
-          ))}
-          <li>
-            <button
-              onClick={() => handleNav('#contact')}
-              className="btn-primary w-full justify-center mt-2 rounded-full py-3"
-            >
-              Hire Me
-            </button>
+{open && (
+  <div className="fixed inset-0 z-40 md:hidden bg-black/60 backdrop-blur-sm flex items-start justify-center p-4" onClick={() => setOpen(false)}>
+    <div className="bg-navy-900/95 border-b border-navy-800 w-full max-w-md rounded-lg max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <ul className="flex flex-col gap-4 px-6 py-4">
+        {navLinks.map((item) => (
+          <li key={item.label}>
+            {item.type === 'external' ? (
+              <a href={item.href} target="_blank" rel="noopener noreferrer" className="nav-link text-base w-full text-left py-2 font-medium transition-colors hover:text-blue-400 block" onClick={() => setOpen(false)}>
+                {item.label}
+              </a>
+            ) : (
+              <button onClick={() => { handleNav(item.href); setOpen(false); }} className="nav-link text-base w-full text-left py-2 font-medium transition-colors hover:text-blue-400">
+                {item.label}
+              </button>
+            )}
           </li>
-        </ul>
-      </div>
+        ))}
+        <li>
+          <button onClick={() => { handleNav('#contact'); setOpen(false); }} className="btn-primary w-full justify-center mt-2 rounded-full py-3">
+            Hire Me
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+)}
     </header>
   );
 }

@@ -59,7 +59,7 @@ export default function Hero({ content }) {
 
           {/* Heading */}
           <h1
-            className="font-display font-extrabold text-5xl md:text-7xl lg:text-[5.5rem] tracking-tight leading-[1.1] text-white mb-6 animate-fade-up"
+            className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] text-white mb-6 animate-fade-up"
             style={{ animationDelay: '100ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             {headlineParts.length > 1 ? (
@@ -99,7 +99,7 @@ export default function Hero({ content }) {
 
           {/* CTAs */}
           <div
-            className="flex flex-wrap gap-4 animate-fade-up"
+            className="flex flex-col sm:flex-row gap-2 mt-6 animate-fade-up"
             style={{ animationDelay: '400ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             <button

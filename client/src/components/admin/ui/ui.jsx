@@ -214,7 +214,7 @@ export function Modal({ open, onClose, title, subtitle, children, footer, maxWid
       onClick={onClose}
     >
       <div
-        className={`bg-navy-900 border border-navy-800 rounded-2xl w-full ${maxWidth} shadow-2xl`}
+        className={`bg-navy-900 border border-navy-800 rounded-2xl w-full ${maxWidth} shadow-2xl max-h-[85vh] overflow-y-auto`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
