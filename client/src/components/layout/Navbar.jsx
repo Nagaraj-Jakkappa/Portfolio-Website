@@ -47,7 +47,7 @@ export default function Navbar({ content }) {
           : 'bg-transparent'
       }`}
     >
-      <nav className="max-w-6xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-1 group">
           <span className="font-display font-black text-xl tracking-tighter text-white uppercase italic">
@@ -106,24 +106,21 @@ export default function Navbar({ content }) {
         </div>
 
         {/* Mobile hamburger */}
-        <button
-          className="lg:hidden flex items-center p-3 focus:outline-none"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-        >
-          <span
-            className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? 'rotate-45 translate-y-2' : ''}`}
-          />
-          <span
-            className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? 'opacity-0' : ''}`}
-          />
-          <span
-            className={`block h-0.5 w-6 bg-slate-300 transition-all duration-300 ${open ? '-rotate-45 -translate-y-2' : ''}`}
-          />
-        </button>
-      </nav>
+<button
+  type="button"
+  aria-label="Toggle navigation menu"
+  aria-expanded={open}
+  aria-controls="mobile-menu"
+  onClick={() => setOpen((v) => !v)}
+  className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-700/70 bg-slate-900/60 text-slate-200 transition hover:border-cyan-400/60 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+>
+  <span className="flex flex-col gap-1.5">
+    <span className={`block h-0.5 w-6 rounded-full bg-current ${open ? 'rotate-45 translate-y-2' : ''}`}></span>
+    <span className={`block h-0.5 w-6 rounded-full bg-current ${open ? 'opacity-0' : ''}`}></span>
+    <span className={`block h-0.5 w-6 rounded-full bg-current ${open ? '-rotate-45 -translate-y-2' : ''}`}></span>
+  </span>
+</button>
+      </div>
 
 {open && (
   <div className="fixed inset-0 z-40 md:hidden bg-black/60 backdrop-blur-sm flex items-start justify-center p-4" onClick={() => setOpen(false)}>
