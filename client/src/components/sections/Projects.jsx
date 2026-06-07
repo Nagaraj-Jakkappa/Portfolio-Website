@@ -78,7 +78,7 @@ function ProjectCard({ project }) {
 
       {/* Content */}
       <div className="p-6 flex flex-col flex-1">
-        <h3 className="font-display font-semibold text-white text-xl mb-2 group-hover:text-blue-400 transition-colors">
+        <h3 className="font-display font-semibold text-white text-xl mb-2 break-words group-hover:text-blue-400 transition-colors">
           {title}
         </h3>
         
@@ -93,7 +93,7 @@ function ProjectCard({ project }) {
           </div>
         )}
 
-        <p className="text-slate-400 text-sm leading-relaxed mb-4">{description}</p>
+        <p className="text-slate-400 text-sm leading-relaxed mb-4 break-words">{description}</p>
 
         {/* Case Study Toggle */}
         <div className="mt-auto pt-4 border-t border-navy-700/50">
@@ -105,7 +105,7 @@ function ProjectCard({ project }) {
           </button>
           
           {expanded && (
-            <div className="space-y-3 text-sm text-slate-300 bg-navy-900/50 p-4 rounded-lg border border-navy-700 mb-4 animate-fade-up">
+            <div className="space-y-3 text-sm text-slate-300 bg-navy-900/50 p-4 rounded-lg border border-navy-700 mb-4 animate-fade-up break-words">
               {caseStudy.problem && (
                 <div>
                   <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Problem:</strong>
@@ -129,11 +129,11 @@ function ProjectCard({ project }) {
         </div>
 
         {/* Links */}
-        <div className="flex flex-wrap gap-3 pt-3">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-3">
           {project.slug && (
             <Link
               to={`/projects/${project.slug}`}
-              className="flex items-center gap-1.5 text-xs font-medium text-white bg-blue-500 hover:bg-blue-600 px-3 py-1.5 rounded transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-white bg-blue-500 hover:bg-blue-600 px-3 py-1.5 rounded transition-colors w-full sm:w-auto"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -146,7 +146,7 @@ function ProjectCard({ project }) {
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs font-medium text-white bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 px-3 py-1.5 rounded transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-white bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 px-3 py-1.5 rounded transition-colors w-full sm:w-auto"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -159,7 +159,7 @@ function ProjectCard({ project }) {
               href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white bg-navy-800 hover:bg-navy-700 border border-navy-700 px-3 py-1.5 rounded transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white bg-navy-800 hover:bg-navy-700 border border-navy-700 px-3 py-1.5 rounded transition-colors w-full sm:w-auto"
             >
               <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.04c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.72.08-.72 1.2.08 1.82 1.22 1.82 1.22 1.06 1.82 2.8 1.3 3.48.98.1-.76.42-1.3.76-1.6-2.66-.3-5.46-1.33-5.46-5.93 0-1.3.47-2.38 1.22-3.22-.12-.3-.52-1.52.12-3.18 0 0 1-.32 3.3 1.22a11.5 11.5 0 016 0c2.28-1.54 3.28-1.22 3.28-1.22.64 1.66.24 2.88.12 3.18.76.84 1.22 1.9 1.22 3.22 0 4.6-2.8 5.62-5.48 5.92.44.38.82 1.12.82 2.26v3.35c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z" />

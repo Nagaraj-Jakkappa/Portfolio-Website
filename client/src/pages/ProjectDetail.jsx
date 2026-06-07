@@ -119,7 +119,7 @@ export default function ProjectDetail() {
         </Link>
 
         {/* Hero Section */}
-        <header className="mb-12">
+        <header className="mb-12 overflow-hidden">
           <div className="flex flex-wrap gap-3 mb-6">
             <span className={`text-xs font-mono px-3 py-1 rounded-md border ${CATEGORY_COLOR[category] || CATEGORY_COLOR.other}`}>
               {category}
@@ -131,7 +131,7 @@ export default function ProjectDetail() {
             )}
           </div>
           
-          <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight">
+          <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight break-words">
             {title}
           </h1>
           <p className="text-xl text-slate-300 leading-relaxed max-w-3xl">
@@ -209,7 +209,7 @@ export default function ProjectDetail() {
             <div className="bg-navy-800/50 rounded-2xl border border-navy-700 p-6">
               <h3 className="text-sm font-mono tracking-widest text-white uppercase mb-4">Technologies</h3>
               {techStack?.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 break-words">
                   {techStack.map(tech => (
                     <span key={tech} className="px-3 py-1.5 text-xs font-medium text-slate-300 bg-navy-900 border border-navy-700 rounded-md">
                       {tech}
