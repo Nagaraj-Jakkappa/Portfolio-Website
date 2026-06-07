@@ -89,7 +89,7 @@ export default function CurrentlyBuilding({ content, loading }) {
             <h2 className="font-display font-bold text-2xl text-white mb-6">
               Engineering <span className="gradient-text">Impact</span>
             </h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {loading ? (
                 [1, 2, 3, 4].map((i) => (
                   <div key={i} className="card-base p-6 flex flex-col justify-center items-center text-center animate-pulse min-h-[140px]">

@@ -82,7 +82,7 @@ export default function About({ content }) {
           <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
             01 / About
           </p>
-          <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-white text-center md:text-left">
             {about.title || (
               <>
                 The person behind <span className="gradient-text">the code</span>
