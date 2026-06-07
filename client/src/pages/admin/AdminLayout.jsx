@@ -38,6 +38,7 @@ const ICONS = {
   eye: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 100 6 3 3 0 000-6z',
   content: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
   skills: 'M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5',
+  experience: 'M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2',
 };
 
 const NAV_MAIN = [
@@ -47,6 +48,7 @@ const NAV_MAIN = [
   { label: 'Skills', path: '/admin/skills', icon: 'skills' },
   { label: 'Projects', path: '/admin/projects', icon: 'projects' },
   { label: 'Certificates', path: '/admin/certificates', icon: 'certs' },
+  { label: 'Experiences', path: '/admin/experiences', icon: 'experience' },
   { label: 'Messages', path: '/admin/messages', icon: 'messages' },
   { label: 'Notifications', path: '/admin/notifications', icon: 'bell' },
   { label: 'Settings', path: '/admin/settings', icon: 'settings' },

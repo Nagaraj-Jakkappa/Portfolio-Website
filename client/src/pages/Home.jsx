@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import Hero from '../components/sections/Hero';
 import CurrentlyBuilding from '../components/sections/CurrentlyBuilding';
 import About from '../components/sections/About';
+import Experience from '../components/sections/Experience';
 import NowSection from '../components/sections/NowSection';
 import Skills from '../components/sections/Skills';
 import GithubPulse from '../components/sections/GithubPulse';
@@ -72,6 +73,8 @@ export default function Home({ content, loading }) {
       <CurrentlyBuilding content={content} loading={loading} />
 
       <About content={content} />
+
+      <Experience />
 
       <NowSection />
 

@@ -28,6 +28,9 @@ const SkillsPage = lazy(() => import('./pages/admin/SkillsPage'));
 // NEW Notification Page
 const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage'));
 
+// Experience Page
+const ExperiencesPage = lazy(() => import('./pages/admin/ExperiencesPage'));
+
 function PageSpinner() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#060d1a]">
@@ -117,6 +120,9 @@ export default function App() {
 
           {/* NEW Notifications Route */}
           <Route path="notifications" element={<NotificationsPage />} />
+
+          {/* Experiences */}
+          <Route path="experiences" element={<ExperiencesPage />} />
         </Route>
 
         {/* 404 */}
