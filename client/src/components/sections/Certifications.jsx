@@ -121,7 +121,7 @@ export default function Certifications() {
                   </div>
 
                   <div>
-                    <h3 className="text-white font-bold text-lg leading-tight">{cert.title}</h3>
+                    <h3 className="text-white font-bold text-lg leading-tight break-words">{cert.title}</h3>
                     <p className="text-blue-400 text-sm font-mono mt-1">{cert.organization}</p>
                   </div>
                 </div>
@@ -139,7 +139,7 @@ export default function Certifications() {
                     {showOutcomes[cert._id] ? '- Hide Learning Outcomes' : '+ View Learning Outcomes'}
                   </button>
                   {showOutcomes[cert._id] && (
-                    <ul className="list-disc pl-5 text-slate-300 space-y-1 text-sm">
+                    <ul className="list-disc pl-5 text-slate-300 space-y-1 text-sm break-words">
                       {(Array.isArray(cert.learningOutcomes)
                         ? cert.learningOutcomes
                         : typeof cert.learningOutcomes === 'string'

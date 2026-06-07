@@ -78,7 +78,7 @@ export default function Skills() {
           {Object.entries(groupedSkills).map(([category, items]) => (
             <div key={category} className="card-base card-hover p-6">
               <h3
-                className={`font-display font-semibold uppercase tracking-widest mb-5 px-2 py-1 rounded-md border w-fit text-xs ${LEVEL_COLORS[category] || 'text-slate-400 border-slate-400/20 bg-slate-500/10'}`}
+                className={`font-display font-semibold uppercase tracking-widest mb-5 px-2 py-1 rounded-md border w-fit text-xs text-center md:text-left ${LEVEL_COLORS[category] || 'text-slate-400 border-slate-400/20 bg-slate-500/10'}`}
               >
                 {category}
               </h3>
