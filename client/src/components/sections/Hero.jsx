@@ -46,7 +46,7 @@ export default function Hero({ content }) {
       {/* Radial gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-navy-950/50 via-transparent to-navy-900" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pt-20 pb-32">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
         <div className="max-w-3xl stagger-children">
           {/* Status Badge */}
           <div

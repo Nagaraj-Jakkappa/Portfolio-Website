@@ -37,7 +37,7 @@ export default function Skills() {
   if (loading) {
     return (
       <section id="skills" className="section-padding bg-navy-950 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-16">
             <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">02 / Skills</p>
             <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
@@ -64,7 +64,7 @@ export default function Skills() {
   return (
     <section id="skills" className="section-padding bg-navy-950 relative overflow-hidden">
       <div className="orb w-72 h-72 bg-purple-500 bottom-0 left-10 opacity-5" />
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
             02 / Skills

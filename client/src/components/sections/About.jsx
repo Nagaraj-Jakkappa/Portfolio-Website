@@ -76,7 +76,7 @@ export default function About({ content }) {
     <section id="about" className="section-padding bg-navy-900 relative overflow-hidden">
       <div className="orb w-64 h-64 bg-blue-500 top-0 right-20 opacity-5" />
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="mb-16">
           <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">

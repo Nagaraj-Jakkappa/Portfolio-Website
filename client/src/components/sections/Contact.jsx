@@ -120,7 +120,7 @@ export default function Contact({ content }) {
     <section id="contact" className="section-padding bg-navy-950 relative overflow-hidden">
       <div className="orb w-96 h-96 bg-blue-600 top-10 left-10 opacity-5" />
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
             04 / Contact

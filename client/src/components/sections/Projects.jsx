@@ -200,7 +200,7 @@ export default function Projects() {
     <section id="projects" className="section-padding bg-navy-900 relative overflow-hidden">
       <div className="orb w-80 h-80 bg-blue-500 top-20 right-0 opacity-5" />
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
             03 / Projects

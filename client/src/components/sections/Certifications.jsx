@@ -26,7 +26,7 @@ export default function Certifications() {
   if (loading) {
     return (
       <section id="certifications" className="section-padding bg-navy-950">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">02 / Recognition</p>
             <h2 className="font-display font-bold text-4xl text-white">Certifications & Education</h2>
@@ -58,7 +58,7 @@ export default function Certifications() {
 
   return (
     <section id="certifications" className="section-padding bg-navy-950">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">

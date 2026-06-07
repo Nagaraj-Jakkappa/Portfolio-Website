@@ -46,7 +46,7 @@ export default function CurrentlyBuilding({ content, loading }) {
 
   return (
     <section id="currently-building" className="section-padding bg-navy-950 border-t border-navy-800">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row gap-12 items-start">
           {/* Currently Building */}
           <div className="flex-1 w-full">

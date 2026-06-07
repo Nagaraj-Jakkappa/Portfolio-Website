@@ -107,7 +107,7 @@ export default function ProjectDetail() {
       <div className="orb w-96 h-96 bg-blue-500 top-0 right-0 opacity-[0.03]" />
       <div className="orb w-64 h-64 bg-emerald-500 bottom-0 left-0 opacity-[0.03]" />
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Link 
           to="/#projects" 
           className="inline-flex items-center gap-2 text-sm font-mono text-slate-400 hover:text-blue-400 transition-colors mb-8 group"
