@@ -13,7 +13,7 @@ export default function Footer({ content }) {
       {/* Background Glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-24 bg-blue-500/5 blur-[120px] pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row flex-wrap items-center justify-between gap-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-1 group md:order-first">
           <span className="font-display font-black text-xl tracking-tighter text-white uppercase italic">
