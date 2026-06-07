@@ -165,10 +165,7 @@ export default function AdminLayout() {
     <div className="flex h-screen bg-navy-950 text-slate-200 overflow-hidden">
       {/* Mobile Overlay */}
       {mobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-40 md:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/60 z-40 md:hidden cursor-pointer" onClick={() => setMobileOpen(false)} />
       )}
 
       {/* Mobile Sidebar */}
