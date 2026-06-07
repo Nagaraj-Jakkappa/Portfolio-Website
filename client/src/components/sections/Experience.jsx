@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
 
-// ── Fallback (only used when API call fails entirely) ─────────────────────────
+// ── Fallback (only when API call fails entirely) ───────────────────────────────
 const DEFAULT_EXPERIENCE = [
   {
     _id: 'default-1',
@@ -19,10 +19,30 @@ const DEFAULT_EXPERIENCE = [
       'Practiced task-based frontend development, debugging, and project submission workflow.',
     ],
     techStack: ['HTML', 'CSS', 'JavaScript'],
+    breakdown: {
+      skillsApplied: [
+        'Responsive Design',
+        'UI Layout Structuring',
+        'JavaScript DOM Logic',
+        'Frontend Debugging',
+        'Git Workflow',
+      ],
+      practices: [
+        'Broke UI tasks into smaller frontend components.',
+        'Tested layouts across different screen sizes.',
+        'Improved spacing, alignment, and visual consistency.',
+        'Practiced task-based development and project submission workflow.',
+      ],
+      takeaways: [
+        'Improved confidence in building responsive frontend interfaces.',
+        'Strengthened HTML, CSS, and JavaScript fundamentals through practical tasks.',
+        'Learned how to polish UI details like spacing, layout, and mobile behavior.',
+      ],
+    },
   },
 ];
 
-// ── Tech badge ────────────────────────────────────────────────────────────────
+// ── Small helpers ─────────────────────────────────────────────────────────────
 function TechBadge({ label }) {
   return (
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wide bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 whitespace-nowrap">
@@ -31,7 +51,14 @@ function TechBadge({ label }) {
   );
 }
 
-// ── Type badge ────────────────────────────────────────────────────────────────
+function SkillBadge({ label }) {
+  return (
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wide bg-violet-500/10 text-violet-400 border border-violet-500/20 whitespace-nowrap">
+      {label}
+    </span>
+  );
+}
+
 function TypeBadge({ label }) {
   return (
     <span className="inline-flex items-center px-3 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap">
@@ -40,18 +67,77 @@ function TypeBadge({ label }) {
   );
 }
 
+function BulletList({ items, color = 'cyan' }) {
+  const dotColor = color === 'violet' ? 'bg-violet-400/70' : 'bg-emerald-400/70';
+  return (
+    <ul className="space-y-2">
+      {items.map((item, i) => (
+        <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
+          <span
+            className={`mt-[6px] w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`}
+          />
+          <span className="break-words leading-relaxed">{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// ── Expandable breakdown panel ────────────────────────────────────────────────
+function BreakdownPanel({ breakdown }) {
+  const hasSkills = breakdown?.skillsApplied?.length > 0;
+  const hasPractices = breakdown?.practices?.length > 0;
+  const hasTakeaways = breakdown?.takeaways?.length > 0;
+
+  if (!hasSkills && !hasPractices && !hasTakeaways) return null;
+
+  return (
+    <div className="mt-4 rounded-xl border border-slate-700/50 bg-slate-950/50 overflow-hidden">
+      {/* Skills Applied */}
+      {hasSkills && (
+        <div className="px-5 py-4 border-b border-slate-800/60 last:border-b-0">
+          <p className="text-[11px] font-bold text-violet-400 uppercase tracking-[0.2em] mb-3">
+            Skills Applied
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {breakdown.skillsApplied.map((s, i) => (
+              <SkillBadge key={i} label={s} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Development Practices */}
+      {hasPractices && (
+        <div className="px-5 py-4 border-b border-slate-800/60 last:border-b-0">
+          <p className="text-[11px] font-bold text-emerald-400 uppercase tracking-[0.2em] mb-3">
+            Development Practices
+          </p>
+          <BulletList items={breakdown.practices} color="violet" />
+        </div>
+      )}
+
+      {/* Practical Takeaways */}
+      {hasTakeaways && (
+        <div className="px-5 py-4">
+          <p className="text-[11px] font-bold text-sky-400 uppercase tracking-[0.2em] mb-3">
+            Practical Takeaways
+          </p>
+          <BulletList items={breakdown.takeaways} color="cyan" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Glowing timeline node ─────────────────────────────────────────────────────
 function TimelineNode({ isLast }) {
   return (
     <div className="flex flex-col items-center select-none">
-      {/* Glowing circle */}
       <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cyan-400/60 bg-slate-950 shadow-[0_0_18px_rgba(34,211,238,0.22)]">
-        {/* Outer subtle ring */}
         <span className="absolute inset-0 rounded-full border border-cyan-400/20 animate-ping opacity-40" />
-        {/* Inner dot */}
         <span className="h-2.5 w-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
       </div>
-      {/* Connector line going down (hidden for last item) */}
       {!isLast && (
         <div className="mt-1 flex-1 w-px bg-gradient-to-b from-cyan-400/30 via-slate-700/40 to-transparent min-h-[2rem]" />
       )}
@@ -61,9 +147,16 @@ function TimelineNode({ isLast }) {
 
 // ── Experience card ───────────────────────────────────────────────────────────
 function ExperienceCard({ item }) {
+  const [showBreakdown, setShowBreakdown] = useState(false);
+
+  const hasBreakdown =
+    item.breakdown?.skillsApplied?.length > 0 ||
+    item.breakdown?.practices?.length > 0 ||
+    item.breakdown?.takeaways?.length > 0;
+
   return (
     <div className="group relative bg-slate-900/70 border border-slate-700/60 rounded-2xl p-5 sm:p-7 hover:border-cyan-400/40 hover:shadow-[0_4px_40px_rgba(34,211,238,0.07)] transition-all duration-300 overflow-hidden">
-      {/* Subtle corner glow on hover */}
+      {/* Corner glow on hover */}
       <div className="absolute top-0 left-0 w-32 h-32 bg-cyan-400/5 rounded-full -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
       {/* Header row */}
@@ -76,14 +169,12 @@ function ExperienceCard({ item }) {
             {item.organization}
           </p>
         </div>
-
-        {/* Meta badges */}
         <div className="flex flex-wrap items-center gap-2 sm:justify-end shrink-0">
           {item.type && <TypeBadge label={item.type} />}
         </div>
       </div>
 
-      {/* Meta info row: duration + location */}
+      {/* Meta: duration + location */}
       {(item.duration || item.location) && (
         <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4 text-xs text-slate-500 font-mono">
           {item.duration && (
@@ -135,6 +226,39 @@ function ExperienceCard({ item }) {
           ))}
         </div>
       )}
+
+      {/* Breakdown toggle button */}
+      {hasBreakdown && (
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={() => setShowBreakdown((v) => !v)}
+            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-cyan-400 transition-colors duration-200 group/btn"
+            aria-expanded={showBreakdown}
+          >
+            {/* Chevron */}
+            <span
+              className={`w-4 h-4 rounded-full border border-slate-600 group-hover/btn:border-cyan-400/60 flex items-center justify-center transition-all duration-200 shrink-0 ${
+                showBreakdown ? 'bg-cyan-500/10 border-cyan-400/60' : ''
+              }`}
+            >
+              <svg
+                className={`w-2.5 h-2.5 transition-transform duration-200 ${showBreakdown ? 'rotate-180 text-cyan-400' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+            {showBreakdown ? 'Hide Experience Breakdown' : 'View Experience Breakdown'}
+          </button>
+
+          {/* Animated breakdown panel */}
+          {showBreakdown && <BreakdownPanel breakdown={item.breakdown} />}
+        </div>
+      )}
     </div>
   );
 }
@@ -143,12 +267,10 @@ function ExperienceCard({ item }) {
 function SkeletonRow() {
   return (
     <div className="grid grid-cols-[2.25rem_1fr] gap-4 sm:gap-6 pb-8">
-      {/* Node skeleton */}
       <div className="flex flex-col items-center gap-2 pt-1">
         <div className="w-9 h-9 rounded-full bg-slate-800 animate-pulse" />
         <div className="flex-1 w-px bg-slate-800/60 min-h-[4rem]" />
       </div>
-      {/* Card skeleton */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 animate-pulse">
         <div className="h-5 w-56 bg-slate-800 rounded mb-3" />
         <div className="h-3.5 w-36 bg-slate-800 rounded mb-5" />
@@ -183,25 +305,19 @@ export default function Experience() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Hide section cleanly if API succeeded but returned zero visible items
+  // Hide cleanly if API succeeded but returned zero visible items
   if (!loading && !apiFailed && items.length === 0) return null;
-
-  const displayItems = items;
 
   return (
     <section id="experience" className="py-20 sm:py-28 relative overflow-hidden">
-      {/* Page-level background accent */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-      >
+      {/* Background accents */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute top-1/3 left-0 w-[500px] h-[500px] bg-cyan-500/[0.025] rounded-full blur-[140px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/[0.03] rounded-full blur-[120px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-
-        {/* ── Section header ───────────────────────────────────────────── */}
+        {/* Section header */}
         <div className="mb-12 sm:mb-16">
           <p className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-[0.35em] mb-3">
             Experience
@@ -214,12 +330,12 @@ export default function Experience() {
           </p>
         </div>
 
-        {/* ── Timeline ─────────────────────────────────────────────────── */}
+        {/* Timeline */}
         {loading ? (
           <SkeletonRow />
         ) : (
           <div className="relative">
-            {/* Continuous vertical track line */}
+            {/* Vertical track */}
             <div
               className="absolute left-[1.125rem] top-4 bottom-4 w-px pointer-events-none"
               aria-hidden="true"
@@ -229,8 +345,8 @@ export default function Experience() {
               }}
             />
 
-            {displayItems.map((item, idx) => {
-              const isLast = idx === displayItems.length - 1;
+            {items.map((item, idx) => {
+              const isLast = idx === items.length - 1;
               return (
                 <div
                   key={item._id}
@@ -238,12 +354,12 @@ export default function Experience() {
                     isLast ? 'pb-0' : 'pb-10 sm:pb-12'
                   }`}
                 >
-                  {/* Node column */}
+                  {/* Node */}
                   <div className="flex flex-col items-center pt-1">
                     <TimelineNode isLast={isLast} />
                   </div>
 
-                  {/* Card column */}
+                  {/* Card */}
                   <div className="min-w-0">
                     <ExperienceCard item={item} />
                   </div>

@@ -39,6 +39,10 @@ const EMPTY = {
   endDate: '',
   displayOrder: 0,
   isVisible: true,
+  // Breakdown fields (textarea strings for the form)
+  breakdownSkills: '',      // comma-separated → skillsApplied array
+  breakdownPractices: '',   // newline-separated → practices array
+  breakdownTakeaways: '',   // newline-separated → takeaways array
 };
 
 // ── Add / Edit Modal ──────────────────────────────────────────────────────────
@@ -51,6 +55,16 @@ function ExperienceModal({ item, onClose, onSave }) {
         ...item,
         highlights: Array.isArray(item.highlights) ? item.highlights.join('\n') : '',
         techStack: Array.isArray(item.techStack) ? item.techStack.join(', ') : '',
+        // Breakdown fields: deserialise arrays back to strings for textarea
+        breakdownSkills: Array.isArray(item.breakdown?.skillsApplied)
+          ? item.breakdown.skillsApplied.join(', ')
+          : '',
+        breakdownPractices: Array.isArray(item.breakdown?.practices)
+          ? item.breakdown.practices.join('\n')
+          : '',
+        breakdownTakeaways: Array.isArray(item.breakdown?.takeaways)
+          ? item.breakdown.takeaways.join('\n')
+          : '',
       };
     }
     return { ...EMPTY };
@@ -76,7 +90,22 @@ function ExperienceModal({ item, onClose, onSave }) {
           : [],
         displayOrder: Number(form.displayOrder) || 0,
         isVisible: Boolean(form.isVisible),
+        breakdown: {
+          skillsApplied: form.breakdownSkills
+            ? form.breakdownSkills.split(',').map((s) => s.trim()).filter(Boolean)
+            : [],
+          practices: form.breakdownPractices
+            ? form.breakdownPractices.split('\n').map((l) => l.trim()).filter(Boolean)
+            : [],
+          takeaways: form.breakdownTakeaways
+            ? form.breakdownTakeaways.split('\n').map((l) => l.trim()).filter(Boolean)
+            : [],
+        },
       };
+      // Remove the flat textarea fields – API doesn't need them
+      delete payload.breakdownSkills;
+      delete payload.breakdownPractices;
+      delete payload.breakdownTakeaways;
       await onSave(payload, item?._id);
       onClose();
     } catch {
@@ -180,6 +209,41 @@ function ExperienceModal({ item, onClose, onSave }) {
           onChange={(e) => set('techStack', e.target.value)}
           placeholder="HTML, CSS, JavaScript, React"
         />
+
+        {/* ── Breakdown section ─────────────────────────────── */}
+        <div className="pt-2 border-t border-navy-800">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">
+            Experience Breakdown (optional expandable panel)
+          </p>
+
+          <div className="space-y-4">
+            {/* Skills Applied */}
+            <Input
+              label="Skills Applied (comma-separated)"
+              value={form.breakdownSkills}
+              onChange={(e) => set('breakdownSkills', e.target.value)}
+              placeholder="Responsive Design, Git Workflow, JavaScript DOM Logic"
+            />
+
+            {/* Development Practices */}
+            <Textarea
+              label="Development Practices (one per line)"
+              value={form.breakdownPractices}
+              onChange={(e) => set('breakdownPractices', e.target.value)}
+              placeholder={"Broke UI tasks into smaller frontend components.\nTested layouts across different screen sizes."}
+              rows={4}
+            />
+
+            {/* Practical Takeaways */}
+            <Textarea
+              label="Practical Takeaways (one per line)"
+              value={form.breakdownTakeaways}
+              onChange={(e) => set('breakdownTakeaways', e.target.value)}
+              placeholder={"Improved confidence in building responsive frontend interfaces.\nStrengthened HTML, CSS, and JavaScript fundamentals."}
+              rows={4}
+            />
+          </div>
+        </div>
 
         {/* Display Order + Visibility */}
         <div className="grid grid-cols-2 gap-3">
@@ -362,6 +426,7 @@ export default function ExperiencesPage() {
         endDate: item.endDate,
         displayOrder: item.displayOrder,
         isVisible: !item.isVisible,
+        breakdown: item.breakdown || { skillsApplied: [], practices: [], takeaways: [] },
       };
       const { data } = await api.put(`/experiences/${item._id}`, payload);
       setItems((prev) => prev.map((x) => (x._id === item._id ? data : x)));

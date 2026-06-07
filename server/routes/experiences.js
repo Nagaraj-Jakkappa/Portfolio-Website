@@ -35,6 +35,13 @@ const expValidation = [
   body('endDate').optional({ checkFalsy: true }).isString(),
   body('displayOrder').optional().isNumeric().withMessage('displayOrder must be a number'),
   body('isVisible').optional().isBoolean(),
+  // Breakdown sub-document (all optional)
+  body('breakdown.skillsApplied').optional().isArray(),
+  body('breakdown.skillsApplied.*').optional().isString(),
+  body('breakdown.practices').optional().isArray(),
+  body('breakdown.practices.*').optional().isString(),
+  body('breakdown.takeaways').optional().isArray(),
+  body('breakdown.takeaways.*').optional().isString(),
 ];
 
 // ── Public: GET /api/experiences ─────────────────────────────────────────────
@@ -79,6 +86,17 @@ router.post('/', protect, expValidation, validate, async (req, res) => {
       endDate: req.body.endDate || '',
       displayOrder: typeof req.body.displayOrder === 'number' ? req.body.displayOrder : 0,
       isVisible: req.body.isVisible !== false,
+      breakdown: {
+        skillsApplied: Array.isArray(req.body.breakdown?.skillsApplied)
+          ? req.body.breakdown.skillsApplied.filter(Boolean)
+          : [],
+        practices: Array.isArray(req.body.breakdown?.practices)
+          ? req.body.breakdown.practices.filter(Boolean)
+          : [],
+        takeaways: Array.isArray(req.body.breakdown?.takeaways)
+          ? req.body.breakdown.takeaways.filter(Boolean)
+          : [],
+      },
     });
     res.status(201).json(item);
   } catch (err) {
@@ -107,6 +125,17 @@ router.put('/:id', protect, expValidation, validate, async (req, res) => {
         endDate: req.body.endDate || '',
         displayOrder: typeof req.body.displayOrder === 'number' ? req.body.displayOrder : 0,
         isVisible: req.body.isVisible !== false,
+        breakdown: {
+          skillsApplied: Array.isArray(req.body.breakdown?.skillsApplied)
+            ? req.body.breakdown.skillsApplied.filter(Boolean)
+            : [],
+          practices: Array.isArray(req.body.breakdown?.practices)
+            ? req.body.breakdown.practices.filter(Boolean)
+            : [],
+          takeaways: Array.isArray(req.body.breakdown?.takeaways)
+            ? req.body.breakdown.takeaways.filter(Boolean)
+            : [],
+        },
       },
       { new: true, runValidators: true }
     );

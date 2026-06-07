@@ -14,6 +14,12 @@ const experienceSchema = new mongoose.Schema(
     endDate: { type: String, default: '' },
     displayOrder: { type: Number, default: 0 },
     isVisible: { type: Boolean, default: true },
+    // Optional expandable breakdown panel
+    breakdown: {
+      skillsApplied: [{ type: String }],   // rendered as badges
+      practices: [{ type: String }],       // rendered as bullet list
+      takeaways: [{ type: String }],       // rendered as bullet list
+    },
   },
   { timestamps: true }
 );
