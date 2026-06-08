@@ -85,7 +85,7 @@ export default function RecruiterMode({ items }) {
               Behind the Code
             </p>
 
-            <h2 className="font-display text-4xl md:text-5xl font-black text-white leading-tight max-w-3xl">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight break-words max-w-3xl">
               Engineering <span className="text-cyan-400">Highlights</span>
             </h2>
           </div>
@@ -98,7 +98,7 @@ export default function RecruiterMode({ items }) {
         </div>
 
         {/* Bento Grid Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 auto-rows-auto">
           {visibleItems.map((item, idx) => {
             const theme = THEME_MAP[item.themeColor] || THEME_MAP.cyan;
             const sizeClass = SIZE_MAP[item.size] || SIZE_MAP.small;
@@ -106,7 +106,7 @@ export default function RecruiterMode({ items }) {
             return (
               <div
                 key={item._id || idx}
-                className={`group relative overflow-hidden rounded-3xl border border-white/5 bg-navy-900/40 p-6 md:p-8 backdrop-blur-sm transition-all duration-300 hover:bg-navy-800/60 ${theme.border} ${sizeClass} flex flex-col justify-between min-h-[160px]`}
+                className={`group relative overflow-hidden rounded-3xl border border-white/5 bg-navy-900/40 p-4 sm:p-5 lg:p-6 backdrop-blur-sm transition-all duration-300 hover:bg-navy-800/60 ${theme.border} ${sizeClass} flex flex-col justify-between min-h-[160px]`}
               >
                 <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full blur-3xl opacity-20 transition-opacity duration-500 group-hover:opacity-40 ${theme.bg}`} />
                 
@@ -122,10 +122,10 @@ export default function RecruiterMode({ items }) {
                     )}
                   </div>
                   
-                  <h3 className={`font-display font-bold text-2xl text-white mb-3 group-hover:${theme.text} transition-colors`}>
+                  <h3 className={`font-display font-bold text-xl sm:text-2xl text-white mb-3 group-hover:${theme.text} transition-colors break-words`}>
                     {item.title}
                   </h3>
-                  <p className="text-slate-300 text-base leading-relaxed pr-2">
+                  <p className="text-slate-300 text-sm sm:text-base leading-relaxed pr-2 break-words">
                     {item.description}
                   </p>
                 </div>

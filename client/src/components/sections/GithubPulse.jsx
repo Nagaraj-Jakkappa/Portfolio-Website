@@ -84,12 +84,12 @@ export default function GithubPulse({ items }) {
           <p className="font-mono text-cyan-400 text-sm tracking-widest uppercase mb-3">
             Live Stream
           </p>
-          <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
+          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white break-words">
             Tech <span className="text-cyan-400">Pulse</span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 auto-rows-auto">
           {visibleItems.map((item, idx) => {
             const theme = THEME_MAP[item.themeColor] || THEME_MAP.cyan;
             const sizeClass = SIZE_MAP[item.size] || SIZE_MAP.small;
@@ -99,7 +99,7 @@ export default function GithubPulse({ items }) {
             return (
               <div
                 key={item._id || idx}
-                className={`group relative overflow-hidden rounded-3xl border border-white/5 bg-navy-900/40 p-6 md:p-8 backdrop-blur-sm transition-all duration-300 hover:bg-navy-800/60 ${theme.border} ${sizeClass} flex flex-col justify-between`}
+                className={`group relative overflow-hidden rounded-3xl border border-white/5 bg-navy-900/40 p-4 sm:p-5 lg:p-6 backdrop-blur-sm transition-all duration-300 hover:bg-navy-800/60 ${theme.border} ${sizeClass} flex flex-col justify-between`}
               >
                 <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full blur-3xl opacity-20 transition-opacity duration-500 group-hover:opacity-40 ${theme.bg}`} />
                 
@@ -115,10 +115,10 @@ export default function GithubPulse({ items }) {
                     )}
                   </div>
                   
-                  <h3 className={`font-display font-bold text-2xl mb-3 ${theme.text}`}>
+                  <h3 className={`font-display font-bold text-xl sm:text-2xl mb-3 break-words ${theme.text}`}>
                     {item.title}
                   </h3>
-                  <p className="text-slate-300 text-base leading-relaxed pr-2 mb-6 flex-1">
+                  <p className="text-slate-300 text-sm sm:text-base leading-relaxed pr-2 mb-6 flex-1 break-words">
                     {item.description}
                   </p>
 

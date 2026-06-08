@@ -226,7 +226,7 @@ export default function Projects() {
         </div>
 
         {loading && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="card-base h-96 animate-pulse">
                 <div className="h-44 bg-navy-700 rounded-t-2xl" />
@@ -258,7 +258,7 @@ export default function Projects() {
 
         {!loading && !error && filteredProjects.length > 0 && (
           <>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayed.map((p) => (
                 <ProjectCard key={p._id} project={p} />
               ))}

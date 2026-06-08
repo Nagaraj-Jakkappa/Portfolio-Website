@@ -84,7 +84,7 @@ export default function NowSection({ items }) {
                 Live Status
               </span>
             </div>
-            <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-6 italic">now</h2>
+            <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white mb-6 italic break-words">now</h2>
             <p className="text-slate-400 text-base leading-relaxed mb-6">
               This is a snapshot of my current professional focus and personal interests. Inspired
               by the "Now Page" movement.
@@ -93,7 +93,7 @@ export default function NowSection({ items }) {
           </div>
 
           {/* Bento Grid */}
-          <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-auto">
+          <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6 auto-rows-auto">
             {visibleItems.map((item, idx) => {
               const theme = THEME_MAP[item.themeColor] || THEME_MAP.blue;
               const sizeClass = SIZE_MAP[item.size] || SIZE_MAP.small;
@@ -101,7 +101,7 @@ export default function NowSection({ items }) {
               return (
                 <div
                   key={item._id || idx}
-                  className={`group relative overflow-hidden rounded-3xl border border-white/5 bg-navy-900/40 p-6 backdrop-blur-sm transition-all duration-300 hover:bg-navy-800/60 ${theme.border} ${sizeClass} flex flex-col justify-between min-h-[160px]`}
+                  className={`group relative overflow-hidden rounded-3xl border border-white/5 bg-navy-900/40 p-4 sm:p-5 lg:p-6 backdrop-blur-sm transition-all duration-300 hover:bg-navy-800/60 ${theme.border} ${sizeClass} flex flex-col justify-between min-h-[160px]`}
                 >
                   <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full blur-3xl opacity-20 transition-opacity duration-500 group-hover:opacity-40 ${theme.bg}`} />
                   
@@ -114,7 +114,7 @@ export default function NowSection({ items }) {
                         {item.category}
                       </h3>
                     </div>
-                    <p className="text-slate-300 text-sm leading-relaxed mt-2 pr-2">
+                    <p className="text-slate-300 text-sm leading-relaxed mt-2 pr-2 break-words">
                       {item.description}
                     </p>
                   </div>
