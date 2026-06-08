@@ -37,6 +37,7 @@ const siteContentSchema = new mongoose.Schema(
       github: { type: String, default: '', maxlength: 500 },
       linkedin: { type: String, default: '', maxlength: 500 },
       email: { type: String, default: '', maxlength: 200 },
+      whatsapp: { type: String, default: '', maxlength: 200 },
       phone: { type: String, default: '', maxlength: 50 },
       location: { type: String, default: '', maxlength: 200 },
     },

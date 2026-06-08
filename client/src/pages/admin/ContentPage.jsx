@@ -44,7 +44,7 @@ const EMPTY_CONTENT = {
     highlights: [],
   },
   resume: { resumeUrl: '', updatedAtText: '' },
-  socialLinks: { github: '', linkedin: '', email: '', phone: '', location: '' },
+  socialLinks: { github: '', linkedin: '', email: '', whatsapp: '', phone: '', location: '' },
   currentlyBuilding: [],
   seo: { title: '', description: '', keywords: '', ogImage: '', twitterImage: '' },
   impactMetrics: [],
@@ -485,7 +485,7 @@ export default function ContentPage() {
             placeholder="https://linkedin.com/in/username"
           />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mt-3">
           <Input
             label="Email"
             value={form.socialLinks.email}
@@ -493,18 +493,26 @@ export default function ContentPage() {
             placeholder="you@email.com"
           />
           <Input
+            label="WhatsApp"
+            value={form.socialLinks.whatsapp}
+            onChange={(e) => setNested('socialLinks', 'whatsapp', e.target.value)}
+            placeholder="https://wa.me/..."
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3 mt-3">
+          <Input
             label="Phone"
             value={form.socialLinks.phone}
             onChange={(e) => setNested('socialLinks', 'phone', e.target.value)}
             placeholder="+91 1234567890"
           />
+          <Input
+            label="Location"
+            value={form.socialLinks.location}
+            onChange={(e) => setNested('socialLinks', 'location', e.target.value)}
+            placeholder="Yadgir, Karnataka, India"
+          />
         </div>
-        <Input
-          label="Location"
-          value={form.socialLinks.location}
-          onChange={(e) => setNested('socialLinks', 'location', e.target.value)}
-          placeholder="Yadgir, Karnataka, India"
-        />
       </Section>
 
       {/* ── Currently Building ────────────────────────────── */}

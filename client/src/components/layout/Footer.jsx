@@ -14,8 +14,7 @@ export default function Footer({ content }) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 flex flex-col items-center justify-center text-center gap-5">
 
-        {/* Logo – centered */}
-        <Link to="/" className="flex items-center gap-1 group">
+        <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Go to homepage" className="flex items-center gap-1 group">
           <span className="font-display font-black text-xl tracking-tighter text-white uppercase italic">
             Tech
             <span className="text-blue-400 group-hover:text-blue-300 transition-colors">
@@ -28,7 +27,23 @@ export default function Footer({ content }) {
         {/* Social + Top – centered row */}
         <div className="flex flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium uppercase tracking-widest text-slate-500">
           <a
-            href="https://github.com/Nagaraj-Jakkappa"
+            href={content?.socialLinks?.whatsapp || 'https://wa.me/916362835904'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-2 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300 whitespace-nowrap"
+          >
+            WhatsApp
+          </a>
+
+          <a
+            href={content?.socialLinks?.email && !content.socialLinks.email.startsWith('mailto:') ? `mailto:${content.socialLinks.email}` : content?.socialLinks?.email || 'mailto:nagupoojary33@gmail.com'}
+            className="px-3 py-2 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300 whitespace-nowrap"
+          >
+            Email
+          </a>
+
+          <a
+            href={content?.socialLinks?.github || 'https://github.com/Nagaraj-Jakkappa'}
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-2 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300 whitespace-nowrap"
@@ -37,7 +52,7 @@ export default function Footer({ content }) {
           </a>
 
           <a
-            href="https://linkedin.com/in/nagaraj-jakkappa"
+            href={content?.socialLinks?.linkedin || 'https://www.linkedin.com/in/nagaraj-jakkappa/'}
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-2 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300 whitespace-nowrap"

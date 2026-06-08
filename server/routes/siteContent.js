@@ -33,6 +33,7 @@ const contentValidationRules = [
   body('socialLinks.github').optional({ checkFalsy: true }).isURL().withMessage('Invalid GitHub URL'),
   body('socialLinks.linkedin').optional({ checkFalsy: true }).isURL().withMessage('Invalid LinkedIn URL'),
   body('socialLinks.email').optional({ checkFalsy: true }).isEmail().withMessage('Invalid email'),
+  body('socialLinks.whatsapp').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
   body('socialLinks.phone').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
   body('socialLinks.location').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
 
@@ -179,6 +180,7 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         github: req.body.socialLinks.github?.trim() || '',
         linkedin: req.body.socialLinks.linkedin?.trim() || '',
         email: req.body.socialLinks.email?.trim() || '',
+        whatsapp: req.body.socialLinks.whatsapp?.trim() || '',
         phone: req.body.socialLinks.phone?.trim() || '',
         location: req.body.socialLinks.location?.trim() || '',
       };
