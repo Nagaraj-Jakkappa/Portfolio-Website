@@ -42,6 +42,38 @@ const contentValidationRules = [
   body('currentlyBuilding.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
   body('currentlyBuilding.*.status').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
 
+  // Now
+  body('now').optional().isArray({ max: 20 }),
+  body('now.*.category').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
+  body('now.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
+  body('now.*.icon').optional({ checkFalsy: true }).isString().isLength({ max: 10 }),
+  body('now.*.themeColor').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
+  body('now.*.size').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
+  body('now.*.visible').optional().isBoolean(),
+  body('now.*.order').optional().isNumeric(),
+
+  // Tech Pulse
+  body('techPulse').optional().isArray({ max: 20 }),
+  body('techPulse.*.title').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
+  body('techPulse.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
+  body('techPulse.*.icon').optional({ checkFalsy: true }).isString().isLength({ max: 10 }),
+  body('techPulse.*.tag').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
+  body('techPulse.*.themeColor').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
+  body('techPulse.*.size').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
+  body('techPulse.*.visible').optional().isBoolean(),
+  body('techPulse.*.order').optional().isNumeric(),
+
+  // Engineering Highlights
+  body('engineeringHighlights').optional().isArray({ max: 20 }),
+  body('engineeringHighlights.*.title').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
+  body('engineeringHighlights.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
+  body('engineeringHighlights.*.icon').optional({ checkFalsy: true }).isString().isLength({ max: 10 }),
+  body('engineeringHighlights.*.tag').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
+  body('engineeringHighlights.*.themeColor').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
+  body('engineeringHighlights.*.size').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
+  body('engineeringHighlights.*.visible').optional().isBoolean(),
+  body('engineeringHighlights.*.order').optional().isNumeric(),
+
   // SEO
   body('seo.title').optional({ checkFalsy: true }).isString().isLength({ max: 80 }),
   body('seo.description').optional({ checkFalsy: true }).isString().isLength({ max: 180 }),
@@ -158,6 +190,47 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         title: item.title?.trim() || '',
         description: item.description?.trim() || '',
         status: item.status?.trim() || 'Active',
+      }));
+    }
+
+    // Now
+    if (Array.isArray(req.body.now)) {
+      payload.now = req.body.now.map((item) => ({
+        category: item.category?.trim() || '',
+        description: item.description?.trim() || '',
+        icon: item.icon?.trim() || '🚀',
+        themeColor: item.themeColor?.trim() || 'blue',
+        size: item.size?.trim() || 'small',
+        visible: typeof item.visible === 'boolean' ? item.visible : true,
+        order: Number(item.order) || 0,
+      }));
+    }
+
+    // Tech Pulse
+    if (Array.isArray(req.body.techPulse)) {
+      payload.techPulse = req.body.techPulse.map((item) => ({
+        title: item.title?.trim() || '',
+        description: item.description?.trim() || '',
+        icon: item.icon?.trim() || '⚡',
+        tag: item.tag?.trim() || '',
+        themeColor: item.themeColor?.trim() || 'cyan',
+        size: item.size?.trim() || 'feature',
+        visible: typeof item.visible === 'boolean' ? item.visible : true,
+        order: Number(item.order) || 0,
+      }));
+    }
+
+    // Engineering Highlights
+    if (Array.isArray(req.body.engineeringHighlights)) {
+      payload.engineeringHighlights = req.body.engineeringHighlights.map((item) => ({
+        title: item.title?.trim() || '',
+        description: item.description?.trim() || '',
+        icon: item.icon?.trim() || '🛠️',
+        tag: item.tag?.trim() || '',
+        themeColor: item.themeColor?.trim() || 'cyan',
+        size: item.size?.trim() || 'feature',
+        visible: typeof item.visible === 'boolean' ? item.visible : true,
+        order: Number(item.order) || 0,
       }));
     }
 
