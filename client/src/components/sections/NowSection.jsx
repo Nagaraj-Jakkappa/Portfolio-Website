@@ -1,7 +1,62 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function NowSection() {
+const THEME_MAP = {
+  blue: { border: 'border-blue-500', text: 'text-blue-400' },
+  cyan: { border: 'border-cyan-500', text: 'text-cyan-400' },
+  emerald: { border: 'border-emerald-500', text: 'text-emerald-400' },
+  rose: { border: 'border-rose-500', text: 'text-rose-400' },
+  amber: { border: 'border-amber-500', text: 'text-amber-400' },
+  violet: { border: 'border-violet-500', text: 'text-violet-400' },
+  purple: { border: 'border-violet-500', text: 'text-violet-400' }, // fallback for old purple to violet
+};
+
+const FALLBACK_ITEMS = [
+  {
+    category: 'Learning',
+    description: 'Mastering MongoDB Aggregation Pipelines and deep-diving into Redux Toolkit for global state management.',
+    icon: '🚀',
+    themeColor: 'blue',
+    visible: true,
+    order: 1
+  },
+  {
+    category: 'Building',
+    description: 'Refining TechArtistry.in and adding interactive AI simulations to showcase Deep Learning concepts.',
+    icon: '🛠️',
+    themeColor: 'emerald',
+    visible: true,
+    order: 2
+  },
+  {
+    category: 'Reading',
+    description: 'Currently reading "Clean Code" by Robert C. Martin to improve my architectural decision-making.',
+    icon: '📖',
+    themeColor: 'amber',
+    visible: true,
+    order: 3
+  },
+  {
+    category: 'Current Goal',
+    description: 'Securing a Full-Stack Developer role in Bengaluru to contribute to high-impact web products.',
+    icon: '🎯',
+    themeColor: 'violet',
+    visible: true,
+    order: 4
+  }
+];
+
+export default function NowSection({ items }) {
+  // If items is completely undefined/null, use fallback.
+  // If items is an array, map over it.
+  const sourceItems = Array.isArray(items) && items.length > 0 ? items : (items === undefined ? FALLBACK_ITEMS : []);
+
+  const visibleItems = sourceItems
+    .filter((item) => item.visible !== false)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  if (visibleItems.length === 0) return null;
+
   return (
     <section className="py-20 bg-navy-950 relative overflow-hidden">
       {/* Background Decor */}
@@ -30,56 +85,29 @@ export default function NowSection() {
 
           {/* Grid Area */}
           <div className="md:w-2/3 grid sm:grid-cols-2 gap-6">
-            {/* Learning Item */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="card-base p-6 border-l-4 border-blue-500 bg-navy-900/50"
-            >
-              <div className="text-xl mb-4 text-blue-400">🚀 Learning</div>
-              <p className="text-slate-300 text-sm leading-relaxed">
-                Mastering{' '}
-                <span className="text-white font-semibold">MongoDB Aggregation Pipelines</span> and
-                deep-diving into <span className="text-white font-semibold">Redux Toolkit</span> for
-                global state management.
-              </p>
-            </motion.div>
-
-            {/* Building Item */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="card-base p-6 border-l-4 border-emerald-500 bg-navy-900/50"
-            >
-              <div className="text-xl mb-4 text-emerald-400">🛠️ Building</div>
-              <p className="text-slate-300 text-sm leading-relaxed">
-                Refining <span className="text-white font-semibold">TechArtistry.in</span> and
-                adding interactive AI simulations to showcase Deep Learning concepts.
-              </p>
-            </motion.div>
-
-            {/* Reading Item */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="card-base p-6 border-l-4 border-amber-500 bg-navy-900/50"
-            >
-              <div className="text-xl mb-4 text-amber-400">📖 Reading</div>
-              <p className="text-slate-300 text-sm leading-relaxed">
-                Currently reading <span className="text-white font-semibold">"Clean Code"</span> by
-                Robert C. Martin to improve my architectural decision-making.
-              </p>
-            </motion.div>
-
-            {/* Focus Item */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="card-base p-6 border-l-4 border-purple-500 bg-navy-900/50"
-            >
-              <div className="text-xl mb-4 text-purple-400">🎯 Current Goal</div>
-              <p className="text-slate-300 text-sm leading-relaxed">
-                Securing a{' '}
-                <span className="text-white font-semibold">Full-Stack Developer role</span> in
-                Bengaluru to contribute to high-impact web products.
-              </p>
-            </motion.div>
+            {visibleItems.map((item, idx) => {
+              const theme = THEME_MAP[item.themeColor] || THEME_MAP.blue;
+              
+              // We need to carefully render HTML if description contains bold spans like <span className="text-white font-semibold">
+              // For safety and since the previous version had hardcoded spans, we can either use dangerouslySetInnerHTML 
+              // or just render it as plain text if it comes from the DB (the admin textarea is plain text anyway).
+              // Let's render as plain text because the textarea input doesn't support HTML natively.
+              
+              return (
+                <motion.div
+                  key={item._id || idx}
+                  whileHover={{ y: -5 }}
+                  className={`card-base p-6 border-l-4 bg-navy-900/50 ${theme.border}`}
+                >
+                  <div className={`text-xl mb-4 ${theme.text}`}>
+                    {item.icon} {item.category}
+                  </div>
+                  <p className="text-slate-300 text-sm leading-relaxed">
+                    {item.description}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

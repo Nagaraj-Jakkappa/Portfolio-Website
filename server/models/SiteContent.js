@@ -47,6 +47,16 @@ const siteContentSchema = new mongoose.Schema(
         status: { type: String, default: 'Active', maxlength: 50 },
       },
     ],
+    now: [
+      {
+        category: { type: String, default: '', maxlength: 50 },
+        description: { type: String, default: '', maxlength: 500 },
+        icon: { type: String, default: '🚀', maxlength: 10 },
+        themeColor: { type: String, default: 'blue', maxlength: 20 },
+        visible: { type: Boolean, default: true },
+        order: { type: Number, default: 0 },
+      },
+    ],
     seo: {
       title: { type: String, default: '', maxlength: 80 },
       description: { type: String, default: '', maxlength: 180 },

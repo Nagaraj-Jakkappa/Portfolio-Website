@@ -76,7 +76,7 @@ export default function Home({ content, loading }) {
 
       <Experience />
 
-      <NowSection />
+      <NowSection items={content?.now} />
 
       <Skills />
 

@@ -50,6 +50,7 @@ const EMPTY_CONTENT = {
   impactMetrics: [],
   footer: { brandName: '', tagline: '', copyrightText: '', builtWithText: '' },
   navbar: [],
+  now: [],
 };
 
 // ── Collapsible Section ─────────────────────────────────────
@@ -90,6 +91,7 @@ export default function ContentPage() {
             impactMetrics: Array.isArray(data.impactMetrics) ? data.impactMetrics : [],
             footer: { ...EMPTY_CONTENT.footer, ...data.footer },
             navbar: Array.isArray(data.navbar) ? data.navbar : [],
+            now: Array.isArray(data.now) ? data.now : [],
           });
         }
       } catch {
@@ -119,6 +121,7 @@ export default function ContentPage() {
         impactMetrics: Array.isArray(data.impactMetrics) ? data.impactMetrics : [],
         footer: { ...EMPTY_CONTENT.footer, ...data.footer },
         navbar: Array.isArray(data.navbar) ? data.navbar : [],
+        now: Array.isArray(data.now) ? data.now : [],
       });
       toast.success('Content saved!');
     } catch (err) {
@@ -151,6 +154,27 @@ export default function ContentPage() {
     setForm((f) => ({
       ...f,
       currentlyBuilding: f.currentlyBuilding.filter((_, idx) => idx !== i),
+    }));
+
+  // ── Now Section helpers ────────────────────────────────────
+  const addNowItem = () =>
+    setForm((f) => ({
+      ...f,
+      now: [...f.now, { category: '', description: '', icon: '🚀', themeColor: 'blue', visible: true, order: 0 }],
+    }));
+
+  const updateNowItem = (i, key, val) =>
+    setForm((f) => ({
+      ...f,
+      now: f.now.map((item, idx) =>
+        idx === i ? { ...item, [key]: val } : item
+      ),
+    }));
+
+  const removeNowItem = (i) =>
+    setForm((f) => ({
+      ...f,
+      now: f.now.filter((_, idx) => idx !== i),
     }));
 
   // ── Impact Metrics helpers ─────────────────────────────────
@@ -442,6 +466,47 @@ export default function ContentPage() {
         ))}
         <Btn variant="ghost" onClick={addBuildItem}>
           <Ic d={IC.plus} size={13} /> Add Item
+        </Btn>
+      </Section>
+
+      {/* ── Now Section ─────────────────────────────────── */}
+      <Section title="Now Section">
+        {form.now.map((item, i) => (
+          <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-slate-500 font-mono">Now Item #{i + 1}</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={item.visible} onChange={(e) => updateNowItem(i, 'visible', e.target.checked)} className="w-4 h-4 rounded bg-navy-900 border-navy-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-navy-950" />
+                  <span className="text-xs text-slate-300">Visible</span>
+                </label>
+              </div>
+              <button onClick={() => removeNowItem(i)} className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
+                <Ic d={IC.trash} size={13} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-end">
+              <Input label="Category" value={item.category} onChange={(e) => updateNowItem(i, 'category', e.target.value)} placeholder="Learning" />
+              <Input label="Icon" value={item.icon} onChange={(e) => updateNowItem(i, 'icon', e.target.value)} placeholder="🚀" />
+              <div className="flex flex-col gap-1.5 min-w-[120px]">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Theme Color</label>
+                <select value={item.themeColor} onChange={(e) => updateNowItem(i, 'themeColor', e.target.value)} className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                  <option value="blue">Blue</option>
+                  <option value="cyan">Cyan</option>
+                  <option value="emerald">Emerald</option>
+                  <option value="rose">Rose</option>
+                  <option value="amber">Amber</option>
+                  <option value="violet">Violet</option>
+                </select>
+              </div>
+              <Input label="Order" value={item.order} onChange={(e) => updateNowItem(i, 'order', e.target.value)} type="number" />
+            </div>
+            <Textarea label="Description" value={item.description} onChange={(e) => updateNowItem(i, 'description', e.target.value)} rows={2} placeholder="Description here..." />
+          </div>
+        ))}
+        <Btn variant="ghost" onClick={addNowItem}>
+          <Ic d={IC.plus} size={13} /> Add Now Item
         </Btn>
       </Section>
 
