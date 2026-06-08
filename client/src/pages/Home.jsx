@@ -80,13 +80,13 @@ export default function Home({ content, loading }) {
 
       <Skills />
 
-      <GithubPulse />
+      <GithubPulse items={content?.techPulse} />
 
       <Certifications />
 
       <Projects />
 
-      <RecruiterMode />
+      <RecruiterMode items={content?.engineeringHighlights} />
 
       <Contact content={content} />
     </>

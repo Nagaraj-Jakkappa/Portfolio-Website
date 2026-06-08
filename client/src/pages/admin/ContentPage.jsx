@@ -51,6 +51,8 @@ const EMPTY_CONTENT = {
   footer: { brandName: '', tagline: '', copyrightText: '', builtWithText: '' },
   navbar: [],
   now: [],
+  techPulse: [],
+  engineeringHighlights: [],
 };
 
 // ── Collapsible Section ─────────────────────────────────────
@@ -92,6 +94,8 @@ export default function ContentPage() {
             footer: { ...EMPTY_CONTENT.footer, ...data.footer },
             navbar: Array.isArray(data.navbar) ? data.navbar : [],
             now: Array.isArray(data.now) ? data.now : [],
+            techPulse: Array.isArray(data.techPulse) ? data.techPulse : [],
+            engineeringHighlights: Array.isArray(data.engineeringHighlights) ? data.engineeringHighlights : [],
           });
         }
       } catch {
@@ -122,6 +126,8 @@ export default function ContentPage() {
         footer: { ...EMPTY_CONTENT.footer, ...data.footer },
         navbar: Array.isArray(data.navbar) ? data.navbar : [],
         now: Array.isArray(data.now) ? data.now : [],
+        techPulse: Array.isArray(data.techPulse) ? data.techPulse : [],
+        engineeringHighlights: Array.isArray(data.engineeringHighlights) ? data.engineeringHighlights : [],
       });
       toast.success('Content saved!');
     } catch (err) {
@@ -175,6 +181,48 @@ export default function ContentPage() {
     setForm((f) => ({
       ...f,
       now: f.now.filter((_, idx) => idx !== i),
+    }));
+
+  // ── Tech Pulse helpers ─────────────────────────────────────
+  const addTechPulseItem = () =>
+    setForm((f) => ({
+      ...f,
+      techPulse: [...f.techPulse, { title: '', description: '', icon: '⚡', tag: '', themeColor: 'cyan', size: 'small', visible: true, order: 0 }],
+    }));
+
+  const updateTechPulseItem = (i, key, val) =>
+    setForm((f) => ({
+      ...f,
+      techPulse: f.techPulse.map((item, idx) =>
+        idx === i ? { ...item, [key]: val } : item
+      ),
+    }));
+
+  const removeTechPulseItem = (i) =>
+    setForm((f) => ({
+      ...f,
+      techPulse: f.techPulse.filter((_, idx) => idx !== i),
+    }));
+
+  // ── Engineering Highlights helpers ─────────────────────────
+  const addEngineeringItem = () =>
+    setForm((f) => ({
+      ...f,
+      engineeringHighlights: [...f.engineeringHighlights, { title: '', description: '', icon: '🛠️', tag: '', themeColor: 'cyan', size: 'small', visible: true, order: 0 }],
+    }));
+
+  const updateEngineeringItem = (i, key, val) =>
+    setForm((f) => ({
+      ...f,
+      engineeringHighlights: f.engineeringHighlights.map((item, idx) =>
+        idx === i ? { ...item, [key]: val } : item
+      ),
+    }));
+
+  const removeEngineeringItem = (i) =>
+    setForm((f) => ({
+      ...f,
+      engineeringHighlights: f.engineeringHighlights.filter((_, idx) => idx !== i),
     }));
 
   // ── Impact Metrics helpers ─────────────────────────────────
@@ -486,7 +534,7 @@ export default function ContentPage() {
               </button>
             </div>
             
-            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-end">
+            <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-3 items-end">
               <Input label="Category" value={item.category} onChange={(e) => updateNowItem(i, 'category', e.target.value)} placeholder="Learning" />
               <Input label="Icon" value={item.icon} onChange={(e) => updateNowItem(i, 'icon', e.target.value)} placeholder="🚀" />
               <div className="flex flex-col gap-1.5 min-w-[120px]">
@@ -498,6 +546,16 @@ export default function ContentPage() {
                   <option value="rose">Rose</option>
                   <option value="amber">Amber</option>
                   <option value="violet">Violet</option>
+                  <option value="slate">Slate</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5 min-w-[120px]">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size</label>
+                <select value={item.size} onChange={(e) => updateNowItem(i, 'size', e.target.value)} className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                  <option value="small">Small (1 col)</option>
+                  <option value="wide">Wide (2 col)</option>
+                  <option value="tall">Tall (2 row)</option>
+                  <option value="feature">Feature (2x2)</option>
                 </select>
               </div>
               <Input label="Order" value={item.order} onChange={(e) => updateNowItem(i, 'order', e.target.value)} type="number" />
@@ -507,6 +565,114 @@ export default function ContentPage() {
         ))}
         <Btn variant="ghost" onClick={addNowItem}>
           <Ic d={IC.plus} size={13} /> Add Now Item
+        </Btn>
+      </Section>
+
+      {/* ── Tech Pulse ──────────────────────────────────── */}
+      <Section title="Tech Pulse">
+        {form.techPulse.map((item, i) => (
+          <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-slate-500 font-mono">Tech Pulse #{i + 1}</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={item.visible} onChange={(e) => updateTechPulseItem(i, 'visible', e.target.checked)} className="w-4 h-4 rounded bg-navy-900 border-navy-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-navy-950" />
+                  <span className="text-xs text-slate-300">Visible</span>
+                </label>
+              </div>
+              <button onClick={() => removeTechPulseItem(i)} className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
+                <Ic d={IC.trash} size={13} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-[1fr_auto_auto] gap-3 items-end">
+              <Input label="Title" value={item.title} onChange={(e) => updateTechPulseItem(i, 'title', e.target.value)} placeholder="GitHub Activity" />
+              <Input label="Tag / Label" value={item.tag} onChange={(e) => updateTechPulseItem(i, 'tag', e.target.value)} placeholder="Development" />
+              <Input label="Icon" value={item.icon} onChange={(e) => updateTechPulseItem(i, 'icon', e.target.value)} placeholder="⚡" />
+            </div>
+            <div className="grid grid-cols-[1fr_1fr_auto] gap-3 items-end mt-2">
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Theme Color</label>
+                <select value={item.themeColor} onChange={(e) => updateTechPulseItem(i, 'themeColor', e.target.value)} className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                  <option value="blue">Blue</option>
+                  <option value="cyan">Cyan</option>
+                  <option value="emerald">Emerald</option>
+                  <option value="rose">Rose</option>
+                  <option value="amber">Amber</option>
+                  <option value="violet">Violet</option>
+                  <option value="slate">Slate</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size</label>
+                <select value={item.size} onChange={(e) => updateTechPulseItem(i, 'size', e.target.value)} className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                  <option value="small">Small (1 col)</option>
+                  <option value="wide">Wide (2 col)</option>
+                  <option value="tall">Tall (2 row)</option>
+                  <option value="feature">Feature (2x2)</option>
+                </select>
+              </div>
+              <Input label="Order" value={item.order} onChange={(e) => updateTechPulseItem(i, 'order', e.target.value)} type="number" />
+            </div>
+            <Textarea label="Description" value={item.description} onChange={(e) => updateTechPulseItem(i, 'description', e.target.value)} rows={2} placeholder="Description here..." />
+          </div>
+        ))}
+        <Btn variant="ghost" onClick={addTechPulseItem}>
+          <Ic d={IC.plus} size={13} /> Add Tech Pulse Item
+        </Btn>
+      </Section>
+
+      {/* ── Engineering Highlights ─────────────────────── */}
+      <Section title="Engineering Highlights">
+        {form.engineeringHighlights.map((item, i) => (
+          <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-slate-500 font-mono">Highlight #{i + 1}</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={item.visible} onChange={(e) => updateEngineeringItem(i, 'visible', e.target.checked)} className="w-4 h-4 rounded bg-navy-900 border-navy-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-navy-950" />
+                  <span className="text-xs text-slate-300">Visible</span>
+                </label>
+              </div>
+              <button onClick={() => removeEngineeringItem(i)} className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
+                <Ic d={IC.trash} size={13} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-[1fr_auto_auto] gap-3 items-end">
+              <Input label="Title" value={item.title} onChange={(e) => updateEngineeringItem(i, 'title', e.target.value)} placeholder="Admin-Driven Portfolio" />
+              <Input label="Tag / Label" value={item.tag} onChange={(e) => updateEngineeringItem(i, 'tag', e.target.value)} placeholder="CMS" />
+              <Input label="Icon" value={item.icon} onChange={(e) => updateEngineeringItem(i, 'icon', e.target.value)} placeholder="🛠️" />
+            </div>
+            <div className="grid grid-cols-[1fr_1fr_auto] gap-3 items-end mt-2">
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Theme Color</label>
+                <select value={item.themeColor} onChange={(e) => updateEngineeringItem(i, 'themeColor', e.target.value)} className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                  <option value="blue">Blue</option>
+                  <option value="cyan">Cyan</option>
+                  <option value="emerald">Emerald</option>
+                  <option value="rose">Rose</option>
+                  <option value="amber">Amber</option>
+                  <option value="violet">Violet</option>
+                  <option value="slate">Slate</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size</label>
+                <select value={item.size} onChange={(e) => updateEngineeringItem(i, 'size', e.target.value)} className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                  <option value="small">Small (1 col)</option>
+                  <option value="wide">Wide (2 col)</option>
+                  <option value="tall">Tall (2 row)</option>
+                  <option value="feature">Feature (2x2)</option>
+                </select>
+              </div>
+              <Input label="Order" value={item.order} onChange={(e) => updateEngineeringItem(i, 'order', e.target.value)} type="number" />
+            </div>
+            <Textarea label="Description" value={item.description} onChange={(e) => updateEngineeringItem(i, 'description', e.target.value)} rows={2} placeholder="Description here..." />
+          </div>
+        ))}
+        <Btn variant="ghost" onClick={addEngineeringItem}>
+          <Ic d={IC.plus} size={13} /> Add Highlight
         </Btn>
       </Section>
 
