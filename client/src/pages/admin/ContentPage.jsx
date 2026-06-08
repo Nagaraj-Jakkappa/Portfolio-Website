@@ -114,7 +114,38 @@ export default function ContentPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { data } = await api.put('/site-content', form);
+      const payload = {
+        ...form,
+        now: form.now.map((item, idx) => ({
+          ...item,
+          order: Number(item.order) || idx + 1,
+          size: item.size || 'small',
+          themeColor: item.themeColor || 'blue',
+          visible: item.visible !== false,
+        })),
+        techPulse: form.techPulse.map((item, idx) => ({
+          ...item,
+          order: Number(item.order) || idx + 1,
+          size: item.size || 'small',
+          themeColor: item.themeColor || 'cyan',
+          visible: item.visible !== false,
+        })),
+        engineeringHighlights: form.engineeringHighlights.map((item, idx) => ({
+          ...item,
+          order: Number(item.order) || idx + 1,
+          size: item.size || 'small',
+          themeColor: item.themeColor || 'cyan',
+          visible: item.visible !== false,
+        })),
+      };
+
+      console.log('Saving site content:', {
+        now: payload.now,
+        techPulse: payload.techPulse,
+        engineeringHighlights: payload.engineeringHighlights
+      });
+
+      const { data } = await api.put('/site-content', payload);
       setForm({
         hero: { ...EMPTY_CONTENT.hero, ...data.hero },
         about: { ...EMPTY_CONTENT.about, ...data.about, highlights: data.about?.highlights || [] },
@@ -166,7 +197,7 @@ export default function ContentPage() {
   const addNowItem = () =>
     setForm((f) => ({
       ...f,
-      now: [...f.now, { category: '', description: '', icon: '🚀', themeColor: 'blue', visible: true, order: 0 }],
+      now: [...f.now, { category: '', description: '', icon: '🚀', themeColor: 'blue', size: 'small', visible: true, order: 0 }],
     }));
 
   const updateNowItem = (i, key, val) =>
