@@ -1,6 +1,12 @@
 import React from 'react';
 
-const DEFAULT_TIMELINE = [
+const getWhatsAppHref = (value) => {
+  if (!value) return 'https://wa.me/916362835904';
+  if (value.startsWith('http')) return value;
+  const digits = value.replace(/\D/g, '');
+  const normalized = digits.startsWith('91') ? digits : `91${digits}`;
+  return `https://wa.me/${normalized}`;
+};const DEFAULT_TIMELINE = [
   {
     year: '2024',
     title: 'Frontend Internship',
@@ -55,7 +61,7 @@ export default function About({ content }) {
 
   const profileImage = about.imageUrl || '/profile.jpg';
   const location = about.location || 'Yadgir, Karnataka';
-  const whatsappUrl = social.whatsapp || 'https://wa.me/916362835904';
+  const whatsappUrl = getWhatsAppHref(social.whatsapp);
   const emailHref = social.email && !social.email.startsWith('mailto:') ? `mailto:${social.email}` : social.email || 'mailto:nagupoojary33@gmail.com';
   const githubUrl = social.github || 'https://github.com/Nagaraj-Jakkappa';
   const linkedinUrl = social.linkedin || 'https://www.linkedin.com/in/nagaraj-jakkappa/';
