@@ -64,7 +64,7 @@ export default function Navbar({ content }) {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-1 group shrink-0">
+          <a href="https://www.techartistry.in/" aria-label="Go to Techartistry homepage" className="flex items-center gap-1 group shrink-0">
             <span className="font-display font-black text-xl tracking-tighter text-white uppercase italic">
               Tech
               <span className="text-blue-400 group-hover:text-blue-300 transition-colors">
@@ -72,7 +72,7 @@ export default function Navbar({ content }) {
               </span>
             </span>
             <span className="font-mono text-xs text-slate-500 mt-1">.in</span>
-          </Link>
+          </a>
 
           {/* Desktop nav links – shown at lg+ */}
           <ul className="hidden lg:flex items-center gap-6 xl:gap-8">
