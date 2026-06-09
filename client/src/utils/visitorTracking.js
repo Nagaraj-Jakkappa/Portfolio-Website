@@ -67,8 +67,17 @@ export function trackVisitorEvent(eventType, metadata = {}) {
       metadata,
     };
 
-    const apiUrl = import.meta.env.VITE_API_URL || '/api';
-    const endpoint = `${apiUrl}/visitor-events/track`;
+    let baseUrl = import.meta.env.VITE_API_URL || '';
+    baseUrl = baseUrl.replace(/\/+$/, '');
+    
+    if (baseUrl && !baseUrl.endsWith('/api')) {
+      baseUrl += '/api';
+    }
+    if (!baseUrl) {
+      baseUrl = '/api';
+    }
+
+    const endpoint = `${baseUrl}/insights/event`;
 
     // Fire and forget, don't await, catch errors silently
     if (navigator.sendBeacon) {

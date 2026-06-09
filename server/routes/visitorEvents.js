@@ -3,8 +3,8 @@ const { protect } = require('../middleware/auth');
 const VisitorEvent = require('../models/VisitorEvent');
 const router = express.Router();
 
-// Public route: POST /api/visitor-events/track
-router.post('/track', async (req, res) => {
+// Shared tracking handler
+const trackHandler = async (req, res) => {
   try {
     const {
       eventType,
@@ -48,7 +48,13 @@ router.post('/track', async (req, res) => {
     // Never crash on bad payload
     res.status(200).json({ success: true });
   }
-});
+};
+
+// Public route: POST /api/visitor-events/track
+router.post('/track', trackHandler);
+
+// Alias route: POST /api/insights/event
+router.post('/event', trackHandler);
 
 // Protected admin route: GET /api/visitor-events/admin
 router.get('/admin', protect, async (req, res) => {

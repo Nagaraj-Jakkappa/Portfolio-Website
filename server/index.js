@@ -112,6 +112,7 @@ app.use('/api/site-content', siteContentRoutes);
 app.use('/api/admin', adminExportRoutes);
 app.use('/api/experiences', experienceRoutes);
 app.use('/api/visitor-events', visitorEventRoutes);
+app.use('/api/insights', visitorEventRoutes);
 
 // 8. 404 & Error Handling
 app.use('/api/*', (req, res) => {
