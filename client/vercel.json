@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/site/ping",
+      "destination": "https://techartistry-api.onrender.com/api/site/ping"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://techartistry-api.onrender.com/api/:path*"
     },

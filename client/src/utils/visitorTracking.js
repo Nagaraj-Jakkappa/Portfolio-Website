@@ -75,17 +75,8 @@ export function trackVisitorEvent(eventType, metadata = {}) {
       metadata,
     };
 
-    let baseUrl = import.meta.env.VITE_API_URL || '';
-    baseUrl = baseUrl.replace(/\/+$/, '');
-    
-    if (baseUrl && !baseUrl.endsWith('/api')) {
-      baseUrl += '/api';
-    }
-    if (!baseUrl) {
-      baseUrl = '/api';
-    }
-
-    const endpoint = `${baseUrl}/site/ping`;
+    // Hardcoded same-origin URL for tracking to use Vercel proxy
+    const endpoint = '/api/site/ping';
 
     // Fire and forget, don't await, catch errors silently
     if (navigator.sendBeacon) {
