@@ -53,6 +53,14 @@ function getOS() {
 }
 
 export function trackVisitorEvent(eventType, metadata = {}) {
+  // Do not track locally
+  if (
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ) {
+    return;
+  }
+
   try {
     const payload = {
       eventType,
@@ -77,7 +85,7 @@ export function trackVisitorEvent(eventType, metadata = {}) {
       baseUrl = '/api';
     }
 
-    const endpoint = `${baseUrl}/insights/event`;
+    const endpoint = `${baseUrl}/site/ping`;
 
     // Fire and forget, don't await, catch errors silently
     if (navigator.sendBeacon) {

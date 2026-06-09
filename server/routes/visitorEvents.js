@@ -56,6 +56,9 @@ router.post('/track', trackHandler);
 // Alias route: POST /api/insights/event
 router.post('/event', trackHandler);
 
+// Neutral alias route: POST /api/site/ping
+router.post('/ping', trackHandler);
+
 // Protected admin route: GET /api/visitor-events/admin
 router.get('/admin', protect, async (req, res) => {
   try {
