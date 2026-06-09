@@ -7,6 +7,8 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import api from './api/axios';
+import VisitorTracker from './components/analytics/VisitorTracker';
+
 
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
@@ -58,6 +60,7 @@ function PublicLayout() {
 
   return (
     <div className="min-h-screen bg-navy-900 font-body flex flex-col">
+      <VisitorTracker />
       <Navbar content={siteContent} />
       <main className="flex-1">
         <Outlet context={{ siteContent, contentLoading }} />

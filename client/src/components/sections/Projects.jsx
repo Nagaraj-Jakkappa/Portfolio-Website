@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useData';
+import { trackVisitorEvent } from '../../utils/visitorTracking';
 
 function getCaseStudy(title) {
   const t = title.toLowerCase();
@@ -98,7 +99,12 @@ function ProjectCard({ project }) {
         {/* Case Study Toggle */}
         <div className="mt-auto pt-4 border-t border-navy-700/50">
           <button 
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => {
+              if (!expanded) {
+                trackVisitorEvent('case_study_open', { title, slug: project.slug });
+              }
+              setExpanded(!expanded);
+            }}
             className="text-xs font-mono uppercase tracking-wider text-blue-400 hover:text-blue-300 flex items-center gap-2 mb-3"
           >
             {expanded ? '- Hide Case Study' : '+ View Case Study'}
@@ -159,6 +165,7 @@ function ProjectCard({ project }) {
               href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackVisitorEvent('github_click', { title, slug: project.slug })}
               className="flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white bg-navy-800 hover:bg-navy-700 border border-navy-700 px-3 py-1.5 rounded transition-colors w-full sm:w-auto"
             >
               <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

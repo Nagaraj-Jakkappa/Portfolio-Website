@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { trackVisitorEvent } from '../../utils/visitorTracking';
 import api from '../../api/axios';
 
 export default function Certifications() {
@@ -71,6 +72,7 @@ export default function Certifications() {
             href="/Nagaraj_Jakkappa_Resume_2026.pdf"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackVisitorEvent('resume_download')}
             className="btn-primary rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-500/20 w-fit"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -165,6 +167,7 @@ export default function Certifications() {
                       href={cert.link}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackVisitorEvent('credential_click')}
                       className="px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500 hover:text-white transition-all duration-300 text-[11px] font-medium tracking-wide flex items-center gap-1.5"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

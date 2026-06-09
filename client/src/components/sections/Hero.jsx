@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { trackVisitorEvent } from '../../utils/visitorTracking';
 
 export default function Hero({ content }) {
   const hero = content?.hero || {};
@@ -28,6 +29,7 @@ export default function Hero({ content }) {
   };
 
   const viewResume = () => {
+    trackVisitorEvent('resume_click');
     window.open(resumeUrl, '_blank', 'noopener,noreferrer');
   };
 

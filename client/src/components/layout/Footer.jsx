@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { trackVisitorEvent } from '../../utils/visitorTracking';
 
 const getWhatsAppHref = (value) => {
   if (!value) return 'https://wa.me/916362835904';
@@ -37,6 +38,7 @@ const getWhatsAppHref = (value) => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="WhatsApp"
+            onClick={() => trackVisitorEvent('whatsapp_click')}
             className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -47,6 +49,7 @@ const getWhatsAppHref = (value) => {
           <a
             href={content?.socialLinks?.email && !content.socialLinks.email.startsWith('mailto:') ? `mailto:${content.socialLinks.email}` : content?.socialLinks?.email || 'mailto:nagupoojary33@gmail.com'}
             aria-label="Email"
+            onClick={() => trackVisitorEvent('email_click')}
             className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,6 +62,7 @@ const getWhatsAppHref = (value) => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
+            onClick={() => trackVisitorEvent('github_click')}
             className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -71,6 +75,7 @@ const getWhatsAppHref = (value) => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
+            onClick={() => trackVisitorEvent('linkedin_click')}
             className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-800 bg-navy-900 hover:bg-navy-800 hover:border-blue-500/50 hover:text-blue-400 transition-all duration-300"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

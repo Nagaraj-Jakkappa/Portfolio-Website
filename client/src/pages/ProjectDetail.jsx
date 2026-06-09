@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import api from '../api/axios';
+import { trackVisitorEvent } from '../utils/visitorTracking';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
@@ -16,6 +17,7 @@ export default function ProjectDetail() {
         const { data } = await api.get(`/projects/slug/${slug}`);
         setProject(data);
         setError(false);
+        trackVisitorEvent('project_view', { slug, title: data.title });
       } catch (err) {
         console.error('Failed to load project:', err);
         setError(true);
@@ -241,6 +243,7 @@ export default function ProjectDetail() {
                   href={githubUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
+                  onClick={() => trackVisitorEvent('github_click', { slug, title })}
                   className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-navy-800 hover:bg-navy-700 border border-navy-700 text-white font-medium rounded-xl transition-colors"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { trackVisitorEvent } from '../../utils/visitorTracking';
 
 const getWhatsAppHref = (value) => {
   if (!value) return 'https://wa.me/916362835904';
@@ -153,6 +154,7 @@ export default function About({ content }) {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackVisitorEvent('whatsapp_click')}
                 className="group flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-navy-800/50 hover:bg-blue-500/10 hover:border-blue-500/50 hover:text-blue-400 text-slate-300 transition-all duration-300 text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -162,6 +164,7 @@ export default function About({ content }) {
               </a>
               <a
                 href={emailHref}
+                onClick={() => trackVisitorEvent('email_click')}
                 className="group flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-navy-800/50 hover:bg-blue-500/10 hover:border-blue-500/50 hover:text-blue-400 text-slate-300 transition-all duration-300 text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,6 +176,7 @@ export default function About({ content }) {
                 href={githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackVisitorEvent('github_click')}
                 className="group flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-navy-800/50 hover:bg-blue-500/10 hover:border-blue-500/50 hover:text-blue-400 text-slate-300 transition-all duration-300 text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -184,6 +188,7 @@ export default function About({ content }) {
                 href={linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackVisitorEvent('linkedin_click')}
                 className="group flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-navy-800/50 hover:bg-blue-500/10 hover:border-blue-500/50 hover:text-blue-400 text-slate-300 transition-all duration-300 text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
