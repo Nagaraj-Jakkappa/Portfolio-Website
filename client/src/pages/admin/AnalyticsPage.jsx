@@ -3,204 +3,230 @@
  * Path: client/src/pages/admin/AnalyticsPage.jsx
  */
 
-import {
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, StatCard, PageHeader, Ic } from '../../components/admin/ui/ui';
-
-const MONTHLY = [
-  { month: 'Jan', views: 820, msgs: 4 },
-  { month: 'Feb', views: 1140, msgs: 6 },
-  { month: 'Mar', views: 980, msgs: 3 },
-  { month: 'Apr', views: 1450, msgs: 9 },
-  { month: 'May', views: 1890, msgs: 12 },
-  { month: 'Jun', views: 1620, msgs: 8 },
-  { month: 'Jul', views: 2200, msgs: 15 },
-  { month: 'Aug', views: 2750, msgs: 18 },
-];
-const WEEKLY = [
-  { day: 'Mon', views: 43, clicks: 12 },
-  { day: 'Tue', views: 68, clicks: 22 },
-  { day: 'Wed', views: 55, clicks: 18 },
-  { day: 'Thu', views: 91, clicks: 31 },
-  { day: 'Fri', views: 78, clicks: 27 },
-  { day: 'Sat', views: 34, clicks: 9 },
-  { day: 'Sun', views: 29, clicks: 7 },
-];
-const SOURCES = [
-  { name: 'LinkedIn', pct: 38 },
-  { name: 'GitHub', pct: 27 },
-  { name: 'Direct', pct: 20 },
-  { name: 'Google', pct: 11 },
-  { name: 'Twitter', pct: 4 },
-];
-
-const Tip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-navy-900 border border-navy-800 rounded-xl p-3 shadow-2xl text-xs">
-      <p className="text-slate-500 mb-2">{label}</p>
-      {payload.map((p, i) => (
-        <div key={i} className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-          <span className="text-slate-400 capitalize">{p.dataKey}:</span>
-          <span className="text-white font-semibold ml-1">{p.value}</span>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const totalViews = MONTHLY.reduce((s, m) => s + m.views, 0);
-const totalMsgs = MONTHLY.reduce((s, m) => s + m.msgs, 0);
-const avgPerDay = Math.round(totalViews / (MONTHLY.length * 30));
-const peak = MONTHLY.reduce((a, b) => (a.views > b.views ? a : b)).month;
+import api from '../../api/axios';
 
 export default function AnalyticsPage() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchInsights = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await api.get('/visitor-events/admin/summary');
+      setData(res.data);
+    } catch (err) {
+      console.error('Failed to fetch visitor insights:', err);
+      setError('Failed to load visitor insights. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInsights();
+  }, []);
+
+  if (loading && !data) {
+    return (
+      <div className="p-5 md:p-7 max-w-[1400px] mx-auto space-y-4">
+        <PageHeader title="Visitor Insights" description="Loading real-time analytics..." />
+        <div className="animate-pulse flex gap-4">
+          <div className="h-24 bg-navy-800 rounded-xl w-full" />
+          <div className="h-24 bg-navy-800 rounded-xl w-full" />
+          <div className="h-24 bg-navy-800 rounded-xl w-full" />
+          <div className="h-24 bg-navy-800 rounded-xl w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-5 md:p-7 max-w-[1400px] mx-auto space-y-4">
+        <PageHeader title="Visitor Insights" description="Real-time analytics" />
+        <Card className="border-red-500/20 bg-red-500/5">
+          <div className="p-5 text-red-400">
+            <p>{error}</p>
+            <button
+              onClick={fetchInsights}
+              className="mt-4 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-sm transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
   return (
     <div className="p-5 md:p-7 max-w-[1400px] mx-auto space-y-4">
-      <PageHeader title="Analytics" description="Portfolio performance insights — last 8 months" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <PageHeader title="Visitor Insights" description="Anonymous tracking and engagement metrics" />
+        <button
+          onClick={fetchInsights}
+          disabled={loading}
+          className="flex items-center gap-2 px-4 py-2 bg-navy-800 hover:bg-navy-700 text-slate-300 rounded-lg text-sm transition disabled:opacity-50"
+        >
+          <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh Data
+        </button>
+      </div>
 
+      {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          label="Total Page Views"
-          value={totalViews.toLocaleString()}
-          delta={22}
+          label="Total Events"
+          value={data.totalEvents?.toLocaleString() || 0}
           accent="#38bdf8"
-          icon={
-            <Ic
-              d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 100 6 3 3 0 000-6z"
-              size={16}
-            />
-          }
+          icon={<Ic d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 100 6 3 3 0 000-6z" size={16} />}
         />
         <StatCard
-          label="Avg Views / Day"
-          value={avgPerDay}
-          delta={8}
-          accent="#6366f1"
+          label="Today's Events"
+          value={data.todayEvents?.toLocaleString() || 0}
+          accent="#10b981"
           icon={<Ic d="M18 20V10 M12 20V4 M6 20v-6" size={16} />}
         />
         <StatCard
-          label="Messages Received"
-          value={totalMsgs}
-          delta={35}
-          accent="#10b981"
-          icon={<Ic d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" size={16} />}
+          label="Page Views"
+          value={data.pageViews?.toLocaleString() || 0}
+          accent="#6366f1"
+          icon={<Ic d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6" size={16} />}
         />
         <StatCard
-          label="Peak Month"
-          value={peak}
+          label="CTA Clicks"
+          value={data.ctaClicks?.toLocaleString() || 0}
           accent="#f59e0b"
-          icon={
-            <Ic
-              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-              size={16}
-            />
-          }
+          icon={<Ic d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.773 2.882M2.728 11.83l.149 2.988M2.239 7.188l2.882.773M11.83 2.728l2.988.149M20 7h.01" size={16} />}
         />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-4">
+      {/* Sections: Top Pages, Top Referrers, Device Breakdown */}
+      <div className="grid lg:grid-cols-3 gap-4">
+        {/* Top Pages */}
         <Card padding={false}>
-          <div className="p-5 pb-0">
-            <CardHeader title="Monthly Traffic" subtitle="Page views over time" />
+          <div className="p-5 border-b border-navy-800">
+            <CardHeader title="Top Pages" subtitle="Most viewed routes" />
           </div>
-          <div className="h-56 px-2 pb-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={MONTHLY} margin={{ top: 5, right: 10, left: -22, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="gMV" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.28} />
-                    <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e2d3d" vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tick={{ fontSize: 11, fill: '#374151' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis tick={{ fontSize: 11, fill: '#374151' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<Tip />} />
-                <Area
-                  type="monotone"
-                  dataKey="views"
-                  stroke="#38bdf8"
-                  strokeWidth={2}
-                  fill="url(#gMV)"
-                  dot={false}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="p-3">
+            {data.topPages?.length > 0 ? (
+              data.topPages.map((item, i) => (
+                <div key={i} className="flex justify-between items-center py-2 px-2 hover:bg-white/5 rounded-lg">
+                  <span className="text-sm text-slate-300 truncate pr-4">{item.page || '/'}</span>
+                  <span className="text-sm font-mono text-blue-400">{item.count}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-500 text-center py-4">No page data yet</p>
+            )}
           </div>
         </Card>
 
+        {/* Top Referrers */}
         <Card padding={false}>
-          <div className="p-5 pb-0">
-            <CardHeader title="This Week" subtitle="Daily views vs project link clicks" />
+          <div className="p-5 border-b border-navy-800">
+            <CardHeader title="Top Referrers" subtitle="Where visitors come from" />
           </div>
-          <div className="h-56 px-2 pb-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={WEEKLY} margin={{ top: 5, right: 10, left: -28, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e2d3d" vertical={false} />
-                <XAxis
-                  dataKey="day"
-                  tick={{ fontSize: 11, fill: '#374151' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis tick={{ fontSize: 11, fill: '#374151' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<Tip />} cursor={{ fill: '#1e2d3d50' }} />
-                <Bar
-                  dataKey="views"
-                  fill="#38bdf8"
-                  radius={[3, 3, 0, 0]}
-                  maxBarSize={16}
-                  opacity={0.85}
-                />
-                <Bar
-                  dataKey="clicks"
-                  fill="#6366f1"
-                  radius={[3, 3, 0, 0]}
-                  maxBarSize={16}
-                  opacity={0.85}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="p-3">
+            {data.topReferrers?.length > 0 ? (
+              data.topReferrers.map((item, i) => (
+                <div key={i} className="flex justify-between items-center py-2 px-2 hover:bg-white/5 rounded-lg">
+                  <span className="text-sm text-slate-300 truncate pr-4">{item.referrer}</span>
+                  <span className="text-sm font-mono text-blue-400">{item.count}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-500 text-center py-4">No referrer data yet</p>
+            )}
+          </div>
+        </Card>
+
+        {/* Device Breakdown */}
+        <Card padding={false}>
+          <div className="p-5 border-b border-navy-800">
+            <CardHeader title="Device Breakdown" subtitle="Desktop vs Mobile" />
+          </div>
+          <div className="p-3">
+            {data.deviceBreakdown?.length > 0 ? (
+              data.deviceBreakdown.map((item, i) => (
+                <div key={i} className="flex justify-between items-center py-2 px-2 hover:bg-white/5 rounded-lg">
+                  <span className="text-sm text-slate-300 capitalize">{item.device || 'Unknown'}</span>
+                  <span className="text-sm font-mono text-blue-400">{item.count}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-500 text-center py-4">No device data yet</p>
+            )}
           </div>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader title="Traffic Sources" subtitle="Where your visitors come from" />
-        <div className="space-y-3">
-          {SOURCES.map(({ name, pct }) => (
-            <div key={name} className="flex items-center gap-4">
-              <span className="text-sm text-slate-400 w-20 flex-shrink-0">{name}</span>
-              <div className="flex-1 h-2 bg-navy-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-blue-400 to-[#6366f1]"
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-              <span className="text-xs text-slate-600 w-9 text-right tabular-nums">{pct}%</span>
-            </div>
-          ))}
+      {/* Recent Events Table */}
+      <Card padding={false}>
+        <div className="p-5 border-b border-navy-800">
+          <CardHeader title="Recent Events" subtitle="Latest tracking activity" />
         </div>
-        <p className="text-xs text-slate-800 mt-5 pt-4 border-t border-navy-800">
-          Connect Plausible, Umami, or Google Analytics to replace this seeded data with real
-          numbers.
-        </p>
+        <div className="w-full overflow-x-auto">
+          {data.recentEvents?.length > 0 ? (
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="bg-navy-900/50">
+                  <th className="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Time</th>
+                  <th className="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Event Type</th>
+                  <th className="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Page</th>
+                  <th className="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Device</th>
+                  <th className="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Browser/OS</th>
+                  <th className="p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Referrer</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-navy-800">
+                {data.recentEvents.map((ev) => (
+                  <tr key={ev._id} className="hover:bg-white/5 transition-colors">
+                    <td className="p-4 text-sm text-slate-300 whitespace-nowrap">
+                      {new Date(ev.createdAt).toLocaleString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </td>
+                    <td className="p-4 text-sm whitespace-nowrap">
+                      <span className={`px-2 py-1 rounded text-xs font-mono ${
+                        ev.eventType === 'page_view' 
+                          ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' 
+                          : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                      }`}>
+                        {ev.eventType}
+                      </span>
+                    </td>
+                    <td className="p-4 text-sm text-slate-300 truncate max-w-[200px]" title={ev.page}>
+                      {ev.page || '/'}
+                    </td>
+                    <td className="p-4 text-sm text-slate-300 capitalize">{ev.deviceType || 'Unknown'}</td>
+                    <td className="p-4 text-sm text-slate-400">
+                      {(ev.browser || 'Unknown')} / {(ev.os || 'Unknown')}
+                    </td>
+                    <td className="p-4 text-sm text-slate-500 truncate max-w-[200px]" title={ev.referrer}>
+                      {ev.referrer || '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="p-8 text-center text-slate-500 text-sm">
+              No recent events recorded.
+            </div>
+          )}
+        </div>
       </Card>
     </div>
   );

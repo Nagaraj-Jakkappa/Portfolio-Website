@@ -43,7 +43,7 @@ const ICONS = {
 
 const NAV_MAIN = [
   { label: 'Dashboard', path: '/admin', icon: 'dashboard', end: true },
-  { label: 'Analytics', path: '/admin/analytics', icon: 'analytics' },
+  { label: 'Visitor Insights', path: '/admin/analytics', icon: 'analytics' },
   { label: 'Content', path: '/admin/content', icon: 'content' },
   { label: 'Skills', path: '/admin/skills', icon: 'skills' },
   { label: 'Projects', path: '/admin/projects', icon: 'projects' },
@@ -56,7 +56,7 @@ const NAV_MAIN = [
 
 const PAGE_NAMES = {
   '/admin': 'Dashboard',
-  '/admin/analytics': 'Analytics',
+  '/admin/analytics': 'Visitor Insights',
   '/admin/content': 'Content',
   '/admin/skills': 'Skills',
   '/admin/projects': 'Projects',
