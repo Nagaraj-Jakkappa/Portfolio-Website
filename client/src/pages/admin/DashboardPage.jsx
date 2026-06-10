@@ -37,16 +37,19 @@ const IC = {
   live: 'M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0',
 };
 
-const VISITOR_DATA = [
-  { month: 'Jan', visitors: 124, pageviews: 348 },
-  { month: 'Feb', visitors: 187, pageviews: 502 },
-  { month: 'Mar', visitors: 152, pageviews: 431 },
-  { month: 'Apr', visitors: 241, pageviews: 628 },
-  { month: 'May', visitors: 318, pageviews: 847 },
-  { month: 'Jun', visitors: 282, pageviews: 731 },
-  { month: 'Jul', visitors: 397, pageviews: 962 },
-  { month: 'Aug', visitors: 471, pageviews: 1138 },
-];
+const EVENT_LABELS = {
+  page_view: 'Page View',
+  project_view: 'Project View',
+  github_click: 'GitHub Click',
+  linkedin_click: 'LinkedIn Click',
+  whatsapp_click: 'WhatsApp Click',
+  email_click: 'Email Click',
+  resume_click: 'Resume Click',
+  resume_download: 'Resume Download',
+  credential_click: 'Credential Click',
+  case_study_open: 'Case Study Open',
+  experience_breakdown_open: 'Experience Breakdown Open',
+};
 
 const MSG_DATA = [
   { month: 'Jan', count: 2 },
@@ -188,13 +191,17 @@ function MsgRow({ m }) {
 
 export default function DashboardPage() {
   const [data, setData] = useState({ projects: [], messages: [], certificates: [], counts: {} });
+  const [visitorData, setVisitorData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get('/stats')
-      .then((res) => {
-        setData(res.data);
+    Promise.all([
+      api.get('/stats').catch(() => ({ data: {} })),
+      api.get('/visitor-events/admin/summary').catch(() => ({ data: null }))
+    ])
+      .then(([statsRes, visitorRes]) => {
+        setData(statsRes.data || { projects: [], messages: [], certificates: [], counts: {} });
+        setVisitorData(visitorRes.data);
       })
       .catch((err) => console.error('Dashboard Load Error:', err))
       .finally(() => setLoading(false));
@@ -228,7 +235,7 @@ export default function DashboardPage() {
         </Btn>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           label="Total Projects"
           value={loading ? '—' : (data.counts?.projectCount ?? 0)}
@@ -251,62 +258,60 @@ export default function DashboardPage() {
           loading={loading}
           icon={<Ic d={IC.cert} size={16} />}
         />
-        <StatCard
-          label="Profile Views"
-          value={loading ? '—' : '1.2k'}
-          delta={8}
-          accent="#10b981"
-          loading={loading}
-          icon={<Ic d={IC.eye} size={16} />}
-        />
+      </div>
+
+      <div className="pt-4 border-t border-navy-800/50 mt-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-white uppercase tracking-wider">Visitor Insights</h2>
+          <a href="/admin/analytics" className="text-xs text-blue-400 hover:text-blue-300">Detailed View →</a>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <StatCard label="Today's Events" value={loading ? '—' : (visitorData?.todayEvents ?? 0)} accent="#10b981" loading={loading} />
+          <StatCard label="Total Events" value={loading ? '—' : (visitorData?.totalEvents ?? 0)} accent="#38bdf8" loading={loading} />
+          <StatCard label="Page Views" value={loading ? '—' : (visitorData?.pageViews ?? 0)} accent="#6366f1" loading={loading} />
+          <StatCard label="CTA Clicks" value={loading ? '—' : (visitorData?.ctaClicks ?? 0)} accent="#f59e0b" loading={loading} />
+          <StatCard label="Top Page" value={loading ? '—' : (visitorData?.topPages?.[0]?.page || '/')} accent="#ec4899" loading={loading} />
+          <StatCard label="Top Referrer" value={loading ? '—' : (visitorData?.topReferrers?.[0]?.referrer || 'Direct')} accent="#8b5cf6" loading={loading} />
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2" padding={false}>
           <div className="p-5 pb-0">
-            <CardHeader title="Visitor Traffic" subtitle="Monthly unique visitors vs page views" />
+            <CardHeader title="Important Activity" subtitle="Recent high-value interactions" action={
+              <a href="/admin/analytics" className="text-xs text-blue-400 hover:text-blue-300">View all →</a>
+            }/>
           </div>
-          <div className="h-52 px-2 pb-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={VISITOR_DATA} margin={{ top: 5, right: 10, left: -22, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="gV" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.28} />
-                    <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gP" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.18} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e2d3d" vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tick={{ fontSize: 11, fill: '#374151' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis tick={{ fontSize: 11, fill: '#374151' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<ChartTip />} cursor={{ stroke: '#1e2d3d' }} />
-                <Area
-                  type="monotone"
-                  dataKey="pageviews"
-                  stroke="#6366f1"
-                  strokeWidth={1.5}
-                  fill="url(#gP)"
-                  dot={false}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="visitors"
-                  stroke="#38bdf8"
-                  strokeWidth={2}
-                  fill="url(#gV)"
-                  dot={false}
-                  activeDot={{ r: 4, fill: '#38bdf8', strokeWidth: 0 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="px-5 py-4 min-h-[220px]">
+            {loading ? (
+              <div className="animate-pulse space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex justify-between items-center py-2 border-b border-navy-800">
+                    <div className="space-y-2">
+                      <div className="h-3 bg-navy-800 rounded w-24"></div>
+                      <div className="h-2 bg-navy-800 rounded w-16"></div>
+                    </div>
+                    <div className="h-2 bg-navy-800 rounded w-12"></div>
+                  </div>
+                ))}
+              </div>
+            ) : visitorData?.recentImportantEvents?.length === 0 ? (
+              <p className="text-sm text-slate-700 py-10 text-center">No recent activity.</p>
+            ) : (
+              (visitorData?.recentImportantEvents || []).map(ev => (
+                <div key={ev._id} className="flex justify-between items-center py-3 border-b border-navy-800 last:border-0 hover:bg-white/5 px-2 rounded transition-colors">
+                  <div>
+                    <p className="text-sm text-slate-200">{EVENT_LABELS[ev.eventType] || ev.eventType}</p>
+                    <p className="text-xs text-slate-500 mt-0.5 truncate max-w-[150px] sm:max-w-[300px]">
+                      {ev.page || '/'} <span className="mx-1">•</span> <span className="capitalize">{ev.deviceType || 'Unknown'}</span>
+                    </p>
+                  </div>
+                  <span className="text-xs text-slate-600 whitespace-nowrap">
+                    {new Date(ev.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </Card>
 

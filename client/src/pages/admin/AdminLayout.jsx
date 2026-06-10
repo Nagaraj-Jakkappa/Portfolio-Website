@@ -77,6 +77,7 @@ export default function AdminLayout() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [hasNewVisitorEvents, setHasNewVisitorEvents] = useState(false);
 
   const notificationRef = useRef(null);
 
@@ -105,13 +106,23 @@ export default function AdminLayout() {
 
   const fetchNotificationsData = async () => {
     try {
-      const [listRes, countRes] = await Promise.all([
-        axios.get('/notifications'),
-        axios.get('/notifications/unread-count'),
+      const [listRes, countRes, visitorRes] = await Promise.all([
+        axios.get('/notifications').catch(() => ({ data: [] })),
+        axios.get('/notifications/unread-count').catch(() => ({ data: { count: 0 } })),
+        axios.get('/visitor-events/admin/summary').catch(() => null),
       ]);
 
       setNotifications(listRes.data.slice(0, 10));
       setUnreadCount(countRes.data.count);
+
+      if (visitorRes?.data?.latestEventCreatedAt) {
+        const lastSeen = localStorage.getItem('techartistry_visitor_insights_seen_at');
+        if (!lastSeen || new Date(visitorRes.data.latestEventCreatedAt).getTime() > parseInt(lastSeen, 10)) {
+          setHasNewVisitorEvents(true);
+        } else {
+          setHasNewVisitorEvents(false);
+        }
+      }
     } catch (error) {
       console.error('Failed to fetch notifications', error);
     }
@@ -208,7 +219,7 @@ export default function AdminLayout() {
                   `
                         flex items-center gap-3
                         rounded-lg px-3 py-2.5 mb-1
-                        transition
+                        transition relative
                         ${
                           isActive
                             ? 'bg-blue-500/10 text-blue-400'
@@ -220,6 +231,9 @@ export default function AdminLayout() {
                 <Ic d={ICONS[item.icon]} size={15} />
 
                 {item.label}
+                {item.path === '/admin/analytics' && hasNewVisitorEvents && (
+                  <span className="absolute right-3 w-1.5 h-1.5 rounded-full bg-blue-400" />
+                )}
               </NavLink>
             ))}
           </nav>
@@ -269,7 +283,7 @@ export default function AdminLayout() {
                   `
                         flex items-center gap-3
                         rounded-lg px-3 py-2.5 mb-1
-                        transition
+                        transition relative
                         ${
                           isActive
                             ? 'bg-blue-500/10 text-blue-400'
@@ -281,6 +295,12 @@ export default function AdminLayout() {
                 <Ic d={ICONS[item.icon]} size={15} />
 
                 {expanded && item.label}
+                {expanded && item.path === '/admin/analytics' && hasNewVisitorEvents && (
+                  <span className="absolute right-3 w-1.5 h-1.5 rounded-full bg-blue-400" />
+                )}
+                {!expanded && item.path === '/admin/analytics' && hasNewVisitorEvents && (
+                  <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-blue-400" />
+                )}
               </NavLink>
             ))}
           </nav>
@@ -327,9 +347,9 @@ export default function AdminLayout() {
             >
               <Ic d={ICONS.bell} size={16} />
 
-              {unreadCount > 0 && (
+              {(unreadCount > 0 || hasNewVisitorEvents) && (
                 <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-blue-400 text-[10px] font-bold text-white ring-2 ring-navy-900">
-                  {unreadCount}
+                  {unreadCount > 0 ? unreadCount : '!'}
                 </span>
               )}
             </button>

@@ -42,6 +42,7 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     fetchInsights();
+    localStorage.setItem('techartistry_visitor_insights_seen_at', Date.now().toString());
   }, []);
 
   const handleClearTestEvents = async () => {

@@ -210,6 +210,26 @@ router.get('/admin/summary', protect, async (req, res) => {
       .limit(10)
       .lean();
 
+    const recentImportantEvents = await VisitorEvent.find({
+      eventType: {
+        $in: [
+          'whatsapp_click',
+          'email_click',
+          'github_click',
+          'linkedin_click',
+          'resume_click',
+          'resume_download',
+          'contact_submit',
+          'project_view',
+        ]
+      }
+    })
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .lean();
+
+    const latestEvent = await VisitorEvent.findOne().sort({ createdAt: -1 }).select('createdAt').lean();
+
     res.json({
       totalEvents,
       todayEvents,
@@ -219,6 +239,8 @@ router.get('/admin/summary', protect, async (req, res) => {
       topReferrers: topReferrersAgg.map((x) => ({ referrer: x._id, count: x.count })),
       deviceBreakdown: deviceBreakdownAgg.map((x) => ({ device: x._id, count: x.count })),
       recentEvents,
+      recentImportantEvents,
+      latestEventCreatedAt: latestEvent ? latestEvent.createdAt : null,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
