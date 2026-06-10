@@ -7,6 +7,20 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, StatCard, PageHeader, Ic } from '../../components/admin/ui/ui';
 import api from '../../api/axios';
 
+const EVENT_LABELS = {
+  page_view: 'Page View',
+  project_view: 'Project View',
+  github_click: 'GitHub Click',
+  linkedin_click: 'LinkedIn Click',
+  whatsapp_click: 'WhatsApp Click',
+  email_click: 'Email Click',
+  resume_click: 'Resume Click',
+  resume_download: 'Resume Download',
+  credential_click: 'Credential Click',
+  case_study_open: 'Case Study Open',
+  experience_breakdown_open: 'Experience Breakdown Open',
+};
+
 export default function AnalyticsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +43,17 @@ export default function AnalyticsPage() {
   useEffect(() => {
     fetchInsights();
   }, []);
+
+  const handleClearTestEvents = async () => {
+    if (!window.confirm('Are you sure you want to clear manual test events?')) return;
+    try {
+      await api.delete('/visitor-events/admin/test-events');
+      fetchInsights();
+    } catch (err) {
+      console.error('Failed to clear test events', err);
+      alert('Failed to clear test events');
+    }
+  };
 
   if (loading && !data) {
     return (
@@ -69,16 +94,24 @@ export default function AnalyticsPage() {
     <div className="p-5 md:p-7 max-w-[1400px] mx-auto space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <PageHeader title="Visitor Insights" description="Anonymous tracking and engagement metrics" />
-        <button
-          onClick={fetchInsights}
-          disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-navy-800 hover:bg-navy-700 text-slate-300 rounded-lg text-sm transition disabled:opacity-50"
-        >
-          <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Refresh Data
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleClearTestEvents}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-sm transition"
+          >
+            Clear Test Events
+          </button>
+          <button
+            onClick={fetchInsights}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-navy-800 hover:bg-navy-700 text-slate-300 rounded-lg text-sm transition disabled:opacity-50"
+          >
+            <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh Data
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -204,18 +237,18 @@ export default function AnalyticsPage() {
                           ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' 
                           : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                       }`}>
-                        {ev.eventType}
+                        {EVENT_LABELS[ev.eventType] || ev.eventType}
                       </span>
                     </td>
-                    <td className="p-4 text-sm text-slate-300 truncate max-w-[200px]" title={ev.page}>
-                      {ev.page || '/'}
+                    <td className="p-4 text-sm text-slate-300 truncate max-w-[200px]" title={ev.page || ev.path}>
+                      {ev.page || ev.path || 'Unknown'}
                     </td>
                     <td className="p-4 text-sm text-slate-300 capitalize">{ev.deviceType || 'Unknown'}</td>
                     <td className="p-4 text-sm text-slate-400">
                       {(ev.browser || 'Unknown')} / {(ev.os || 'Unknown')}
                     </td>
                     <td className="p-4 text-sm text-slate-500 truncate max-w-[200px]" title={ev.referrer}>
-                      {ev.referrer || '-'}
+                      {ev.referrer || 'Direct / None'}
                     </td>
                   </tr>
                 ))}

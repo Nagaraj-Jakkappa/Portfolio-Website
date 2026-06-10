@@ -115,21 +115,65 @@ router.get('/admin/summary', protect, async (req, res) => {
 
     const topPagesAgg = await VisitorEvent.aggregate([
       { $match: { eventType: 'page_view' } },
-      { $group: { _id: '$page', count: { $sum: 1 } } },
+      {
+        $addFields: {
+          normalizedPage: {
+            $cond: {
+              if: { $in: ['$page', ['', null]] },
+              then: { $cond: [{ $in: ['$path', ['', null]] }, 'Unknown', '$path'] },
+              else: '$page'
+            }
+          }
+        }
+      },
+      {
+        $addFields: {
+          finalPage: {
+            $cond: {
+              if: { $eq: ['$normalizedPage', ''] },
+              then: '/',
+              else: '$normalizedPage'
+            }
+          }
+        }
+      },
+      { $group: { _id: '$finalPage', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 5 },
     ]);
 
     const topReferrersAgg = await VisitorEvent.aggregate([
-      { $match: { eventType: 'page_view', referrer: { $ne: null, $ne: '' } } },
-      { $group: { _id: '$referrer', count: { $sum: 1 } } },
+      { $match: { eventType: 'page_view' } },
+      {
+        $addFields: {
+          normalizedReferrer: {
+            $cond: {
+              if: { $in: ['$referrer', ['', null]] },
+              then: 'Direct / None',
+              else: '$referrer'
+            }
+          }
+        }
+      },
+      { $group: { _id: '$normalizedReferrer', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 5 },
     ]);
 
     const deviceBreakdownAgg = await VisitorEvent.aggregate([
-      { $match: { eventType: 'page_view', deviceType: { $ne: null } } },
-      { $group: { _id: '$deviceType', count: { $sum: 1 } } },
+      { $match: { eventType: 'page_view' } },
+      {
+        $addFields: {
+          normalizedDevice: {
+            $cond: {
+              if: { $in: ['$deviceType', ['', null]] },
+              then: 'Unknown',
+              else: '$deviceType'
+            }
+          }
+        }
+      },
+      { $group: { _id: '$normalizedDevice', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
     ]);
 
@@ -148,6 +192,22 @@ router.get('/admin/summary', protect, async (req, res) => {
       deviceBreakdown: deviceBreakdownAgg.map((x) => ({ device: x._id, count: x.count })),
       recentEvents,
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Protected admin route: DELETE /api/visitor-events/admin/test-events
+router.delete('/admin/test-events', protect, async (req, res) => {
+  try {
+    await VisitorEvent.deleteMany({
+      $or: [
+        { page: { $regex: 'manual-test', $options: 'i' } },
+        { path: { $regex: 'manual-test', $options: 'i' } },
+        { sessionId: { $regex: 'manual-test', $options: 'i' } },
+      ],
+    });
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
