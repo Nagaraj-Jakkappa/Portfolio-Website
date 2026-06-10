@@ -6,8 +6,13 @@ import toast from 'react-hot-toast';
  * Requests sent to '/api' will be automatically forwarded to your
  * Render backend (https://techartistry-api.onrender.com/api).
  */
+const apiURL = import.meta.env.VITE_API_URL;
+// If VITE_API_URL is hardcoded to the www domain which is failing, force same-origin '/api'
+// Otherwise, use VITE_API_URL if valid, and fallback to '/api'.
+const safeBaseURL = (apiURL && apiURL.includes('www.techartistry.in')) ? '/api' : (apiURL || '/api');
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: safeBaseURL,
   timeout: 60000, // Increased to 60s to accommodate Render cold starts
   withCredentials: true,
 });
