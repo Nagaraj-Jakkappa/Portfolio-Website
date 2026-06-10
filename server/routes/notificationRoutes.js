@@ -2,6 +2,7 @@
 
 const express = require('express');
 const Notification = require('../models/Notification');
+const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ const router = express.Router();
 | GET ALL NOTIFICATIONS
 |--------------------------------------------------------------------------
 */
-router.get('/', async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
     const notifications = await Notification.find().sort({ createdAt: -1 });
 
@@ -30,7 +31,7 @@ router.get('/', async (req, res) => {
 | GET UNREAD COUNT
 |--------------------------------------------------------------------------
 */
-router.get('/unread-count', async (req, res) => {
+router.get('/unread-count', protect, async (req, res) => {
   try {
     const count = await Notification.countDocuments({
       read: false,
@@ -52,7 +53,7 @@ router.get('/unread-count', async (req, res) => {
 | MARK ALL AS READ
 |--------------------------------------------------------------------------
 */
-router.put('/mark-all-read', async (req, res) => {
+router.put('/mark-all-read', protect, async (req, res) => {
   try {
     await Notification.updateMany({ read: false }, { read: true });
 
@@ -75,7 +76,7 @@ router.put('/mark-all-read', async (req, res) => {
 | CREATE NOTIFICATION
 |--------------------------------------------------------------------------
 */
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const { title, message, type } = req.body;
 
