@@ -118,10 +118,24 @@ router.get('/admin/summary', protect, async (req, res) => {
       {
         $addFields: {
           normalizedPage: {
-            $cond: {
-              if: { $in: ['$page', ['', null]] },
-              then: { $cond: [{ $in: ['$path', ['', null]] }, 'Unknown', '$path'] },
-              else: '$page'
+            $let: {
+              vars: {
+                trimmedPage: { $trim: { input: { $ifNull: ['$page', ''] } } },
+                trimmedPath: { $trim: { input: { $ifNull: ['$path', ''] } } }
+              },
+              in: {
+                $cond: {
+                  if: { $ne: ['$$trimmedPage', ''] },
+                  then: '$$trimmedPage',
+                  else: {
+                    $cond: {
+                      if: { $ne: ['$$trimmedPath', ''] },
+                      then: '$$trimmedPath',
+                      else: '/'
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -147,10 +161,17 @@ router.get('/admin/summary', protect, async (req, res) => {
       {
         $addFields: {
           normalizedReferrer: {
-            $cond: {
-              if: { $in: ['$referrer', ['', null]] },
-              then: 'Direct / None',
-              else: '$referrer'
+            $let: {
+              vars: {
+                trimmedRef: { $trim: { input: { $ifNull: ['$referrer', ''] } } }
+              },
+              in: {
+                $cond: {
+                  if: { $in: ['$$trimmedRef', ['', '-']] },
+                  then: 'Direct / None',
+                  else: '$$trimmedRef'
+                }
+              }
             }
           }
         }
@@ -165,10 +186,17 @@ router.get('/admin/summary', protect, async (req, res) => {
       {
         $addFields: {
           normalizedDevice: {
-            $cond: {
-              if: { $in: ['$deviceType', ['', null]] },
-              then: 'Unknown',
-              else: '$deviceType'
+            $let: {
+              vars: {
+                trimmedDevice: { $trim: { input: { $ifNull: ['$deviceType', ''] } } }
+              },
+              in: {
+                $cond: {
+                  if: { $in: ['$$trimmedDevice', ['', '-']] },
+                  then: 'Unknown',
+                  else: '$$trimmedDevice'
+                }
+              }
             }
           }
         }
@@ -205,6 +233,7 @@ router.delete('/admin/test-events', protect, async (req, res) => {
         { page: { $regex: 'manual-test', $options: 'i' } },
         { path: { $regex: 'manual-test', $options: 'i' } },
         { sessionId: { $regex: 'manual-test', $options: 'i' } },
+        { title: { $regex: 'Manual Tracking Test', $options: 'i' } },
       ],
     });
     res.json({ success: true });
