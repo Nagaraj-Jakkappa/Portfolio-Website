@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   PieChart,
