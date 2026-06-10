@@ -265,10 +265,10 @@ function ProjectRow({ project, onEdit, onDelete }) {
                 alt={project.title || 'Project'} 
                 loading="lazy" 
                 decoding="async" 
-                className="w-full h-full object-cover" 
+                className="w-full h-full object-cover object-top" 
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = 'https://via.placeholder.com/600x400/0f172a/38bdf8?text=No+Image';
+                  e.target.src = 'https://via.placeholder.com/600x400/0f172a/38bdf8?text=Project+Preview';
                 }}
               />
             ) : (

@@ -143,20 +143,25 @@ export default function ProjectDetail() {
 
         {/* Image */}
         {imageUrl ? (
-          <div className="rounded-2xl overflow-hidden bg-navy-800 border border-navy-700 shadow-2xl shadow-blue-900/10 mb-16 aspect-video">
+          <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl bg-slate-950/60 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700">
             <img 
               src={imageUrl} 
-              alt={title} 
-              className="w-full h-full object-cover"
+              alt={title || "Project Preview"} 
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover object-top"
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.style.display = 'none';
+                e.target.src = 'https://via.placeholder.com/1200x675/0f172a/38bdf8?text=Project+Preview';
               }}
             />
           </div>
         ) : (
-          <div className="rounded-2xl bg-navy-800 border border-navy-700 shadow-2xl shadow-blue-900/10 mb-16 aspect-video flex items-center justify-center">
-            <span className="font-display font-bold text-5xl text-blue-400/20">{title[0]}</span>
+          <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl bg-navy-800 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700 flex flex-col items-center justify-center">
+            <div className="w-24 h-24 rounded-3xl bg-navy-900 border border-navy-700 flex items-center justify-center mb-4">
+              <span className="font-display font-bold text-4xl text-blue-400/40">{title[0]}</span>
+            </div>
+            <span className="text-slate-500 font-mono text-sm uppercase tracking-widest">Project Preview</span>
           </div>
         )}
 

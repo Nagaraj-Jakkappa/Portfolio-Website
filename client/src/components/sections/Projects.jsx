@@ -44,24 +44,25 @@ function ProjectCard({ project }) {
   return (
     <div className="card-base group flex flex-col overflow-hidden transition-all duration-300">
       {/* Thumbnail */}
-      <div className="h-56 bg-navy-700 relative overflow-hidden">
+      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-2xl bg-slate-950/60">
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={title || "Project thumbnail"}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = 'https://via.placeholder.com/600x400/0f172a/38bdf8?text=No+Image';
+              e.target.src = 'https://via.placeholder.com/600x400/0f172a/38bdf8?text=Project+Preview';
             }}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="w-16 h-16 rounded-2xl bg-navy-800 border border-navy-700 flex items-center justify-center">
+          <div className="w-full h-full flex flex-col items-center justify-center bg-navy-800">
+            <div className="w-16 h-16 rounded-2xl bg-navy-900 border border-navy-700 flex items-center justify-center mb-3">
               <span className="font-display font-bold text-2xl text-blue-400/40">{title[0]}</span>
             </div>
+            <span className="text-slate-500 font-mono text-xs uppercase tracking-widest">Project Preview</span>
           </div>
         )}
         {/* Category badge */}
