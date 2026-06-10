@@ -56,6 +56,12 @@ const EVENT_LABELS = {
   experience_breakdown_open: 'Experience Breakdown Open',
 };
 
+const formatPagePath = (path) => {
+  if (!path || path.trim() === '') return 'Unknown';
+  if (path === '/') return 'Home';
+  return path;
+};
+
 const MSG_DATA = [
   { month: 'Jan', count: 2 },
   { month: 'Feb', count: 5 },
@@ -275,7 +281,7 @@ export default function DashboardPage() {
           <StatCard label="Total Events" value={loading ? '—' : (visitorData?.totalEvents ?? 0)} accent="#38bdf8" loading={loading} icon={<Ic d={IC.eye} size={16} />} />
           <StatCard label="Page Views" value={loading ? '—' : (visitorData?.pageViews ?? 0)} accent="#6366f1" loading={loading} icon={<Ic d={IC.fileText} size={16} />} />
           <StatCard label="CTA Clicks" value={loading ? '—' : (visitorData?.ctaClicks ?? 0)} accent="#f59e0b" loading={loading} icon={<Ic d={IC.mousePointer} size={16} />} />
-          <StatCard label="Top Page" value={loading ? '—' : (visitorData?.topPages?.[0]?.page || '/')} accent="#ec4899" loading={loading} icon={<Ic d={IC.link} size={16} />} />
+          <StatCard label="Top Page" value={loading ? '—' : formatPagePath(visitorData?.topPages?.[0]?.page)} accent="#ec4899" loading={loading} icon={<Ic d={IC.link} size={16} />} />
           <StatCard label="Top Referrer" value={loading ? '—' : (visitorData?.topReferrers?.[0]?.referrer || 'Direct')} accent="#8b5cf6" loading={loading} icon={<Ic d={IC.externalLink} size={16} />} />
         </div>
       </div>
@@ -308,7 +314,7 @@ export default function DashboardPage() {
                   <div>
                     <p className="text-sm text-slate-200">{EVENT_LABELS[ev.eventType] || ev.eventType}</p>
                     <p className="text-xs text-slate-500 mt-0.5 truncate max-w-[150px] sm:max-w-[300px]">
-                      {ev.page || '/'} <span className="mx-1">•</span> <span className="capitalize">{ev.deviceType || 'Unknown'}</span>
+                      {formatPagePath(ev.page || ev.path)} <span className="mx-1">•</span> <span className="capitalize">{ev.deviceType || 'Unknown'}</span>
                     </p>
                   </div>
                   <span className="text-xs text-slate-600 whitespace-nowrap">

@@ -21,6 +21,12 @@ const EVENT_LABELS = {
   experience_breakdown_open: 'Experience Breakdown Open',
 };
 
+const formatPagePath = (path) => {
+  if (!path || path.trim() === '') return 'Unknown';
+  if (path === '/') return 'Home';
+  return path;
+};
+
 export default function AnalyticsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -154,7 +160,7 @@ export default function AnalyticsPage() {
             {data.topPages?.length > 0 ? (
               data.topPages.map((item, i) => (
                 <div key={i} className="flex justify-between items-center py-2 px-2 hover:bg-white/5 rounded-lg">
-                  <span className="text-sm text-slate-300 truncate pr-4">{item.page || '/'}</span>
+                  <span className="text-sm text-slate-300 truncate pr-4">{formatPagePath(item.page)}</span>
                   <span className="text-sm font-mono text-blue-400">{item.count}</span>
                 </div>
               ))
@@ -242,7 +248,7 @@ export default function AnalyticsPage() {
                       </span>
                     </td>
                     <td className="p-4 text-sm text-slate-300 truncate max-w-[200px]" title={ev.page || ev.path}>
-                      {ev.page || ev.path || 'Unknown'}
+                      {formatPagePath(ev.page || ev.path)}
                     </td>
                     <td className="p-4 text-sm text-slate-300 capitalize">{ev.deviceType || 'Unknown'}</td>
                     <td className="p-4 text-sm text-slate-400">
