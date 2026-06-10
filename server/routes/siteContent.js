@@ -94,6 +94,11 @@ const contentValidationRules = [
   body('footer.copyrightText').optional({ checkFalsy: true }).isString().isLength({ max: 160 }),
   body('footer.builtWithText').optional({ checkFalsy: true }).isString().isLength({ max: 160 }),
 
+  // Brand Identity
+  body('brandIdentity.wordmarkUrl').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }),
+  body('brandIdentity.logomarkUrl').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }),
+  body('brandIdentity.faviconUrl').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }),
+
   // Navbar
   body('navbar').optional().isArray({ max: 20 }).withMessage('Too many links'),
   body('navbar.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 40 }),
@@ -263,6 +268,15 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         tagline: req.body.footer.tagline?.trim() || '',
         copyrightText: req.body.footer.copyrightText?.trim() || '',
         builtWithText: req.body.footer.builtWithText?.trim() || '',
+      };
+    }
+
+    // Brand Identity
+    if (req.body.brandIdentity) {
+      payload.brandIdentity = {
+        wordmarkUrl: req.body.brandIdentity.wordmarkUrl?.trim() || '',
+        logomarkUrl: req.body.brandIdentity.logomarkUrl?.trim() || '',
+        faviconUrl: req.body.brandIdentity.faviconUrl?.trim() || '',
       };
     }
 

@@ -53,6 +53,7 @@ const EMPTY_CONTENT = {
   now: [],
   techPulse: [],
   engineeringHighlights: [],
+  brandIdentity: { wordmarkUrl: '', logomarkUrl: '', faviconUrl: '' },
 };
 
 // ── Collapsible Section ─────────────────────────────────────
@@ -96,6 +97,7 @@ export default function ContentPage() {
             now: Array.isArray(data.now) ? data.now : [],
             techPulse: Array.isArray(data.techPulse) ? data.techPulse : [],
             engineeringHighlights: Array.isArray(data.engineeringHighlights) ? data.engineeringHighlights : [],
+            brandIdentity: { ...EMPTY_CONTENT.brandIdentity, ...data.brandIdentity },
           });
         }
       } catch {
@@ -159,6 +161,7 @@ export default function ContentPage() {
         now: Array.isArray(data.now) ? data.now : [],
         techPulse: Array.isArray(data.techPulse) ? data.techPulse : [],
         engineeringHighlights: Array.isArray(data.engineeringHighlights) ? data.engineeringHighlights : [],
+        brandIdentity: { ...EMPTY_CONTENT.brandIdentity, ...data.brandIdentity },
       });
       toast.success('Content saved!');
     } catch (err) {
@@ -808,6 +811,73 @@ export default function ContentPage() {
         <Btn variant="ghost" onClick={addNavbarLink}>
           <Ic d={IC.plus} size={13} /> Add Link
         </Btn>
+      </Section>
+
+      {/* ── Brand Identity ─────────────────────────────── */}
+      <Section title="Brand Identity">
+        <Input
+          label="Wordmark URL"
+          value={form.brandIdentity.wordmarkUrl}
+          onChange={(e) => setNested('brandIdentity', 'wordmarkUrl', e.target.value)}
+          placeholder="https://res.cloudinary.com/…/techartistry-wordmark.png"
+          hint="Full text logo image (e.g. TechArtistry.in wordmark)"
+        />
+        <Input
+          label="Logomark URL"
+          value={form.brandIdentity.logomarkUrl}
+          onChange={(e) => setNested('brandIdentity', 'logomarkUrl', e.target.value)}
+          placeholder="https://res.cloudinary.com/…/techartistry-logomark.png"
+          hint="Icon-only logo (hexagon TA mark used as app icon)"
+        />
+        <Input
+          label="Favicon / Browser Icon URL"
+          value={form.brandIdentity.faviconUrl}
+          onChange={(e) => setNested('brandIdentity', 'faviconUrl', e.target.value)}
+          placeholder="https://res.cloudinary.com/…/favicon.png"
+          hint="Square PNG used in browser tabs (placed in /public as favicon.png)"
+        />
+
+        {/* Brand Preview */}
+        {(form.brandIdentity.wordmarkUrl || form.brandIdentity.logomarkUrl || form.brandIdentity.faviconUrl) && (
+          <div className="pt-4 border-t border-navy-800">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-3">Brand Preview</span>
+            <div className="grid grid-cols-3 gap-4">
+              {form.brandIdentity.wordmarkUrl && (
+                <div className="flex flex-col items-center gap-2 p-4 bg-navy-950 border border-navy-800 rounded-xl">
+                  <img
+                    src={form.brandIdentity.wordmarkUrl}
+                    alt="Wordmark preview"
+                    className="max-h-12 object-contain"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                  <span className="text-[10px] text-slate-600 font-mono uppercase">Wordmark</span>
+                </div>
+              )}
+              {form.brandIdentity.logomarkUrl && (
+                <div className="flex flex-col items-center gap-2 p-4 bg-navy-950 border border-navy-800 rounded-xl">
+                  <img
+                    src={form.brandIdentity.logomarkUrl}
+                    alt="Logomark preview"
+                    className="w-12 h-12 object-contain"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                  <span className="text-[10px] text-slate-600 font-mono uppercase">Logomark</span>
+                </div>
+              )}
+              {form.brandIdentity.faviconUrl && (
+                <div className="flex flex-col items-center gap-2 p-4 bg-navy-950 border border-navy-800 rounded-xl">
+                  <img
+                    src={form.brandIdentity.faviconUrl}
+                    alt="Favicon preview"
+                    className="w-8 h-8 object-contain"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                  <span className="text-[10px] text-slate-600 font-mono uppercase">Favicon</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </Section>
 
       {/* ── Bottom Save ──────────────────────────────────── */}

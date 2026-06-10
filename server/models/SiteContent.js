@@ -112,6 +112,11 @@ const siteContentSchema = new mongoose.Schema(
         order: { type: Number, default: 0 },
       },
     ],
+    brandIdentity: {
+      wordmarkUrl: { type: String, default: '', maxlength: 1000 },
+      logomarkUrl: { type: String, default: '', maxlength: 1000 },
+      faviconUrl: { type: String, default: '', maxlength: 1000 },
+    },
   },
   { timestamps: true }
 );
