@@ -35,6 +35,11 @@ const IC = {
   edit: 'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7 M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z',
   trash: 'M3 6h18 M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2',
   live: 'M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0',
+  activity: 'M22 12h-4l-3 9L9 3l-3 9H2',
+  fileText: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
+  mousePointer: 'M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z M13 13l6 6',
+  link: 'M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71 M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71',
+  externalLink: 'M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6 M15 3h6v6 M10 14L21 3',
 };
 
 const EVENT_LABELS = {
@@ -266,12 +271,12 @@ export default function DashboardPage() {
           <a href="/admin/analytics" className="text-xs text-blue-400 hover:text-blue-300">Detailed View →</a>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <StatCard label="Today's Events" value={loading ? '—' : (visitorData?.todayEvents ?? 0)} accent="#10b981" loading={loading} />
-          <StatCard label="Total Events" value={loading ? '—' : (visitorData?.totalEvents ?? 0)} accent="#38bdf8" loading={loading} />
-          <StatCard label="Page Views" value={loading ? '—' : (visitorData?.pageViews ?? 0)} accent="#6366f1" loading={loading} />
-          <StatCard label="CTA Clicks" value={loading ? '—' : (visitorData?.ctaClicks ?? 0)} accent="#f59e0b" loading={loading} />
-          <StatCard label="Top Page" value={loading ? '—' : (visitorData?.topPages?.[0]?.page || '/')} accent="#ec4899" loading={loading} />
-          <StatCard label="Top Referrer" value={loading ? '—' : (visitorData?.topReferrers?.[0]?.referrer || 'Direct')} accent="#8b5cf6" loading={loading} />
+          <StatCard label="Today's Events" value={loading ? '—' : (visitorData?.todayEvents ?? 0)} accent="#10b981" loading={loading} icon={<Ic d={IC.activity} size={16} />} />
+          <StatCard label="Total Events" value={loading ? '—' : (visitorData?.totalEvents ?? 0)} accent="#38bdf8" loading={loading} icon={<Ic d={IC.eye} size={16} />} />
+          <StatCard label="Page Views" value={loading ? '—' : (visitorData?.pageViews ?? 0)} accent="#6366f1" loading={loading} icon={<Ic d={IC.fileText} size={16} />} />
+          <StatCard label="CTA Clicks" value={loading ? '—' : (visitorData?.ctaClicks ?? 0)} accent="#f59e0b" loading={loading} icon={<Ic d={IC.mousePointer} size={16} />} />
+          <StatCard label="Top Page" value={loading ? '—' : (visitorData?.topPages?.[0]?.page || '/')} accent="#ec4899" loading={loading} icon={<Ic d={IC.link} size={16} />} />
+          <StatCard label="Top Referrer" value={loading ? '—' : (visitorData?.topReferrers?.[0]?.referrer || 'Direct')} accent="#8b5cf6" loading={loading} icon={<Ic d={IC.externalLink} size={16} />} />
         </div>
       </div>
 
