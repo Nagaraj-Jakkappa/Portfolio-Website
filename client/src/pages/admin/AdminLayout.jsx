@@ -421,14 +421,7 @@ export default function AdminLayout() {
       >
         {/* Header */}
         <header className="relative z-40 h-16 border-b border-navy-800 bg-navy-900/80 backdrop-blur-md flex items-center gap-4 px-4 md:px-6">
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setExpanded((prev) => !prev)}
-            className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
-            aria-label="Toggle sidebar"
-          >
-            <Ic d={ICONS.menu} size={20} />
-          </button>
+
 
           {/* Breadcrumb */}
           <div className="text-sm flex items-center text-slate-500">
