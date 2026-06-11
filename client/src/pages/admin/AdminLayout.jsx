@@ -237,7 +237,7 @@ export default function AdminLayout() {
       {/* ── MOBILE BACKDROP ────────────────────────────────────── */}
       {expanded && (
         <div
-          className="fixed inset-0 bg-black/60 z-40 md:hidden cursor-pointer"
+          className="fixed inset-0 bg-navy-950/70 backdrop-blur-sm z-40 md:hidden cursor-pointer transition-all duration-300"
           onClick={() => setExpanded(false)}
           aria-hidden="true"
         />
@@ -354,7 +354,7 @@ export default function AdminLayout() {
                 <span className="text-[13px] font-medium tracking-wide">View Site</span>
               </div>
               {!expanded && (
-                <span className="hidden md:block pointer-events-none absolute left-full ml-1 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
                   View Site
                 </span>
               )}
@@ -377,7 +377,7 @@ export default function AdminLayout() {
                 <span className="text-[13px] font-medium tracking-wide">Logout</span>
               </div>
               {!expanded && (
-                <span className="hidden md:block pointer-events-none absolute left-full ml-1 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
                   Logout
                 </span>
               )}
