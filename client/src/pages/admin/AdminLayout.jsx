@@ -3,7 +3,7 @@
  * Path: client/src/pages/admin/AdminLayout.jsx
  *
  * Collapsible sidebar (icon rail ↔ full panel) using existing navy palette.
- * Persistent mobile icon rail.
+ * Premium SaaS UX with smooth CSS transitions and stable icon positions.
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -11,7 +11,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import axios from '../../api/axios';
 
-const Ic = ({ d, size = 16 }) => (
+const Ic = ({ d, size = 18 }) => (
   <svg
     width={size}
     height={size}
@@ -47,7 +47,6 @@ const ICONS = {
   expand: 'M13 5l7 7-7 7',
 };
 
-/* ── Nav groups ───────────────────────────────────────────────── */
 const NAV_GROUPS = [
   {
     label: 'Main',
@@ -76,8 +75,6 @@ const NAV_GROUPS = [
   },
 ];
 
-const ALL_NAV = NAV_GROUPS.flatMap((g) => g.items);
-
 const PAGE_NAMES = {
   '/admin': 'Dashboard',
   '/admin/analytics': 'Visitor Insights',
@@ -104,38 +101,38 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
       aria-label={item.label}
       onClick={onClick}
       className={({ isActive }) =>
-        `group relative flex items-center rounded-xl transition-all duration-200 ${
-          expanded
-            ? 'gap-3 px-3 py-2.5'
-            : 'justify-center w-10 h-10 mx-auto'
-        } ${
+        `group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 overflow-hidden ${
           isActive
             ? 'bg-blue-500/10 text-blue-400'
-            : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
+            : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
         }`
       }
     >
-      <Ic d={ICONS[item.icon]} size={expanded ? 16 : 17} />
+      <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
+        <Ic d={ICONS[item.icon]} size={18} />
+      </div>
 
-      {/* Label — expanded only */}
-      {expanded && (
-        <span className="text-sm truncate">{item.label}</span>
-      )}
+      <div
+        className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
+          expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
+        }`}
+      >
+        <span className="text-[13px] font-medium tracking-wide">{item.label}</span>
+      </div>
 
-      {/* Notification dot */}
       {showDot && (
         <span
-          className={`absolute rounded-full bg-blue-400 ${
+          className={`absolute rounded-full bg-blue-400 transition-all duration-300 ${
             expanded
               ? 'right-3 w-1.5 h-1.5'
-              : 'top-0.5 right-0.5 w-2 h-2 ring-2 ring-navy-900'
+              : 'top-1 right-1 w-2 h-2 ring-2 ring-navy-900'
           }`}
         />
       )}
 
-      {/* Tooltip — collapsed only */}
+      {/* Tooltip — hidden on mobile to prevent tap issues, visible on hover when collapsed on desktop */}
       {!expanded && (
-        <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+        <span className="hidden md:block pointer-events-none absolute left-full ml-1 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
           {item.label}
           {item.path === '/admin/notifications' && unreadCount > 0 && (
             <span className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-blue-500/20 text-blue-400 text-[9px] font-bold">
@@ -173,7 +170,6 @@ export default function AdminLayout() {
     message: { dot: 'bg-cyan-400', badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20' },
   };
 
-  /* ── Notification fetching ──────────────────────────────────── */
   const fetchNotificationsData = async () => {
     try {
       const [listRes, countRes, visitorRes] = await Promise.all([
@@ -225,8 +221,8 @@ export default function AdminLayout() {
   }, []);
 
   // Close sidebar on route change on mobile
-  useEffect(() => { 
-    if (window.innerWidth < 768) setExpanded(false); 
+  useEffect(() => {
+    if (window.innerWidth < 768) setExpanded(false);
   }, [pathname]);
 
   const handleLogout = () => {
@@ -257,41 +253,50 @@ export default function AdminLayout() {
         `}
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div
-            className={`
-              h-16 flex items-center border-b border-navy-800
-              ${expanded ? 'px-4 gap-2.5' : 'justify-center px-0'}
-            `}
-          >
-            <div className="w-8 h-8 rounded-lg border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden flex-shrink-0">
-              <img src="/favicon-32x32.png" alt="Logo" className="w-5 h-5 object-contain" onError={(e) => { e.target.src = '/favicon.png'; }} />
-            </div>
-            {expanded && (
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-white truncate">Techartistry</div>
-                <div className="text-[10px] text-slate-600">Portfolio OS</div>
+          {/* Top Brand Area */}
+          <div className="h-16 flex items-center px-3 border-b border-navy-800 overflow-hidden shrink-0">
+            <div className="flex items-center justify-center min-w-[44px] h-11 shrink-0">
+              <div className="w-8 h-8 rounded-lg border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                <img
+                  src="/apple-touch-icon.png"
+                  alt="Logo"
+                  className="w-5 h-5 object-contain"
+                  onError={(e) => { e.target.src = '/favicon-32x32.png'; }}
+                />
               </div>
-            )}
+            </div>
+            <div
+              className={`whitespace-nowrap transition-all duration-300 ease-out flex flex-col justify-center ${
+                expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
+              }`}
+            >
+              <div className="text-[13px] font-semibold text-slate-100 tracking-wide">Techartistry</div>
+              <div className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">Portfolio OS</div>
+            </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 py-3 px-2 overflow-y-auto overflow-x-hidden">
-            {NAV_GROUPS.map((group) => (
-              <div key={group.label} className="mb-3">
-                {/* Group label — expanded only */}
-                {expanded && (
-                  <div className="px-3 py-1.5 text-[10px] font-semibold text-slate-600 uppercase tracking-widest">
+          {/* Navigation Area */}
+          <nav className="flex-1 py-4 px-3 overflow-y-auto overflow-x-hidden space-y-6">
+            {NAV_GROUPS.map((group, groupIdx) => (
+              <div key={group.label} className="relative">
+                {/* Group label fading */}
+                <div
+                  className={`px-3 transition-all duration-300 ease-out overflow-hidden ${
+                    expanded ? 'opacity-100 max-h-10 mb-2' : 'opacity-0 max-h-0 mb-0'
+                  }`}
+                >
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">
                     {group.label}
+                  </span>
+                </div>
+                {/* Separator dot when collapsed */}
+                {!expanded && groupIdx !== 0 && (
+                  <div className="flex justify-center mb-4 mt-2">
+                    <div className="w-1 h-1 rounded-full bg-navy-800" />
                   </div>
                 )}
-                {/* Separator dot — collapsed only */}
-                {!expanded && group.label !== 'Main' && (
-                  <div className="flex justify-center py-1.5">
-                    <div className="w-1 h-1 rounded-full bg-navy-700" />
-                  </div>
-                )}
-                <div className="space-y-0.5">
+                {/* Nav Items */}
+                <div className="space-y-1">
                   {group.items.map((item) => (
                     <SidebarNavItem
                       key={item.path}
@@ -309,43 +314,28 @@ export default function AdminLayout() {
             ))}
           </nav>
 
-          {/* Bottom — toggle, view site, logout, profile */}
-          <div className="border-t border-navy-800 p-2 space-y-1">
-            {/* Toggle button */}
-            <button
-              onClick={() => setExpanded((v) => !v)}
-              aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
-              className={`group relative flex items-center rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200 ${
-                expanded
-                  ? 'gap-3 px-3 py-2.5 w-full'
-                  : 'justify-center w-10 h-10 mx-auto'
-              }`}
-            >
-              <Ic d={expanded ? ICONS.collapse : ICONS.expand} size={16} />
-              {expanded && <span className="text-sm">Collapse</span>}
-              {!expanded && (
-                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
-                  Expand
-                </span>
-              )}
-            </button>
-
+          {/* Bottom Profile Area */}
+          <div className="p-3 border-t border-navy-800 space-y-1 shrink-0 overflow-hidden">
             {/* View Site */}
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View Site"
-              className={`group relative flex items-center rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200 ${
-                expanded
-                  ? 'gap-3 px-3 py-2.5'
-                  : 'justify-center w-10 h-10 mx-auto'
-              }`}
+              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] overflow-hidden"
             >
-              <Ic d={ICONS.eye} size={16} />
-              {expanded && <span className="text-sm">View Site</span>}
+              <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
+                <Ic d={ICONS.eye} size={18} />
+              </div>
+              <div
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
+                  expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
+                }`}
+              >
+                <span className="text-[13px] font-medium tracking-wide">View Site</span>
+              </div>
               {!expanded && (
-                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="hidden md:block pointer-events-none absolute left-full ml-1 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
                   View Site
                 </span>
               )}
@@ -355,43 +345,56 @@ export default function AdminLayout() {
             <button
               onClick={handleLogout}
               aria-label="Logout"
-              className={`group relative flex items-center rounded-xl text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 ${
-                expanded
-                  ? 'gap-3 px-3 py-2.5 w-full'
-                  : 'justify-center w-10 h-10 mx-auto'
-              }`}
+              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-red-400 hover:bg-red-500/10 w-full overflow-hidden"
             >
-              <Ic d={ICONS.logout} size={16} />
-              {expanded && <span className="text-sm">Logout</span>}
+              <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
+                <Ic d={ICONS.logout} size={18} />
+              </div>
+              <div
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
+                  expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
+                }`}
+              >
+                <span className="text-[13px] font-medium tracking-wide">Logout</span>
+              </div>
               {!expanded && (
-                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="hidden md:block pointer-events-none absolute left-full ml-1 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
                   Logout
                 </span>
               )}
             </button>
 
-            {/* Profile */}
-            <div
-              className={`flex items-center rounded-xl pt-2 mt-1 border-t border-navy-800 ${
-                expanded ? 'gap-2.5 px-3 py-2' : 'justify-center py-2'
-              }`}
-            >
-              <div className="group relative">
-                <div className="w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden flex-shrink-0">
-                  <img src="/favicon-32x32.png" alt="Avatar" className="w-5 h-5 object-contain" onError={(e) => { e.target.src = '/favicon.png'; }} />
+            {/* Profile Line */}
+            <div className="flex items-center rounded-xl h-12 mt-2 pt-2 border-t border-navy-800 overflow-hidden">
+              <div className="group relative flex items-center justify-center min-w-[44px] h-10 shrink-0 cursor-pointer" onClick={() => setExpanded(v => !v)}>
+                <div className="w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shrink-0 shadow-sm hover:border-navy-600 transition-colors">
+                  <img
+                    src="/apple-touch-icon.png"
+                    alt="Avatar"
+                    className="w-5 h-5 object-contain"
+                    onError={(e) => { e.target.src = '/favicon-32x32.png'; }}
+                  />
                 </div>
                 {!expanded && (
-                  <span className="hidden md:block pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
-                    Admin
+                  <span className="hidden md:block pointer-events-none absolute left-full ml-1 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                    Expand Menu
                   </span>
                 )}
               </div>
-              {expanded && (
-                <div className="min-w-0">
-                  <div className="text-xs font-medium text-white truncate">Nagaraj J.</div>
-                  <div className="text-[10px] text-slate-600 truncate">Admin</div>
+              <div
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex flex-col justify-center flex-1 cursor-pointer hover:bg-white/[0.02] rounded-lg h-full ${
+                  expanded ? 'opacity-100 max-w-[200px] px-2' : 'opacity-0 max-w-0 px-0'
+                }`}
+                onClick={() => setExpanded(v => !v)}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="min-w-0">
+                    <div className="text-[13px] font-medium text-slate-200 truncate">Nagaraj J.</div>
+                    <div className="text-[10px] text-slate-500 truncate">Admin</div>
+                  </div>
+                  <Ic d={expanded ? ICONS.collapse : ICONS.expand} size={14} className="text-slate-500" />
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -405,21 +408,21 @@ export default function AdminLayout() {
         `}
       >
         {/* Header */}
-        <header className="relative z-40 h-14 border-b border-navy-800 bg-navy-900/80 backdrop-blur-sm flex items-center gap-4 px-4 md:px-6">
+        <header className="relative z-40 h-16 border-b border-navy-800 bg-navy-900/80 backdrop-blur-md flex items-center gap-4 px-4 md:px-6">
           {/* Mobile hamburger */}
           <button
             onClick={() => setExpanded((prev) => !prev)}
-            className="md:hidden p-1.5 text-slate-500 hover:text-white"
+            className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
             aria-label="Toggle sidebar"
           >
-            <Ic d={ICONS.menu} size={17} />
+            <Ic d={ICONS.menu} size={20} />
           </button>
 
           {/* Breadcrumb */}
-          <div className="text-sm">
-            <span className="text-slate-700">Admin</span>
-            <span className="mx-2 text-slate-800">/</span>
-            <span className="text-slate-300 font-medium">
+          <div className="text-sm flex items-center text-slate-500">
+            <span>Admin</span>
+            <span className="mx-2 text-slate-700">/</span>
+            <span className="text-slate-200 font-medium">
               {PAGE_NAMES[pathname] ?? 'Dashboard'}
             </span>
           </div>
@@ -430,13 +433,13 @@ export default function AdminLayout() {
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications((v) => !v)}
-              className="relative p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition"
+              className="relative p-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
               aria-label="Toggle notifications"
             >
-              <Ic d={ICONS.bell} size={16} />
+              <Ic d={ICONS.bell} size={18} />
 
               {(unreadCount > 0 || hasNewVisitorEvents) && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-blue-400 text-[10px] font-bold text-white ring-2 ring-navy-900">
+                <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-blue-500 shadow-lg shadow-blue-500/30 text-[10px] font-bold text-white ring-2 ring-navy-900">
                   {unreadCount > 0 ? unreadCount : '!'}
                 </span>
               )}
@@ -445,12 +448,12 @@ export default function AdminLayout() {
             {showNotifications && (
               <div className="absolute top-[52px] right-0 w-[360px] max-h-[520px] z-[9999] rounded-2xl border border-navy-700 bg-navy-900/95 backdrop-blur-xl shadow-2xl overflow-hidden">
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-navy-800">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-navy-800 bg-navy-900">
                   <h3 className="text-sm font-semibold text-white">Notifications</h3>
                   {unreadCount > 0 && (
                     <button
                       onClick={(e) => { e.stopPropagation(); markAllAsRead(); }}
-                      className="text-xs text-blue-400 hover:text-blue-300 font-medium"
+                      className="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors"
                     >
                       Mark all read
                     </button>
@@ -460,7 +463,7 @@ export default function AdminLayout() {
                 {/* List */}
                 <div className="max-h-[420px] overflow-y-auto">
                   {notifications.length === 0 ? (
-                    <div className="p-8 text-center text-sm text-slate-600 italic">
+                    <div className="p-8 text-center text-sm text-slate-500 italic">
                       No new activity
                     </div>
                   ) : (
@@ -469,24 +472,24 @@ export default function AdminLayout() {
                       return (
                         <div
                           key={n._id}
-                          className={`px-4 py-3 border-b border-navy-800 hover:bg-white/[0.03] transition cursor-pointer ${
-                            !n.read ? 'bg-blue-500/5' : ''
+                          className={`px-4 py-3 border-b border-navy-800/50 hover:bg-white/[0.03] transition-colors cursor-pointer ${
+                            !n.read ? 'bg-blue-500/[0.03]' : ''
                           }`}
                         >
                           <div className="flex items-start gap-3">
                             <div className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${style.dot}`} />
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center justify-between gap-2">
-                                <p className={`text-sm truncate ${!n.read ? 'text-white font-semibold' : 'text-slate-400 font-medium'}`}>
+                                <p className={`text-sm truncate ${!n.read ? 'text-slate-200 font-semibold' : 'text-slate-400 font-medium'}`}>
                                   {n.title}
                                 </p>
-                                <span className="text-[10px] text-slate-600 whitespace-nowrap">
+                                <span className="text-[10px] text-slate-500 whitespace-nowrap">
                                   {new Date(n.createdAt).toLocaleDateString()}
                                 </span>
                               </div>
-                              <p className="text-xs text-slate-500 mt-1 leading-relaxed">{n.message}</p>
+                              <p className="text-xs text-slate-400 mt-1 leading-relaxed">{n.message}</p>
                               <div className="mt-2">
-                                <span className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] uppercase tracking-wide font-semibold border ${style.badge}`}>
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-semibold border ${style.badge}`}>
                                   {n.type || 'system'}
                                 </span>
                               </div>
@@ -499,7 +502,7 @@ export default function AdminLayout() {
                 </div>
 
                 {/* Footer */}
-                <div className="p-3 border-t border-navy-800">
+                <div className="p-3 border-t border-navy-800 bg-navy-900">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -507,7 +510,7 @@ export default function AdminLayout() {
                       setShowNotifications(false);
                       navigate('/admin/notifications');
                     }}
-                    className="w-full text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 py-2 rounded-lg transition font-bold"
+                    className="w-full text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 py-2.5 rounded-xl transition-colors font-semibold"
                   >
                     View Full Logs
                   </button>
@@ -515,17 +518,6 @@ export default function AdminLayout() {
               </div>
             )}
           </div>
-
-          {/* View Site — header */}
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-400 border border-navy-800 hover:border-blue-400/30 px-3 py-1.5 rounded-lg transition-all"
-          >
-            <Ic d={ICONS.eye} size={12} />
-            View Site
-          </a>
         </header>
 
         {/* Content */}
