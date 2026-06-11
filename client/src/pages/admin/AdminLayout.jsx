@@ -3,7 +3,7 @@
  * Path: client/src/pages/admin/AdminLayout.jsx
  *
  * Collapsible sidebar (icon rail ↔ full panel) using existing navy palette.
- * Tooltips appear only when collapsed; labels shown when expanded.
+ * Persistent mobile icon rail.
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -92,7 +92,7 @@ const PAGE_NAMES = {
 };
 
 /* ── SidebarNavItem ───────────────────────────────────────────── */
-function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount }) {
+function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onClick }) {
   const showDot =
     (item.path === '/admin/analytics' && hasNewVisitorEvents) ||
     (item.path === '/admin/notifications' && unreadCount > 0);
@@ -102,6 +102,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount }) {
       to={item.path}
       end={item.end}
       aria-label={item.label}
+      onClick={onClick}
       className={({ isActive }) =>
         `group relative flex items-center rounded-xl transition-all duration-200 ${
           expanded
@@ -134,7 +135,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount }) {
 
       {/* Tooltip — collapsed only */}
       {!expanded && (
-        <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+        <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
           {item.label}
           {item.path === '/admin/notifications' && unreadCount > 0 && (
             <span className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-blue-500/20 text-blue-400 text-[9px] font-bold">
@@ -156,7 +157,6 @@ export default function AdminLayout() {
   const { pathname } = useLocation();
 
   const [expanded, setExpanded] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -224,14 +224,10 @@ export default function AdminLayout() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close mobile drawer on route change
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
-
-  // Lock body scroll when mobile drawer is open
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [mobileOpen]);
+  // Close sidebar on route change on mobile
+  useEffect(() => { 
+    if (window.innerWidth < 768) setExpanded(false); 
+  }, [pathname]);
 
   const handleLogout = () => {
     logout();
@@ -241,112 +237,23 @@ export default function AdminLayout() {
   return (
     <div className="flex h-screen bg-navy-950 text-slate-200 overflow-hidden">
 
-      {/* ── MOBILE OVERLAY ─────────────────────────────────────── */}
-      {mobileOpen && (
+      {/* ── MOBILE BACKDROP ────────────────────────────────────── */}
+      {expanded && (
         <div
           className="fixed inset-0 bg-black/60 z-40 md:hidden cursor-pointer"
-          onClick={() => setMobileOpen(false)}
+          onClick={() => setExpanded(false)}
           aria-hidden="true"
         />
       )}
 
-      {/* ── MOBILE DRAWER ──────────────────────────────────────── */}
-      <div
-        className={`
-          fixed top-0 left-0 h-full w-72
-          bg-navy-900 border-r border-navy-800
-          z-50 transform transition-transform duration-300 ease-out
-          md:hidden
-          ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}
-      >
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="h-16 flex items-center justify-between px-4 border-b border-navy-800">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden flex-shrink-0">
-                <img src="/favicon.png" alt="Logo" className="w-5 h-5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-white">Techartistry</div>
-                <div className="text-[10px] text-slate-600">Portfolio OS</div>
-              </div>
-            </div>
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="p-1.5 text-slate-500 hover:text-white"
-              aria-label="Close menu"
-            >
-              <Ic d={ICONS.close} size={16} />
-            </button>
-          </div>
-
-          {/* Nav */}
-          <nav className="flex-1 py-3 px-2 overflow-y-auto">
-            {NAV_GROUPS.map((group) => (
-              <div key={group.label} className="mb-3">
-                <div className="px-3 py-1.5 text-[10px] font-semibold text-slate-600 uppercase tracking-widest">
-                  {group.label}
-                </div>
-                {group.items.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    end={item.end}
-                    onClick={() => setMobileOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 rounded-lg px-3 py-2.5 mb-0.5 transition relative text-sm ${
-                        isActive
-                          ? 'bg-blue-500/10 text-blue-400'
-                          : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
-                      }`
-                    }
-                  >
-                    <Ic d={ICONS[item.icon]} size={15} />
-                    {item.label}
-                    {item.path === '/admin/analytics' && hasNewVisitorEvents && (
-                      <span className="absolute right-3 w-1.5 h-1.5 rounded-full bg-blue-400" />
-                    )}
-                    {item.path === '/admin/notifications' && unreadCount > 0 && (
-                      <span className="absolute right-3 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </NavLink>
-                ))}
-              </div>
-            ))}
-          </nav>
-
-          {/* Bottom */}
-          <div className="p-3 border-t border-navy-800 space-y-1">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-500 hover:text-white hover:bg-white/[0.04] transition"
-            >
-              <Ic d={ICONS.eye} size={15} />
-              View Site
-            </a>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400/80 hover:text-red-400 hover:bg-red-500/10 transition w-full"
-            >
-              <Ic d={ICONS.logout} size={15} />
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ── DESKTOP SIDEBAR ────────────────────────────────────── */}
+      {/* ── UNIFIED SIDEBAR ────────────────────────────────────── */}
       <aside
         className={`
-          hidden md:flex flex-col flex-shrink-0
+          fixed top-0 left-0 h-full z-50
+          flex flex-col flex-shrink-0
           bg-navy-900 border-r border-navy-800
           transition-all duration-300 ease-out overflow-hidden
-          ${expanded ? 'w-64' : 'w-[68px]'}
+          ${expanded ? 'w-72 md:w-64 shadow-2xl md:shadow-none' : 'w-[68px]'}
         `}
       >
         <div className="flex flex-col h-full">
@@ -358,7 +265,7 @@ export default function AdminLayout() {
             `}
           >
             <div className="w-8 h-8 rounded-lg border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden flex-shrink-0">
-              <img src="/favicon.png" alt="Logo" className="w-5 h-5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
+              <img src="/favicon-32x32.png" alt="Logo" className="w-5 h-5 object-contain" onError={(e) => { e.target.src = '/favicon.png'; }} />
             </div>
             {expanded && (
               <div className="min-w-0">
@@ -392,6 +299,9 @@ export default function AdminLayout() {
                       expanded={expanded}
                       hasNewVisitorEvents={hasNewVisitorEvents}
                       unreadCount={unreadCount}
+                      onClick={() => {
+                        if (window.innerWidth < 768) setExpanded(false);
+                      }}
                     />
                   ))}
                 </div>
@@ -414,7 +324,7 @@ export default function AdminLayout() {
               <Ic d={expanded ? ICONS.collapse : ICONS.expand} size={16} />
               {expanded && <span className="text-sm">Collapse</span>}
               {!expanded && (
-                <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
                   Expand
                 </span>
               )}
@@ -435,7 +345,7 @@ export default function AdminLayout() {
               <Ic d={ICONS.eye} size={16} />
               {expanded && <span className="text-sm">View Site</span>}
               {!expanded && (
-                <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
                   View Site
                 </span>
               )}
@@ -454,7 +364,7 @@ export default function AdminLayout() {
               <Ic d={ICONS.logout} size={16} />
               {expanded && <span className="text-sm">Logout</span>}
               {!expanded && (
-                <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
                   Logout
                 </span>
               )}
@@ -468,10 +378,10 @@ export default function AdminLayout() {
             >
               <div className="group relative">
                 <div className="w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden flex-shrink-0">
-                  <img src="/favicon.png" alt="Avatar" className="w-5 h-5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
+                  <img src="/favicon-32x32.png" alt="Avatar" className="w-5 h-5 object-contain" onError={(e) => { e.target.src = '/favicon.png'; }} />
                 </div>
                 {!expanded && (
-                  <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                  <span className="hidden md:block pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
                     Admin
                   </span>
                 )}
@@ -488,12 +398,17 @@ export default function AdminLayout() {
       </aside>
 
       {/* ── MAIN CONTENT ───────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div 
+        className={`
+          flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-out
+          ${expanded ? 'ml-[68px] md:ml-64' : 'ml-[68px]'}
+        `}
+      >
         {/* Header */}
         <header className="relative z-40 h-14 border-b border-navy-800 bg-navy-900/80 backdrop-blur-sm flex items-center gap-4 px-4 md:px-6">
           {/* Mobile hamburger */}
           <button
-            onClick={() => setMobileOpen((prev) => !prev)}
+            onClick={() => setExpanded((prev) => !prev)}
             className="md:hidden p-1.5 text-slate-500 hover:text-white"
             aria-label="Toggle sidebar"
           >
