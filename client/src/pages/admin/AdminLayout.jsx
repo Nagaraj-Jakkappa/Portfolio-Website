@@ -155,7 +155,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -253,7 +253,7 @@ export default function AdminLayout() {
       {/* ── MOBILE DRAWER ──────────────────────────────────────── */}
       <div
         className={`
-          fixed top-0 left-0 h-full w-64
+          fixed top-0 left-0 h-full w-72
           bg-navy-900 border-r border-navy-800
           z-50 transform transition-transform duration-300 ease-out
           md:hidden
@@ -264,8 +264,8 @@ export default function AdminLayout() {
           {/* Header */}
           <div className="h-16 flex items-center justify-between px-4 border-b border-navy-800">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center">
-                <span className="text-[10px] font-bold text-white">NJ</span>
+              <div className="w-8 h-8 rounded-lg border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden flex-shrink-0">
+                <img src="/favicon.png" alt="Logo" className="w-5 h-5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
               </div>
               <div>
                 <div className="text-sm font-semibold text-white">Techartistry</div>
@@ -346,7 +346,7 @@ export default function AdminLayout() {
           hidden md:flex flex-col flex-shrink-0
           bg-navy-900 border-r border-navy-800
           transition-all duration-300 ease-out overflow-hidden
-          ${expanded ? 'w-60' : 'w-[68px]'}
+          ${expanded ? 'w-64' : 'w-[68px]'}
         `}
       >
         <div className="flex flex-col h-full">
@@ -357,8 +357,8 @@ export default function AdminLayout() {
               ${expanded ? 'px-4 gap-2.5' : 'justify-center px-0'}
             `}
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center flex-shrink-0">
-              <span className="text-[10px] font-bold text-white">NJ</span>
+            <div className="w-8 h-8 rounded-lg border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden flex-shrink-0">
+              <img src="/favicon.png" alt="Logo" className="w-5 h-5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
             </div>
             {expanded && (
               <div className="min-w-0">
@@ -467,8 +467,8 @@ export default function AdminLayout() {
               }`}
             >
               <div className="group relative">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-slate-600 border border-navy-700 flex items-center justify-center flex-shrink-0">
-                  <span className="text-[10px] font-bold text-slate-300">NJ</span>
+                <div className="w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <img src="/favicon.png" alt="Avatar" className="w-5 h-5 object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
                 </div>
                 {!expanded && (
                   <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-navy-900 border border-navy-700 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
