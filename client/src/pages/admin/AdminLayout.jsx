@@ -102,7 +102,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
       aria-label={item.label}
       onClick={onClick}
       className={({ isActive }) =>
-        `group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 ${
+        `group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 overflow-visible ${
           isActive
             ? 'bg-blue-500/10 text-blue-400'
             : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
@@ -114,7 +114,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
       </div>
 
       <div
-        className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center overflow-hidden ${
+        className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
           expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
         }`}
       >
@@ -133,7 +133,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
 
       {/* Tooltip — hidden on mobile to prevent tap issues, visible on hover when collapsed on desktop */}
       {!expanded && (
-        <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+        <span className="pointer-events-none absolute left-full top-1/2 z-[9999] ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-navy-800 bg-navy-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-xl transition-all duration-150 scale-95 translate-x-1 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100 md:block">
           {item.label}
           {item.path === '/admin/notifications' && unreadCount > 0 && (
             <span className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-blue-500/20 text-blue-400 text-[9px] font-bold">
@@ -288,7 +288,7 @@ export default function AdminLayout() {
                 <Ic d={ICONS.sidebar} size={18} />
               </button>
               {/* Tooltip */}
-              <span className={`hidden md:block pointer-events-none absolute ${expanded ? 'top-full mt-1.5 left-1/2 -translate-x-1/2' : 'left-full ml-3 top-1/2 -translate-y-1/2'} px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 z-[100] shadow-xl`}>
+              <span className={`pointer-events-none absolute z-[9999] hidden whitespace-nowrap rounded-lg border border-navy-800 bg-navy-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-xl transition-all duration-150 scale-95 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100 md:block ${expanded ? 'top-full mt-1.5 left-1/2 -translate-x-1/2' : 'left-full top-1/2 ml-3 -translate-y-1/2 translate-x-1'}`}>
                 {expanded ? 'Close sidebar' : 'Open sidebar'}
               </span>
             </div>
@@ -341,20 +341,20 @@ export default function AdminLayout() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View Site"
-              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] overflow-visible"
             >
               <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
                 <Ic d={ICONS.eye} size={18} />
               </div>
               <div
-                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center overflow-hidden ${
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
                   expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
                 }`}
               >
                 <span className="text-[13px] font-medium tracking-wide">View Site</span>
               </div>
               {!expanded && (
-                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="pointer-events-none absolute left-full top-1/2 z-[9999] ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-navy-800 bg-navy-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-xl transition-all duration-150 scale-95 translate-x-1 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100 md:block">
                   View Site
                 </span>
               )}
@@ -364,20 +364,20 @@ export default function AdminLayout() {
             <button
               onClick={handleLogout}
               aria-label="Logout"
-              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-red-400 hover:bg-red-500/10 w-full"
+              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-red-400 hover:bg-red-500/10 w-full overflow-visible"
             >
               <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
                 <Ic d={ICONS.logout} size={18} />
               </div>
               <div
-                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center overflow-hidden ${
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
                   expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
                 }`}
               >
                 <span className="text-[13px] font-medium tracking-wide">Logout</span>
               </div>
               {!expanded && (
-                <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                <span className="pointer-events-none absolute left-full top-1/2 z-[9999] ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-navy-800 bg-navy-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-xl transition-all duration-150 scale-95 translate-x-1 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100 md:block">
                   Logout
                 </span>
               )}
