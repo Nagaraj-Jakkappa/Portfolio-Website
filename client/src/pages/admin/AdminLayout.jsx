@@ -90,17 +90,27 @@ const PAGE_NAMES = {
 };
 
 /* ── SidebarNavItem ───────────────────────────────────────────── */
-function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onClick }) {
+function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onClick, setHoveredTooltip }) {
   const showDot =
     (item.path === '/admin/analytics' && hasNewVisitorEvents) ||
     (item.path === '/admin/notifications' && unreadCount > 0);
 
+  const itemRef = useRef(null);
+
   return (
     <NavLink
+      ref={itemRef}
       to={item.path}
       end={item.end}
       aria-label={item.label}
       onClick={onClick}
+      onMouseEnter={() => {
+        if (!expanded && itemRef.current) {
+          const rect = itemRef.current.getBoundingClientRect();
+          setHoveredTooltip({ label: item.label, top: rect.top + rect.height / 2, unreadCount });
+        }
+      }}
+      onMouseLeave={() => setHoveredTooltip(null)}
       className={({ isActive }) =>
         `group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 overflow-visible ${
           isActive
@@ -130,18 +140,6 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
           }`}
         />
       )}
-
-      {/* Tooltip — hidden on mobile to prevent tap issues, visible on hover when collapsed on desktop */}
-      {!expanded && (
-        <span className="pointer-events-none absolute left-full top-1/2 z-[9999] ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-navy-800 bg-navy-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-xl transition-all duration-150 scale-95 translate-x-1 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100 md:block">
-          {item.label}
-          {item.path === '/admin/notifications' && unreadCount > 0 && (
-            <span className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-blue-500/20 text-blue-400 text-[9px] font-bold">
-              {unreadCount}
-            </span>
-          )}
-        </span>
-      )}
     </NavLink>
   );
 }
@@ -155,6 +153,7 @@ export default function AdminLayout() {
   const { pathname } = useLocation();
 
   const [expanded, setExpanded] = useState(false);
+  const [hoveredTooltip, setHoveredTooltip] = useState(null);
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -295,7 +294,10 @@ export default function AdminLayout() {
           </div>
 
           {/* Navigation Area */}
-          <nav className="flex-1 py-4 px-3 overflow-visible space-y-6">
+          <nav 
+            className="flex-1 py-3 px-3 overflow-y-auto overflow-x-hidden space-y-1"
+            onScroll={() => setHoveredTooltip(null)}
+          >
             {NAV_GROUPS.map((group, groupIdx) => (
               <div key={group.label} className="relative">
                 {/* Group label fading */}
@@ -310,7 +312,7 @@ export default function AdminLayout() {
                 </div>
                 {/* Separator dot when collapsed */}
                 {!expanded && groupIdx !== 0 && (
-                  <div className="flex justify-center mb-4 mt-2">
+                  <div className="flex justify-center my-2">
                     <div className="w-1 h-1 rounded-full bg-navy-800" />
                   </div>
                 )}
@@ -323,6 +325,7 @@ export default function AdminLayout() {
                       expanded={expanded}
                       hasNewVisitorEvents={hasNewVisitorEvents}
                       unreadCount={unreadCount}
+                      setHoveredTooltip={setHoveredTooltip}
                       onClick={() => {
                         if (window.innerWidth < 768) setExpanded(false);
                       }}
@@ -411,6 +414,21 @@ export default function AdminLayout() {
           </div>
         </div>
       </aside>
+
+      {/* ── GLOBAL SIDEBAR TOOLTIP ─────────────────────────────── */}
+      {!expanded && hoveredTooltip && (
+        <div
+          className="hidden md:block pointer-events-none fixed z-[9999] whitespace-nowrap rounded-lg border border-navy-800 bg-navy-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-xl animate-in fade-in zoom-in-95 duration-150"
+          style={{ top: hoveredTooltip.top, left: 80, transform: 'translateY(-50%)' }}
+        >
+          {hoveredTooltip.label}
+          {hoveredTooltip.label === 'Notifications' && hoveredTooltip.unreadCount > 0 && (
+            <span className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-blue-500/20 text-blue-400 text-[9px] font-bold">
+              {hoveredTooltip.unreadCount}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* ── MAIN CONTENT ───────────────────────────────────────── */}
       <div 
