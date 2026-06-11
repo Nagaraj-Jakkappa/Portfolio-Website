@@ -1,6 +1,9 @@
 /**
  * AdminLayout.jsx
  * Path: client/src/pages/admin/AdminLayout.jsx
+ *
+ * Compact icon-rail sidebar with tooltips, glowing active state,
+ * notification badges, mobile drawer, and header notification panel.
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -34,6 +37,7 @@ const ICONS = {
     'M12 15a3 3 0 100-6 3 3 0 000 6z M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z',
   logout: 'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4 M16 17l5-5-5-5 M21 12H9',
   menu: 'M3 12h18 M3 6h18 M3 18h18',
+  close: 'M18 6L6 18 M6 6l12 12',
   bell: 'M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 01-3.46 0',
   eye: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 100 6 3 3 0 000-6z',
   content: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
@@ -62,8 +66,49 @@ const PAGE_NAMES = {
   '/admin/projects': 'Projects',
   '/admin/messages': 'Messages',
   '/admin/certificates': 'Certificates',
+  '/admin/experiences': 'Experiences',
+  '/admin/notifications': 'Notifications',
   '/admin/settings': 'Settings',
 };
+
+/* ── Sidebar Nav Item (icon-only with tooltip) ─────────────── */
+function SidebarItem({ item, hasNewVisitorEvents, unreadCount }) {
+  const showDot =
+    (item.path === '/admin/analytics' && hasNewVisitorEvents) ||
+    (item.path === '/admin/notifications' && unreadCount > 0);
+
+  return (
+    <NavLink
+      to={item.path}
+      end={item.end}
+      aria-label={item.label}
+      className={({ isActive }) =>
+        `group relative flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-200 ${
+          isActive
+            ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_20px_rgba(34,211,238,0.08)]'
+            : 'text-slate-400 hover:text-white hover:bg-slate-800/70 border border-transparent'
+        }`
+      }
+    >
+      <Ic d={ICONS[item.icon]} size={18} />
+
+      {/* Notification dot */}
+      {showDot && (
+        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-slate-950" />
+      )}
+
+      {/* Tooltip */}
+      <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+        {item.label}
+        {item.path === '/admin/notifications' && unreadCount > 0 && (
+          <span className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-cyan-500/20 text-cyan-400 text-[9px] font-bold">
+            {unreadCount}
+          </span>
+        )}
+      </span>
+    </NavLink>
+  );
+}
 
 export default function AdminLayout() {
   const { logout } = useAuth();
@@ -71,7 +116,6 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const [expanded, setExpanded] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -169,6 +213,17 @@ export default function AdminLayout() {
     };
   }, []);
 
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -176,39 +231,55 @@ export default function AdminLayout() {
 
   return (
     <div className="flex h-screen bg-navy-950 text-slate-200 overflow-hidden">
-      {/* Mobile Overlay */}
+
+      {/* ════════════════════════════════════════════════════════
+          MOBILE OVERLAY
+         ════════════════════════════════════════════════════════ */}
       {mobileOpen && (
-        <div className="fixed inset-0 bg-black/60 z-40 md:hidden cursor-pointer" onClick={() => setMobileOpen(false)} />
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden cursor-pointer"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
       )}
 
-      {/* Mobile Sidebar */}
+      {/* ════════════════════════════════════════════════════════
+          MOBILE DRAWER (full labels)
+         ════════════════════════════════════════════════════════ */}
       <div
         className={`
-        fixed top-0 left-0 h-full w-64
-        bg-navy-900
-        border-r border-navy-800
-        z-50
-        transform transition-transform duration-300
-        md:hidden
-        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
-    `}
+          fixed top-0 left-0 h-full w-64
+          bg-slate-950/95 backdrop-blur-xl
+          border-r border-slate-800/80
+          z-50
+          transform transition-transform duration-300 ease-out
+          md:hidden
+          ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="h-16 flex items-center px-5 border-b border-navy-800">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center">
-              <span className="text-xs font-bold text-white">NJ</span>
+          {/* Mobile Logo + Close */}
+          <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/60">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                <span className="text-[10px] font-black text-white tracking-tight">TA</span>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-white">Techartistry</div>
+                <div className="text-[10px] text-slate-600 font-mono">Admin Panel</div>
+              </div>
             </div>
-
-            <div className="ml-2.5">
-              <div className="text-sm font-semibold text-white">Techartistry</div>
-
-              <div className="text-[10px] text-slate-600">Portfolio OS</div>
-            </div>
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="p-1.5 text-slate-500 hover:text-white rounded-lg hover:bg-slate-800/50 transition-colors"
+              aria-label="Close menu"
+            >
+              <Ic d={ICONS.close} size={16} />
+            </button>
           </div>
 
-          {/* Nav */}
-          <nav className="flex-1 py-4 px-2">
+          {/* Mobile Nav */}
+          <nav className="flex-1 py-3 px-2 overflow-y-auto">
             {NAV_MAIN.map((item) => (
               <NavLink
                 key={item.path}
@@ -216,122 +287,155 @@ export default function AdminLayout() {
                 end={item.end}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
-                  `
-                        flex items-center gap-3
-                        rounded-lg px-3 py-2.5 mb-1
-                        transition relative
-                        ${
-                          isActive
-                            ? 'bg-blue-500/10 text-blue-400'
-                            : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
-                        }
-                    `
+                  `flex items-center gap-3 rounded-xl px-3 py-2.5 mb-0.5 transition-all duration-200 relative text-sm ${
+                    isActive
+                      ? 'bg-cyan-500/10 text-cyan-400 font-medium'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  }`
                 }
               >
-                <Ic d={ICONS[item.icon]} size={15} />
-
+                <Ic d={ICONS[item.icon]} size={16} />
                 {item.label}
                 {item.path === '/admin/analytics' && hasNewVisitorEvents && (
-                  <span className="absolute right-3 w-1.5 h-1.5 rounded-full bg-blue-400" />
+                  <span className="absolute right-3 w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                )}
+                {item.path === '/admin/notifications' && unreadCount > 0 && (
+                  <span className="absolute right-3 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-cyan-500/20 text-cyan-400 text-[10px] font-bold">
+                    {unreadCount}
+                  </span>
                 )}
               </NavLink>
             ))}
           </nav>
+
+          {/* Mobile Bottom */}
+          <div className="p-3 border-t border-slate-800/60 space-y-1.5">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all"
+            >
+              <Ic d={ICONS.eye} size={16} />
+              View Site
+            </a>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-400/80 hover:text-red-400 hover:bg-red-500/10 transition-all w-full"
+            >
+              <Ic d={ICONS.logout} size={16} />
+              Logout
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Desktop Sidebar */}
+      {/* ════════════════════════════════════════════════════════
+          DESKTOP ICON RAIL SIDEBAR
+         ════════════════════════════════════════════════════════ */}
       <aside
-        className={`
-        hidden md:flex flex-col flex-shrink-0
-        bg-navy-900
-        border-r border-navy-800
-        transition-all duration-300 ease-in-out
-        overflow-hidden
-        ${expanded ? 'w-56' : 'w-16'}
-    `}
+        className="
+          hidden md:flex flex-col flex-shrink-0
+          w-[72px]
+          bg-slate-950/95 backdrop-blur-xl
+          border-r border-slate-800/80
+        "
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col items-center h-full py-4">
           {/* Logo */}
-          <div
-            className={`
-                h-16 flex items-center border-b border-navy-800
-                ${expanded ? 'px-5' : 'justify-center px-0'}
-            `}
+          <NavLink
+            to="/admin"
+            aria-label="Techartistry Admin"
+            className="group relative mb-6"
           >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center">
-              <span className="text-xs font-bold text-white">NJ</span>
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 transition-transform duration-200 group-hover:scale-105">
+              <span className="text-[11px] font-black text-white tracking-tight">TA</span>
             </div>
+            {/* Logo tooltip */}
+            <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+              Techartistry Admin
+            </span>
+          </NavLink>
 
-            {expanded && (
-              <div className="ml-2.5">
-                <div className="text-sm font-semibold text-white">Techartistry</div>
-
-                <div className="text-[10px] text-slate-600">Portfolio OS</div>
-              </div>
-            )}
-          </div>
+          {/* Divider */}
+          <div className="w-8 h-px bg-slate-800/80 mb-4" />
 
           {/* Navigation */}
-          <nav className="flex-1 py-4 px-2">
+          <nav className="flex-1 flex flex-col items-center gap-1.5 w-full px-3 overflow-y-auto">
             {NAV_MAIN.map((item) => (
-              <NavLink
+              <SidebarItem
                 key={item.path}
-                to={item.path}
-                end={item.end}
-                className={({ isActive }) =>
-                  `
-                        flex items-center gap-3
-                        rounded-lg px-3 py-2.5 mb-1
-                        transition relative
-                        ${
-                          isActive
-                            ? 'bg-blue-500/10 text-blue-400'
-                            : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
-                        }
-                    `
-                }
-              >
-                <Ic d={ICONS[item.icon]} size={15} />
-
-                {expanded && item.label}
-                {expanded && item.path === '/admin/analytics' && hasNewVisitorEvents && (
-                  <span className="absolute right-3 w-1.5 h-1.5 rounded-full bg-blue-400" />
-                )}
-                {!expanded && item.path === '/admin/analytics' && hasNewVisitorEvents && (
-                  <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-blue-400" />
-                )}
-              </NavLink>
+                item={item}
+                hasNewVisitorEvents={hasNewVisitorEvents}
+                unreadCount={unreadCount}
+              />
             ))}
           </nav>
+
+          {/* Divider */}
+          <div className="w-8 h-px bg-slate-800/80 mt-4 mb-4" />
+
+          {/* Bottom actions */}
+          <div className="flex flex-col items-center gap-1.5 px-3">
+            {/* View Site */}
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View Site"
+              className="group relative flex items-center justify-center w-11 h-11 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/70 border border-transparent transition-all duration-200"
+            >
+              <Ic d={ICONS.eye} size={18} />
+              <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                View Site
+              </span>
+            </a>
+
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              aria-label="Logout"
+              className="group relative flex items-center justify-center w-11 h-11 rounded-2xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent transition-all duration-200"
+            >
+              <Ic d={ICONS.logout} size={18} />
+              <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                Logout
+              </span>
+            </button>
+
+            {/* Admin Avatar */}
+            <div className="group relative mt-2">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-700/60 flex items-center justify-center">
+                <span className="text-[10px] font-bold text-slate-300">NJ</span>
+              </div>
+              <span className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-[11px] font-medium text-white whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+                Admin
+              </span>
+            </div>
+          </div>
         </div>
       </aside>
 
-      {/* Main */}
+      {/* ════════════════════════════════════════════════════════
+          MAIN CONTENT AREA
+         ════════════════════════════════════════════════════════ */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="relative z-40 h-16 border-b border-navy-800 bg-navy-900/80 backdrop-blur-sm flex items-center gap-4 px-6">
-          {/* Sidebar Toggle */}
+        <header className="relative z-40 h-14 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-sm flex items-center gap-4 px-4 md:px-6">
+          {/* Mobile hamburger */}
           <button
-            onClick={() => {
-              if (window.innerWidth < 768) {
-                setMobileOpen((prev) => !prev);
-              } else {
-                setExpanded((prev) => !prev);
-              }
-            }}
-            className="p-1.5 text-slate-500 hover:text-white"
+            onClick={() => setMobileOpen((prev) => !prev)}
+            className="md:hidden p-1.5 text-slate-500 hover:text-white rounded-lg hover:bg-slate-800/50 transition-colors"
             aria-label="Toggle sidebar"
           >
-            <Ic d={ICONS.menu} size={17} />
+            <Ic d={ICONS.menu} size={18} />
           </button>
+
           {/* Breadcrumb */}
           <div className="text-sm">
-            <span className="text-slate-700">Admin</span>
-
+            <span className="text-slate-600">Admin</span>
             <span className="mx-2 text-slate-800">/</span>
-
-            <span className="text-slate-300 font-medium">
+            <span className="text-slate-200 font-medium">
               {PAGE_NAMES[pathname] ?? 'Dashboard'}
             </span>
           </div>
@@ -342,13 +446,13 @@ export default function AdminLayout() {
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications((v) => !v)}
-              className="relative p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition"
+              className="relative p-2 text-slate-500 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all"
               aria-label="Toggle notifications"
             >
               <Ic d={ICONS.bell} size={16} />
 
               {(unreadCount > 0 || hasNewVisitorEvents) && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-blue-400 text-[10px] font-bold text-white ring-2 ring-navy-900">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 flex items-center justify-center rounded-full bg-cyan-400 text-[9px] font-bold text-slate-950 ring-2 ring-slate-950">
                   {unreadCount > 0 ? unreadCount : '!'}
                 </span>
               )}
@@ -357,22 +461,18 @@ export default function AdminLayout() {
             {showNotifications && (
               <div
                 className="
-                                    absolute
-                                    top-[60px]
-                                    right-0
-                                    w-[360px]
-                                    max-h-[520px]
-                                    z-[9999]
-                                    rounded-2xl
-                                    border border-white/10
-                                    bg-navy-900/90
-                                    backdrop-blur-[18px]
-                                    shadow-2xl
-                                    overflow-hidden
-                                "
+                  absolute top-[52px] right-0
+                  w-[360px] max-h-[520px]
+                  z-[9999]
+                  rounded-2xl
+                  border border-slate-700/60
+                  bg-slate-950/95 backdrop-blur-xl
+                  shadow-2xl shadow-black/40
+                  overflow-hidden
+                "
               >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-navy-800">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800/60">
                   <h3 className="text-sm font-semibold text-white">Notifications</h3>
 
                   {unreadCount > 0 && (
@@ -381,7 +481,7 @@ export default function AdminLayout() {
                         e.stopPropagation();
                         markAllAsRead();
                       }}
-                      className="text-xs text-blue-400 hover:text-blue-300 font-medium"
+                      className="text-xs text-cyan-400 hover:text-cyan-300 font-medium"
                     >
                       Mark all read
                     </button>
@@ -402,36 +502,29 @@ export default function AdminLayout() {
                         <div
                           key={n._id}
                           className={`
-                                                        px-4 py-3
-                                                        border-b border-navy-800
-                                                        hover:bg-white/[0.03]
-                                                        transition
-                                                        cursor-pointer
-                                                        ${!n.read ? 'bg-blue-500/5' : ''}
-                                                    `}
+                            px-4 py-3
+                            border-b border-slate-800/40
+                            hover:bg-white/[0.02]
+                            transition
+                            cursor-pointer
+                            ${!n.read ? 'bg-cyan-500/[0.03]' : ''}
+                          `}
                         >
                           <div className="flex items-start gap-3">
                             <div
                               className={`
-                                                                mt-1.5
-                                                                w-2 h-2
-                                                                rounded-full
-                                                                flex-shrink-0
-                                                                ${style.dot}
-                                                            `}
+                                mt-1.5 w-2 h-2 rounded-full flex-shrink-0
+                                ${style.dot}
+                              `}
                             />
 
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center justify-between gap-2">
                                 <p
                                   className={`
-                                                                        text-sm truncate
-                                                                        ${
-                                                                          !n.read
-                                                                            ? 'text-white font-semibold'
-                                                                            : 'text-slate-400 font-medium'
-                                                                        }
-                                                                    `}
+                                    text-sm truncate
+                                    ${!n.read ? 'text-white font-semibold' : 'text-slate-400 font-medium'}
+                                  `}
                                 >
                                   {n.title}
                                 </p>
@@ -448,13 +541,12 @@ export default function AdminLayout() {
                               <div className="mt-2">
                                 <span
                                   className={`
-                                                                        inline-flex items-center
-                                                                        px-2 py-1 rounded-md
-                                                                        text-[10px]
-                                                                        uppercase tracking-wide
-                                                                        font-semibold border
-                                                                        ${style.badge}
-                                                                    `}
+                                    inline-flex items-center
+                                    px-2 py-1 rounded-md
+                                    text-[10px] uppercase tracking-wide
+                                    font-semibold border
+                                    ${style.badge}
+                                  `}
                                 >
                                   {n.type || 'system'}
                                 </span>
@@ -468,7 +560,7 @@ export default function AdminLayout() {
                 </div>
 
                 {/* Footer */}
-                <div className="p-3 border-t border-navy-800">
+                <div className="p-3 border-t border-slate-800/60">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -477,16 +569,11 @@ export default function AdminLayout() {
                       navigate('/admin/notifications');
                     }}
                     className="
-                                            w-full
-                                            text-xs
-                                            bg-blue-500/10
-                                            hover:bg-blue-500/20
-                                            text-blue-400
-                                            py-2
-                                            rounded-lg
-                                            transition
-                                            font-bold
-                                        "
+                      w-full text-xs
+                      bg-cyan-500/10 hover:bg-cyan-500/20
+                      text-cyan-400 py-2 rounded-lg
+                      transition font-bold
+                    "
                   >
                     View Full Logs
                   </button>
@@ -495,12 +582,12 @@ export default function AdminLayout() {
             )}
           </div>
 
-          {/* View Site */}
+          {/* View Site (header, hidden on small screens) */}
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-400 border border-navy-800 hover:border-blue-400/30 px-3 py-1.5 rounded-lg transition-all"
+            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 hover:text-cyan-400 border border-slate-800/60 hover:border-cyan-400/30 px-3 py-1.5 rounded-lg transition-all"
           >
             <Ic d={ICONS.eye} size={12} />
             View Site
