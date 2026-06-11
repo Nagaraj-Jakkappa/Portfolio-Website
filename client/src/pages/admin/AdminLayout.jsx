@@ -102,7 +102,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
       aria-label={item.label}
       onClick={onClick}
       className={({ isActive }) =>
-        `group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 overflow-visible ${
+        `group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 ${
           isActive
             ? 'bg-blue-500/10 text-blue-400'
             : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
@@ -295,7 +295,7 @@ export default function AdminLayout() {
           </div>
 
           {/* Navigation Area */}
-          <nav className="flex-1 py-4 px-3 overflow-y-auto overflow-x-hidden space-y-6">
+          <nav className="flex-1 py-4 px-3 overflow-visible space-y-6">
             {NAV_GROUPS.map((group, groupIdx) => (
               <div key={group.label} className="relative">
                 {/* Group label fading */}
@@ -341,7 +341,7 @@ export default function AdminLayout() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View Site"
-              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] overflow-visible"
+              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
             >
               <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
                 <Ic d={ICONS.eye} size={18} />
@@ -364,7 +364,7 @@ export default function AdminLayout() {
             <button
               onClick={handleLogout}
               aria-label="Logout"
-              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-red-400 hover:bg-red-500/10 w-full overflow-visible"
+              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-red-400 hover:bg-red-500/10 w-full"
             >
               <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
                 <Ic d={ICONS.logout} size={18} />
