@@ -45,6 +45,7 @@ const ICONS = {
   experience: 'M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2',
   collapse: 'M11 19l-7-7 7-7',
   expand: 'M13 5l7 7-7 7',
+  sidebar: 'M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z M9 3v18',
 };
 
 const NAV_GROUPS = [
@@ -132,7 +133,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
 
       {/* Tooltip — hidden on mobile to prevent tap issues, visible on hover when collapsed on desktop */}
       {!expanded && (
-        <span className="hidden md:block pointer-events-none absolute left-full ml-1 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
+        <span className="hidden md:block pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
           {item.label}
           {item.path === '/admin/notifications' && unreadCount > 0 && (
             <span className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-blue-500/20 text-blue-400 text-[9px] font-bold">
@@ -248,30 +249,48 @@ export default function AdminLayout() {
           fixed top-0 left-0 h-full z-50
           flex flex-col flex-shrink-0
           bg-navy-900 border-r border-navy-800
-          transition-all duration-300 ease-out overflow-hidden
+          transition-all duration-300 ease-out
           ${expanded ? 'w-72 md:w-64 shadow-2xl md:shadow-none' : 'w-[68px]'}
         `}
       >
         <div className="flex flex-col h-full">
-          {/* Top Brand Area */}
-          <div className="h-16 flex items-center px-3 border-b border-navy-800 overflow-hidden shrink-0">
-            <div className="flex items-center justify-center min-w-[44px] h-11 shrink-0">
-              <div className="w-8 h-8 rounded-lg border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
-                <img
-                  src="/apple-touch-icon.png"
-                  alt="Logo"
-                  className="w-5 h-5 object-contain"
-                  onError={(e) => { e.target.src = '/favicon-32x32.png'; }}
-                />
+          {/* Top Brand & Toggle Area */}
+          <div className={`flex ${expanded ? 'flex-row items-center justify-between h-16 px-3' : 'flex-col items-center py-4 gap-4'} border-b border-navy-800 shrink-0 overflow-visible`}>
+            {/* Logo & Brand */}
+            <div className={`flex items-center ${expanded ? 'flex-1 min-w-0' : ''}`}>
+              <div className={`flex items-center justify-center shrink-0 ${expanded ? 'min-w-[44px]' : 'w-8'}`}>
+                <div className="w-8 h-8 rounded-lg border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                  <img
+                    src="/apple-touch-icon.png"
+                    alt="Logo"
+                    className="w-5 h-5 object-contain"
+                    onError={(e) => { e.target.src = '/favicon-32x32.png'; }}
+                  />
+                </div>
+              </div>
+              <div
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex flex-col justify-center ${
+                  expanded ? 'opacity-100 w-auto pr-2' : 'opacity-0 w-0 pr-0 overflow-hidden'
+                }`}
+              >
+                <div className="text-[13px] font-semibold text-slate-100 tracking-wide truncate">Techartistry</div>
+                <div className="text-[10px] text-slate-500 font-medium tracking-wide uppercase truncate">Portfolio OS</div>
               </div>
             </div>
-            <div
-              className={`whitespace-nowrap transition-all duration-300 ease-out flex flex-col justify-center ${
-                expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
-              }`}
-            >
-              <div className="text-[13px] font-semibold text-slate-100 tracking-wide">Techartistry</div>
-              <div className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">Portfolio OS</div>
+
+            {/* Toggle Button */}
+            <div className="group relative flex items-center justify-center shrink-0">
+              <button
+                onClick={() => setExpanded(v => !v)}
+                aria-label={expanded ? "Close sidebar" : "Open sidebar"}
+                className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] transition-colors"
+              >
+                <Ic d={ICONS.sidebar} size={18} />
+              </button>
+              {/* Tooltip */}
+              <span className={`hidden md:block pointer-events-none absolute ${expanded ? 'top-full mt-1.5 left-1/2 -translate-x-1/2' : 'left-full ml-3 top-1/2 -translate-y-1/2'} px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 z-[100] shadow-xl`}>
+                {expanded ? 'Close sidebar' : 'Open sidebar'}
+              </span>
             </div>
           </div>
 
@@ -365,9 +384,9 @@ export default function AdminLayout() {
             </button>
 
             {/* Profile Line */}
-            <div className="flex items-center rounded-xl h-12 mt-2 pt-2 border-t border-navy-800 overflow-hidden">
-              <div className="group relative flex items-center justify-center min-w-[44px] h-10 shrink-0 cursor-pointer" onClick={() => setExpanded(v => !v)}>
-                <div className="w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shrink-0 shadow-sm hover:border-navy-600 transition-colors">
+            <div className="flex items-center rounded-xl h-12 mt-2 pt-2 border-t border-navy-800 overflow-visible">
+              <div className="group relative flex items-center justify-center min-w-[44px] h-10 shrink-0">
+                <div className="w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                   <img
                     src="/apple-touch-icon.png"
                     alt="Avatar"
@@ -375,24 +394,17 @@ export default function AdminLayout() {
                     onError={(e) => { e.target.src = '/favicon-32x32.png'; }}
                   />
                 </div>
-                {!expanded && (
-                  <span className="hidden md:block pointer-events-none absolute left-full ml-1 px-2.5 py-1.5 rounded-lg bg-navy-950 border border-navy-800 text-[11px] font-medium text-slate-200 whitespace-nowrap opacity-0 scale-95 translate-x-1 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-150 z-[100] shadow-xl">
-                    Expand Menu
-                  </span>
-                )}
               </div>
               <div
-                className={`whitespace-nowrap transition-all duration-300 ease-out flex flex-col justify-center flex-1 cursor-pointer hover:bg-white/[0.02] rounded-lg h-full ${
-                  expanded ? 'opacity-100 max-w-[200px] px-2' : 'opacity-0 max-w-0 px-0'
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex flex-col justify-center flex-1 h-full ${
+                  expanded ? 'opacity-100 max-w-[200px] px-2' : 'opacity-0 max-w-0 px-0 overflow-hidden'
                 }`}
-                onClick={() => setExpanded(v => !v)}
               >
                 <div className="flex items-center justify-between w-full">
                   <div className="min-w-0">
                     <div className="text-[13px] font-medium text-slate-200 truncate">Nagaraj J.</div>
                     <div className="text-[10px] text-slate-500 truncate">Admin</div>
                   </div>
-                  <Ic d={expanded ? ICONS.collapse : ICONS.expand} size={14} className="text-slate-500" />
                 </div>
               </div>
             </div>
