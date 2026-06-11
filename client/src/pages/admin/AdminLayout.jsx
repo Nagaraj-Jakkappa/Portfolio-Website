@@ -102,7 +102,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
       aria-label={item.label}
       onClick={onClick}
       className={({ isActive }) =>
-        `group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 overflow-hidden ${
+        `group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 overflow-visible ${
           isActive
             ? 'bg-blue-500/10 text-blue-400'
             : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
@@ -114,7 +114,7 @@ function SidebarNavItem({ item, expanded, hasNewVisitorEvents, unreadCount, onCl
       </div>
 
       <div
-        className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
+        className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center overflow-hidden ${
           expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
         }`}
       >
@@ -334,20 +334,20 @@ export default function AdminLayout() {
           </nav>
 
           {/* Bottom Profile Area */}
-          <div className="p-3 border-t border-navy-800 space-y-1 shrink-0 overflow-hidden">
+          <div className="p-3 border-t border-navy-800 space-y-1 shrink-0 overflow-visible">
             {/* View Site */}
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View Site"
-              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] overflow-hidden"
+              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] overflow-visible"
             >
               <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
                 <Ic d={ICONS.eye} size={18} />
               </div>
               <div
-                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center overflow-hidden ${
                   expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
                 }`}
               >
@@ -364,13 +364,13 @@ export default function AdminLayout() {
             <button
               onClick={handleLogout}
               aria-label="Logout"
-              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-red-400 hover:bg-red-500/10 w-full overflow-hidden"
+              className="group relative flex items-center rounded-xl transition-colors duration-200 cursor-pointer h-10 text-slate-400 hover:text-red-400 hover:bg-red-500/10 w-full overflow-visible"
             >
               <div className="flex items-center justify-center min-w-[44px] h-10 shrink-0">
                 <Ic d={ICONS.logout} size={18} />
               </div>
               <div
-                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center ${
+                className={`whitespace-nowrap transition-all duration-300 ease-out flex items-center overflow-hidden ${
                   expanded ? 'opacity-100 max-w-[200px] pr-4' : 'opacity-0 max-w-0 pr-0'
                 }`}
               >
