@@ -253,13 +253,14 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
 // ── Table row ─────────────────────────────────────────────────
 function ProjectRow({ project, onEdit, onDelete }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
   return (
     <tr className="border-b border-navy-800 hover:bg-white/[0.015] transition-colors group">
       {/* Title */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-navy-800 flex-shrink-0 overflow-hidden flex items-center justify-center text-xs font-bold text-blue-400">
-            {project.imageUrl ? (
+            {project.imageUrl && !imgError ? (
               <img 
                 src={project.imageUrl} 
                 alt={project.title || 'Project'} 
@@ -267,12 +268,12 @@ function ProjectRow({ project, onEdit, onDelete }) {
                 decoding="async" 
                 className="w-full h-full object-cover object-top" 
                 onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://via.placeholder.com/600x400/0f172a/38bdf8?text=Project+Preview';
+                  if (import.meta.env.DEV) console.warn('Project image failed:', project.imageUrl);
+                  setImgError(true);
                 }}
               />
             ) : (
-              project.title?.[0]
+              project.title?.[0] || '?'
             )}
           </div>
           <div className="min-w-0">

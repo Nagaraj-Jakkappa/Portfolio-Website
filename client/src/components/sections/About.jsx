@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { trackVisitorEvent } from '../../utils/visitorTracking';
 
 const getWhatsAppHref = (value) => {
@@ -57,6 +57,7 @@ const DEFAULT_BIO = [
 ];
 
 export default function About({ content }) {
+  const [imgError, setImgError] = useState(false);
   const about = content?.about || {};
   const social = content?.socialLinks || {};
 
@@ -118,17 +119,23 @@ export default function About({ content }) {
 
               {/* The Image Container */}
               <div className="relative h-full w-full rounded-2xl overflow-hidden border border-white/10 bg-navy-800">
-                <img
-                  src={profileImage}
-                  alt={about.title || "Nagaraj Jakkappa - Profile"}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-105 hover:scale-100"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/400x400/0f172a/38bdf8?text=NJ';
-                  }}
-                />
+                {profileImage && !imgError ? (
+                  <img
+                    src={profileImage}
+                    alt={about.title || "Nagaraj Jakkappa - Profile"}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-105 hover:scale-100"
+                    onError={(e) => {
+                      if (import.meta.env.DEV) console.warn('Profile image failed:', profileImage);
+                      setImgError(true);
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-navy-900">
+                    <span className="font-display font-bold text-6xl text-blue-400/30">NJ</span>
+                  </div>
+                )}
               </div>
 
               {/* Status Badge */}

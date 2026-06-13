@@ -41,11 +41,13 @@ function ProjectCard({ project }) {
     other: 'text-slate-400 bg-slate-500/10 border-slate-400/20',
   };
 
+  const [imgError, setImgError] = useState(false);
+
   return (
     <div className="card-base group flex flex-col overflow-hidden transition-all duration-300">
       {/* Thumbnail */}
       <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-2xl bg-slate-950/60">
-        {imageUrl ? (
+        {imageUrl && !imgError ? (
           <img
             src={imageUrl}
             alt={title || "Project thumbnail"}
@@ -53,8 +55,8 @@ function ProjectCard({ project }) {
             decoding="async"
             className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
             onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = 'https://via.placeholder.com/600x400/0f172a/38bdf8?text=Project+Preview';
+              if (import.meta.env.DEV) console.warn('Project image failed:', imageUrl);
+              setImgError(true);
             }}
           />
         ) : (

@@ -9,6 +9,7 @@ export default function ProjectDetail() {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     async function fetchProject() {
@@ -142,7 +143,7 @@ export default function ProjectDetail() {
         </header>
 
         {/* Image */}
-        {imageUrl ? (
+        {imageUrl && !imgError ? (
           <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl bg-slate-950/60 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700">
             <img 
               src={imageUrl} 
@@ -151,8 +152,8 @@ export default function ProjectDetail() {
               decoding="async"
               className="w-full h-full object-cover object-top"
               onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = 'https://via.placeholder.com/1200x675/0f172a/38bdf8?text=Project+Preview';
+                if (import.meta.env.DEV) console.warn('Project image failed:', imageUrl);
+                setImgError(true);
               }}
             />
           </div>
