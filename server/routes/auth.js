@@ -2,9 +2,14 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body } = require('express-validator');
 const rateLimit = require('express-rate-limit');
+const multer = require('multer');
+const streamifier = require('streamifier');
+
 const Admin = require('../models/Admin');
 const { protect } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
+const cloudinary = require('../utils/cloudinary');
+
 const router = express.Router();
 
 const loginLimiter = rateLimit({
@@ -17,6 +22,23 @@ const loginLimiter = rateLimit({
     error: 'Too many login attempts. Please try again later.',
   },
   skip: (req) => req.method === 'OPTIONS',
+});
+
+// Configure Multer for memory storage with validation
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype === 'image/jpeg' ||
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/webp'
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPG, PNG, or WebP images are allowed.'), false);
+    }
+  },
 });
 
 // POST /api/auth/login
@@ -32,25 +54,34 @@ router.post(
     try {
       const { username, password } = req.body;
 
-    const admin = await Admin.findOne({ username: username.toLowerCase() });
-    if (!admin || !(await admin.comparePassword(password))) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      const admin = await Admin.findOne({ username: username.toLowerCase() });
+      if (!admin || !(await admin.comparePassword(password))) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+
+      const token = jwt.sign(
+        { id: admin._id, username: admin.username },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: '4h',
+        }
+      );
+
+      res.json({
+        token,
+        username: admin.username,
+        admin: {
+          id: admin._id,
+          username: admin.username,
+          avatarUrl: admin.avatarUrl,
+        },
+      });
+    } catch (err) {
+      console.error('[Auth] Login error:', err);
+      res.status(500).json({ error: 'Server error during login' });
     }
-
-    const token = jwt.sign({ id: admin._id, username: admin.username }, process.env.JWT_SECRET, {
-      expiresIn: '4h',
-    });
-
-    res.json({
-      token,
-      username: admin.username,
-      admin: { id: admin._id, username: admin.username },
-    });
-  } catch (err) {
-    console.error('[Auth] Login error:', err);
-    res.status(500).json({ error: 'Server error during login' });
   }
-});
+);
 
 // GET /api/auth/me
 router.get('/me', protect, async (req, res) => {
@@ -60,6 +91,89 @@ router.get('/me', protect, async (req, res) => {
     res.json({ admin });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/auth/avatar
+router.post('/avatar', protect, (req, res) => {
+  upload.single('avatar')(req, res, async (err) => {
+    if (err) {
+      if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ error: 'Image must be under 2MB.' });
+      }
+      return res.status(400).json({ error: err.message });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image provided.' });
+    }
+
+    try {
+      const admin = await Admin.findById(req.admin.id);
+      if (!admin) return res.status(404).json({ error: 'Admin not found.' });
+
+      // Delete old image if exists
+      if (admin.avatarPublicId) {
+        await cloudinary.uploader.destroy(admin.avatarPublicId).catch(console.error);
+      }
+
+      // Upload new image
+      const streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: 'techartistry/admin/avatar',
+              transformation: [
+                {
+                  width: 400,
+                  height: 400,
+                  crop: 'fill',
+                  gravity: 'face',
+                  quality: 'auto',
+                  fetch_format: 'auto',
+                },
+              ],
+            },
+            (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            }
+          );
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+      };
+
+      const result = await streamUpload(req);
+
+      admin.avatarUrl = result.secure_url;
+      admin.avatarPublicId = result.public_id;
+      await admin.save();
+
+      res.json({ success: true, avatarUrl: admin.avatarUrl });
+    } catch (error) {
+      console.error('Cloudinary Upload Error:', error);
+      res.status(500).json({ error: 'Error uploading image to Cloudinary.' });
+    }
+  });
+});
+
+// DELETE /api/auth/avatar
+router.delete('/avatar', protect, async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin.id);
+    if (!admin) return res.status(404).json({ error: 'Admin not found.' });
+
+    if (admin.avatarPublicId) {
+      await cloudinary.uploader.destroy(admin.avatarPublicId).catch(console.error);
+    }
+
+    admin.avatarUrl = '';
+    admin.avatarPublicId = '';
+    await admin.save();
+
+    res.json({ success: true, message: 'Avatar removed.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error removing avatar.' });
   }
 });
 
@@ -105,7 +219,7 @@ router.put(
     try {
       const { username, currentPassword } = req.body;
       const admin = await Admin.findById(req.admin.id);
-      
+
       if (!admin || !(await admin.comparePassword(currentPassword))) {
         return res.status(401).json({ error: 'Current password is incorrect' });
       }
@@ -118,7 +232,7 @@ router.put(
 
       admin.username = username.toLowerCase();
       await admin.save();
-      
+
       res.json({ success: true, username: admin.username });
     } catch (err) {
       res.status(500).json({ error: err.message });

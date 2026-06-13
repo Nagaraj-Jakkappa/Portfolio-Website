@@ -146,7 +146,7 @@ function SidebarNavItem({ item, isExpanded, hasNewVisitorEvents, unreadCount, on
    AdminLayout
    ═══════════════════════════════════════════════════════════════ */
 export default function AdminLayout() {
-  const { logout } = useAuth();
+  const { admin, logout } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -163,9 +163,16 @@ export default function AdminLayout() {
   // Profile Photo State & Refs
   const fileInputRef = useRef(null);
   const defaultAvatarPath = '/apple-touch-icon.png';
-  const [avatarUrl, setAvatarUrl] = useState(() => {
-    return localStorage.getItem('techartistry_admin_avatar') || '/profile.jpg';
-  });
+  const [avatarUrl, setAvatarUrl] = useState(defaultAvatarPath);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  useEffect(() => {
+    if (admin?.avatarUrl) {
+      setAvatarUrl(admin.avatarUrl);
+    } else {
+      setAvatarUrl(defaultAvatarPath);
+    }
+  }, [admin]);
 
   const TYPE_STYLES = {
     system: { dot: 'bg-blue-400', badge: 'bg-blue-500/10 text-blue-300 border-blue-500/20' },
@@ -248,25 +255,39 @@ export default function AdminLayout() {
     // Local Preview
     const previewUrl = URL.createObjectURL(file);
     setAvatarUrl(previewUrl);
-    localStorage.setItem('techartistry_admin_avatar', previewUrl);
+    setUploadingAvatar(true);
 
-    // TODO: Send to backend
-    // const formData = new FormData();
-    // formData.append('avatar', file);
-    // try {
-    //   await axios.post('/admin/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' }});
-    // } catch (err) {
-    //   console.error('Upload failed', err);
-    // }
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    try {
+      const res = await axios.post('/auth/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' }});
+      if (res.data.success && res.data.avatarUrl) {
+        setAvatarUrl(res.data.avatarUrl);
+      }
+    } catch (err) {
+      console.error('Upload failed', err);
+      alert(err.response?.data?.error || 'Upload failed');
+      setAvatarUrl(admin?.avatarUrl || defaultAvatarPath); // Revert
+    } finally {
+      setUploadingAvatar(false);
+      URL.revokeObjectURL(previewUrl);
+    }
   };
 
-  const handleRemoveAvatar = (e) => {
+  const handleRemoveAvatar = async (e) => {
     e.stopPropagation();
     setAvatarUrl(defaultAvatarPath);
-    localStorage.setItem('techartistry_admin_avatar', defaultAvatarPath);
+    setUploadingAvatar(true);
 
-    // TODO: Tell backend to remove avatar
-    // axios.delete('/admin/avatar').catch(console.error);
+    try {
+      await axios.delete('/auth/avatar');
+    } catch (err) {
+      console.error('Remove failed', err);
+      setAvatarUrl(admin?.avatarUrl || defaultAvatarPath); // Revert
+    } finally {
+      setUploadingAvatar(false);
+    }
   };
 
   const transitionClass = "transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]";
@@ -411,8 +432,8 @@ export default function AdminLayout() {
               
               <div className={`relative group shrink-0 ${isExpanded ? 'mr-3' : ''}`}>
                 <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shadow-sm cursor-pointer relative"
+                  onClick={() => !uploadingAvatar && fileInputRef.current?.click()}
+                  className={`w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shadow-sm relative ${uploadingAvatar ? 'cursor-wait opacity-80' : 'cursor-pointer'}`}
                 >
                   <img
                     src={avatarUrl}
@@ -421,15 +442,22 @@ export default function AdminLayout() {
                     onError={(e) => { e.target.src = defaultAvatarPath; }}
                   />
                   {/* Hover Edit Overlay */}
-                  <div className="absolute inset-0 bg-navy-950/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-white">
-                      <Ic d={ICONS.camera} size={14} />
-                    </span>
-                  </div>
+                  {!uploadingAvatar && (
+                    <div className="absolute inset-0 bg-navy-950/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-white">
+                        <Ic d={ICONS.camera} size={14} />
+                      </span>
+                    </div>
+                  )}
+                  {uploadingAvatar && (
+                    <div className="absolute inset-0 bg-navy-950/60 flex items-center justify-center">
+                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Delete Badge */}
-                {avatarUrl !== defaultAvatarPath && (
+                {avatarUrl !== defaultAvatarPath && !uploadingAvatar && (
                   <button
                     onClick={handleRemoveAvatar}
                     className="absolute -top-1 -right-1 w-[14px] h-[14px] bg-red-500 rounded-full text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-red-400"

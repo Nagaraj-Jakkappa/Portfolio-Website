@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
     const { data } = await api.post('/auth/login', { username, password });
     localStorage.setItem('adminToken', data.token);
     api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-    setAdmin({ username: data.username });
+    setAdmin(data.admin);
     return data;
   };
 
