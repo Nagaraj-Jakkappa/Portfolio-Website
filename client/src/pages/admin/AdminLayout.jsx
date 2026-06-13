@@ -4,6 +4,7 @@
  *
  * Exact video-replicated collapsible sidebar behavior.
  * Floating edge toggle, fixed 68px mobile rail, and premium transitions.
+ * Includes interactive Admin Avatar upload/delete functionality.
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -41,6 +42,8 @@ const ICONS = {
   experience: 'M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2',
   chevronLeft: 'M15 18l-6-6 6-6',
   chevronRight: 'M9 18l6-6-6-6',
+  camera: 'M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z M12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  close: 'M18 6L6 18 M6 6l12 12',
 };
 
 const NAV_GROUPS = [
@@ -156,6 +159,13 @@ export default function AdminLayout() {
   const [hasNewVisitorEvents, setHasNewVisitorEvents] = useState(false);
 
   const notificationRef = useRef(null);
+  
+  // Profile Photo State & Refs
+  const fileInputRef = useRef(null);
+  const defaultAvatarPath = '/apple-touch-icon.png';
+  const [avatarUrl, setAvatarUrl] = useState(() => {
+    return localStorage.getItem('techartistry_admin_avatar') || '/profile.jpg';
+  });
 
   const TYPE_STYLES = {
     system: { dot: 'bg-blue-400', badge: 'bg-blue-500/10 text-blue-300 border-blue-500/20' },
@@ -215,7 +225,6 @@ export default function AdminLayout() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close mobile sidebar smoothly on route change and handle window resize
   useEffect(() => {
     if (window.innerWidth < 768) setIsExpanded(false);
     
@@ -231,7 +240,35 @@ export default function AdminLayout() {
     navigate('/');
   };
 
-  // The premium easing curve used in the reference video
+  // Avatar Management Handlers
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Local Preview
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarUrl(previewUrl);
+    localStorage.setItem('techartistry_admin_avatar', previewUrl);
+
+    // TODO: Send to backend
+    // const formData = new FormData();
+    // formData.append('avatar', file);
+    // try {
+    //   await axios.post('/admin/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' }});
+    // } catch (err) {
+    //   console.error('Upload failed', err);
+    // }
+  };
+
+  const handleRemoveAvatar = (e) => {
+    e.stopPropagation();
+    setAvatarUrl(defaultAvatarPath);
+    localStorage.setItem('techartistry_admin_avatar', defaultAvatarPath);
+
+    // TODO: Tell backend to remove avatar
+    // axios.delete('/admin/avatar').catch(console.error);
+  };
+
   const transitionClass = "transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]";
 
   return (
@@ -255,7 +292,7 @@ export default function AdminLayout() {
           ${isExpanded ? 'w-[260px] shadow-2xl md:shadow-none' : 'w-[68px]'}
         `}
       >
-        {/* Floating Edge Toggle Button - Matches video behavior perfectly */}
+        {/* Floating Edge Toggle Button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={`absolute z-50 flex items-center justify-center w-6 h-6 rounded-full border border-navy-700 bg-navy-900 text-slate-400 hover:text-white hover:bg-navy-800 shadow-sm transition-all duration-300 ${
@@ -369,15 +406,49 @@ export default function AdminLayout() {
               </div>
             </button>
 
+            {/* Profile Avatar & Details */}
             <div className={`flex items-center rounded-lg h-12 mt-2 pt-2 border-t border-navy-800 ${isExpanded ? 'px-2' : 'justify-center'}`}>
-              <div className={`w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center shrink-0 overflow-hidden shadow-sm ${isExpanded ? 'mr-3' : ''}`}>
-                <img
-                  src="/apple-touch-icon.png"
-                  alt="Avatar"
-                  className="w-5 h-5 object-contain"
-                  onError={(e) => { e.target.src = '/favicon-32x32.png'; }}
-                />
+              
+              <div className={`relative group shrink-0 ${isExpanded ? 'mr-3' : ''}`}>
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center overflow-hidden shadow-sm cursor-pointer relative"
+                >
+                  <img
+                    src={avatarUrl}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.target.src = defaultAvatarPath; }}
+                  />
+                  {/* Hover Edit Overlay */}
+                  <div className="absolute inset-0 bg-navy-950/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-white">
+                      <Ic d={ICONS.camera} size={14} />
+                    </span>
+                  </div>
+                </div>
+
+                {/* Delete Badge */}
+                {avatarUrl !== defaultAvatarPath && (
+                  <button
+                    onClick={handleRemoveAvatar}
+                    className="absolute -top-1 -right-1 w-[14px] h-[14px] bg-red-500 rounded-full text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-red-400"
+                    title="Remove Photo"
+                  >
+                    <Ic d={ICONS.close} size={8} />
+                  </button>
+                )}
               </div>
+
+              {/* Hidden File Input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                hidden
+                accept="image/*"
+                onChange={handleAvatarChange}
+              />
+
               <div className={`whitespace-nowrap ${transitionClass} flex flex-col justify-center flex-1 ${isExpanded ? 'opacity-100 max-w-[200px] translate-x-0' : 'opacity-0 max-w-0 -translate-x-2'}`}>
                 <div className="text-[13px] font-medium text-slate-200 truncate leading-none mb-1.5">Nagaraj J.</div>
                 <div className="text-[10px] text-slate-500 truncate leading-none">Admin</div>
