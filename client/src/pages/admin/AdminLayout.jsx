@@ -2,8 +2,8 @@
  * AdminLayout.jsx
  * Path: client/src/pages/admin/AdminLayout.jsx
  *
- * Claude/ChatGPT-style collapsible sidebar (icon rail ↔ full panel).
- * Integrated with navy palette, seamless transitions, and floating tooltips.
+ * Exact video-replicated collapsible sidebar behavior.
+ * Floating edge toggle, fixed 68px mobile rail, and premium transitions.
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -34,14 +34,13 @@ const ICONS = {
   analytics: 'M18 20V10 M12 20V4 M6 20v-6',
   settings: 'M12 15a3 3 0 100-6 3 3 0 000 6z M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z',
   logout: 'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4 M16 17l5-5-5-5 M21 12H9',
-  menu: 'M3 12h18 M3 6h18 M3 18h18',
-  close: 'M18 6L6 18 M6 6l12 12',
   bell: 'M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 01-3.46 0',
   eye: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 100 6 3 3 0 000-6z',
   content: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
   skills: 'M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5',
   experience: 'M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2',
-  sidebar: 'M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z M9 3v18',
+  chevronLeft: 'M15 18l-6-6 6-6',
+  chevronRight: 'M9 18l6-6-6-6',
 };
 
 const NAV_GROUPS = [
@@ -108,11 +107,11 @@ function SidebarNavItem({ item, isExpanded, hasNewVisitorEvents, unreadCount, on
       }}
       onMouseLeave={() => setHoveredTooltip(null)}
       className={({ isActive }) =>
-        `group relative flex items-center rounded-lg transition-all duration-200 cursor-pointer h-9 mb-0.5 outline-none ${
+        `group relative flex items-center rounded-lg transition-all duration-200 cursor-pointer h-10 mb-1 outline-none overflow-hidden ${
           isActive
-            ? 'bg-blue-500/10 text-blue-400 font-medium shadow-sm ring-1 ring-blue-500/20'
+            ? 'bg-blue-500/10 text-blue-400 font-medium'
             : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
-        } ${isExpanded ? 'px-2' : 'justify-center'}`
+        } ${isExpanded ? 'px-3' : 'justify-center'}`
       }
     >
       <div className={`flex items-center justify-center shrink-0 ${isExpanded ? 'mr-3' : ''}`}>
@@ -120,8 +119,8 @@ function SidebarNavItem({ item, isExpanded, hasNewVisitorEvents, unreadCount, on
       </div>
 
       <div
-        className={`whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] overflow-hidden flex-1 flex items-center ${
-          isExpanded ? 'opacity-100 max-w-[200px]' : 'opacity-0 max-w-0'
+        className={`whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex-1 flex items-center ${
+          isExpanded ? 'opacity-100 max-w-[200px] translate-x-0' : 'opacity-0 max-w-0 -translate-x-2'
         }`}
       >
         <span className="text-[13px] tracking-wide truncate">{item.label}</span>
@@ -131,8 +130,8 @@ function SidebarNavItem({ item, isExpanded, hasNewVisitorEvents, unreadCount, on
         <span
           className={`absolute rounded-full bg-blue-400 transition-all duration-300 ${
             isExpanded
-              ? 'right-2 w-1.5 h-1.5'
-              : 'top-1.5 right-1.5 w-2 h-2 ring-2 ring-navy-900'
+              ? 'right-3 w-1.5 h-1.5'
+              : 'top-2 right-2 w-2 h-2 ring-2 ring-navy-900'
           }`}
         />
       )}
@@ -232,6 +231,7 @@ export default function AdminLayout() {
     navigate('/');
   };
 
+  // The premium easing curve used in the reference video
   const transitionClass = "transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]";
 
   return (
@@ -255,13 +255,22 @@ export default function AdminLayout() {
           ${isExpanded ? 'w-[260px] shadow-2xl md:shadow-none' : 'w-[68px]'}
         `}
       >
-        <div className="flex flex-col h-full">
+        {/* Floating Edge Toggle Button - Matches video behavior perfectly */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={`absolute z-50 flex items-center justify-center w-6 h-6 rounded-full border border-navy-700 bg-navy-900 text-slate-400 hover:text-white hover:bg-navy-800 shadow-sm transition-all duration-300 ${
+            isExpanded ? 'top-5 right-3' : 'top-6 -right-3'
+          }`}
+          aria-label={isExpanded ? "Close sidebar" : "Open sidebar"}
+        >
+          <Ic d={isExpanded ? ICONS.chevronLeft : ICONS.chevronRight} size={14} />
+        </button>
+
+        <div className="flex flex-col h-full overflow-hidden">
           
-          {/* Top Brand Area & Toggle */}
-          <div className={`flex shrink-0 border-b border-navy-800 overflow-visible ${transitionClass} ${isExpanded ? 'flex-row items-center justify-between h-14 px-3' : 'flex-col items-center py-4 gap-4'}`}>
-            
-            {/* Logo & Brand text */}
-            <div className={`flex items-center gap-3 overflow-hidden ${isExpanded ? 'w-auto' : ''}`}>
+          {/* Top Brand Area */}
+          <div className={`relative flex shrink-0 overflow-visible ${transitionClass} ${isExpanded ? 'flex-row items-center h-16 px-4' : 'flex-col items-center pt-5 pb-4'}`}>
+            <div className="flex items-center gap-3 overflow-hidden w-full">
               <div className="w-8 h-8 rounded-lg bg-navy-950 border border-navy-700 flex items-center justify-center shrink-0 shadow-sm">
                 <img
                   src="/apple-touch-icon.png"
@@ -270,52 +279,34 @@ export default function AdminLayout() {
                   onError={(e) => { e.target.src = '/favicon-32x32.png'; }}
                 />
               </div>
-              <div className={`flex flex-col whitespace-nowrap transition-all duration-200 overflow-hidden ${isExpanded ? 'opacity-100 w-full' : 'opacity-0 w-0 hidden'}`}>
+              <div className={`flex flex-col whitespace-nowrap ${transitionClass} ${isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 hidden'}`}>
                 <span className="text-[14px] font-semibold text-slate-100 leading-tight tracking-wide">Techartistry</span>
                 <span className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">Portfolio OS</span>
               </div>
-            </div>
-
-            {/* Integrated Toggle */}
-            <div className="group relative flex items-center justify-center shrink-0">
-              <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-                aria-label={isExpanded ? "Close sidebar" : "Open sidebar"}
-              >
-                <Ic d={ICONS.sidebar} size={20} />
-              </button>
-              {/* Tooltip */}
-              <span className={`pointer-events-none absolute z-[9999] hidden whitespace-nowrap rounded-md border border-navy-700 bg-navy-800 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg animate-in fade-in zoom-in-95 duration-150 md:group-hover:block ${isExpanded ? 'top-full mt-1.5 left-1/2 -translate-x-1/2' : 'left-full top-1/2 ml-3 -translate-y-1/2'}`}>
-                {isExpanded ? 'Close sidebar' : 'Open sidebar'}
-              </span>
             </div>
           </div>
 
           {/* Navigation Area */}
           <nav 
-            className="flex-1 py-3 px-3 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] space-y-4"
+            className="flex-1 py-4 px-2 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] space-y-5"
             onScroll={() => setHoveredTooltip(null)}
           >
             {NAV_GROUPS.map((group, groupIdx) => (
               <div key={group.label} className="relative">
-                {/* Group label fading */}
                 <div
-                  className={`px-1 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] overflow-hidden ${
-                    isExpanded ? 'opacity-100 max-h-10 mb-1.5' : 'opacity-0 max-h-0 mb-0'
+                  className={`px-2 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] overflow-hidden ${
+                    isExpanded ? 'opacity-100 max-h-10 mb-2' : 'opacity-0 max-h-0 mb-0'
                   }`}
                 >
-                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">
+                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                     {group.label}
                   </span>
                 </div>
-                {/* Separator dot when collapsed */}
                 {!isExpanded && groupIdx !== 0 && (
-                  <div className="flex justify-center mb-3 mt-1">
-                    <div className="w-1 h-1 rounded-full bg-navy-800" />
+                  <div className="flex justify-center mb-4 mt-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-navy-800" />
                   </div>
                 )}
-                {/* Nav Items */}
                 <div className="flex flex-col">
                   {group.items.map((item) => (
                     <SidebarNavItem
@@ -336,14 +327,13 @@ export default function AdminLayout() {
           </nav>
 
           {/* Bottom Profile Area */}
-          <div className={`p-3 border-t border-navy-800 shrink-0 ${transitionClass}`}>
+          <div className={`p-2 border-t border-navy-800 shrink-0 ${transitionClass}`}>
             
-            {/* View Site */}
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className={`group relative flex items-center rounded-lg transition-all duration-200 cursor-pointer h-9 mb-0.5 outline-none text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] ${isExpanded ? 'px-2' : 'justify-center'}`}
+              className={`group relative flex items-center rounded-lg transition-all duration-200 cursor-pointer h-10 mb-1 outline-none text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] overflow-hidden ${isExpanded ? 'px-3' : 'justify-center'}`}
               onMouseEnter={(e) => {
                 if (!isExpanded) {
                   const rect = e.currentTarget.getBoundingClientRect();
@@ -355,15 +345,14 @@ export default function AdminLayout() {
               <div className={`flex items-center justify-center shrink-0 ${isExpanded ? 'mr-3' : ''}`}>
                 <Ic d={ICONS.eye} size={18} />
               </div>
-              <div className={`whitespace-nowrap ${transitionClass} overflow-hidden flex-1 flex items-center ${isExpanded ? 'opacity-100 max-w-[200px]' : 'opacity-0 max-w-0'}`}>
+              <div className={`whitespace-nowrap ${transitionClass} flex-1 flex items-center ${isExpanded ? 'opacity-100 max-w-[200px] translate-x-0' : 'opacity-0 max-w-0 -translate-x-2'}`}>
                 <span className="text-[13px] tracking-wide truncate">View Site</span>
               </div>
             </a>
 
-            {/* Logout */}
             <button
               onClick={handleLogout}
-              className={`group relative w-full flex items-center rounded-lg transition-all duration-200 cursor-pointer h-9 outline-none text-slate-400 hover:text-red-400 hover:bg-red-500/10 ${isExpanded ? 'px-2' : 'justify-center'}`}
+              className={`group relative w-full flex items-center rounded-lg transition-all duration-200 cursor-pointer h-10 outline-none text-slate-400 hover:text-red-400 hover:bg-red-500/10 overflow-hidden ${isExpanded ? 'px-3' : 'justify-center'}`}
               onMouseEnter={(e) => {
                 if (!isExpanded) {
                   const rect = e.currentTarget.getBoundingClientRect();
@@ -375,23 +364,22 @@ export default function AdminLayout() {
               <div className={`flex items-center justify-center shrink-0 ${isExpanded ? 'mr-3' : ''}`}>
                 <Ic d={ICONS.logout} size={18} />
               </div>
-              <div className={`whitespace-nowrap ${transitionClass} overflow-hidden flex-1 flex items-center justify-start ${isExpanded ? 'opacity-100 max-w-[200px]' : 'opacity-0 max-w-0'}`}>
+              <div className={`whitespace-nowrap ${transitionClass} flex-1 flex items-center justify-start ${isExpanded ? 'opacity-100 max-w-[200px] translate-x-0' : 'opacity-0 max-w-0 -translate-x-2'}`}>
                 <span className="text-[13px] tracking-wide truncate">Logout</span>
               </div>
             </button>
 
-            {/* Profile Line */}
-            <div className={`flex items-center rounded-lg h-10 mt-2 pt-2 border-t border-navy-800 ${isExpanded ? 'px-1' : 'justify-center'}`}>
-              <div className={`w-7 h-7 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center shrink-0 overflow-hidden shadow-sm ${isExpanded ? 'mr-3' : ''}`}>
+            <div className={`flex items-center rounded-lg h-12 mt-2 pt-2 border-t border-navy-800 ${isExpanded ? 'px-2' : 'justify-center'}`}>
+              <div className={`w-8 h-8 rounded-full border border-navy-700 bg-navy-950 flex items-center justify-center shrink-0 overflow-hidden shadow-sm ${isExpanded ? 'mr-3' : ''}`}>
                 <img
                   src="/apple-touch-icon.png"
                   alt="Avatar"
-                  className="w-4 h-4 object-contain"
+                  className="w-5 h-5 object-contain"
                   onError={(e) => { e.target.src = '/favicon-32x32.png'; }}
                 />
               </div>
-              <div className={`whitespace-nowrap ${transitionClass} overflow-hidden flex flex-col justify-center flex-1 ${isExpanded ? 'opacity-100 max-w-[200px]' : 'opacity-0 max-w-0'}`}>
-                <div className="text-[13px] font-medium text-slate-200 truncate leading-none mb-1">Nagaraj J.</div>
+              <div className={`whitespace-nowrap ${transitionClass} flex flex-col justify-center flex-1 ${isExpanded ? 'opacity-100 max-w-[200px] translate-x-0' : 'opacity-0 max-w-0 -translate-x-2'}`}>
+                <div className="text-[13px] font-medium text-slate-200 truncate leading-none mb-1.5">Nagaraj J.</div>
                 <div className="text-[10px] text-slate-500 truncate leading-none">Admin</div>
               </div>
             </div>
@@ -402,12 +390,12 @@ export default function AdminLayout() {
       {/* ── GLOBAL SIDEBAR TOOLTIP ── */}
       {!isExpanded && hoveredTooltip && (
         <div
-          className="hidden md:flex pointer-events-none fixed z-[9999] items-center whitespace-nowrap rounded-md border border-navy-700 bg-navy-800 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg animate-in fade-in zoom-in-95 duration-150"
+          className="hidden md:flex pointer-events-none fixed z-[9999] items-center whitespace-nowrap rounded-md border border-navy-700 bg-navy-800 px-3 py-1.5 text-[12px] font-medium text-white shadow-xl animate-in fade-in zoom-in-95 duration-150"
           style={{ top: hoveredTooltip.top, left: 80, transform: 'translateY(-50%)' }}
         >
           {hoveredTooltip.label}
           {hoveredTooltip.label === 'Notifications' && hoveredTooltip.unreadCount > 0 && (
-            <span className="ml-2 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-blue-500 text-white shadow-sm shadow-blue-500/30 text-[9px] font-bold">
+            <span className="ml-2 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-blue-500 text-white shadow-sm shadow-blue-500/30 text-[10px] font-bold">
               {hoveredTooltip.unreadCount}
             </span>
           )}
@@ -422,11 +410,8 @@ export default function AdminLayout() {
           ml-[68px] ${isExpanded ? 'md:ml-[260px]' : ''}
         `}
       >
-        {/* Header - Cleaned up to only show path and notifications */}
-        <header className="relative z-40 h-14 border-b border-navy-800 bg-navy-900/80 backdrop-blur-md flex items-center justify-between px-4 shrink-0">
-          
+        <header className="relative z-40 h-16 border-b border-navy-800 bg-navy-900/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0">
           <div className="flex items-center">
-            {/* Breadcrumb */}
             <div className="text-[13px] flex items-center text-slate-500">
               <span className="hidden sm:inline">Admin</span>
               <span className="hidden sm:inline mx-2 text-slate-700">/</span>
@@ -436,24 +421,22 @@ export default function AdminLayout() {
             </div>
           </div>
 
-          {/* Notifications bell */}
           <div className="relative" ref={notificationRef}>
             <button
               onClick={() => setShowNotifications((v) => !v)}
               className="relative p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
               aria-label="Toggle notifications"
             >
-              <Ic d={ICONS.bell} size={18} />
+              <Ic d={ICONS.bell} size={20} />
               {(unreadCount > 0 || hasNewVisitorEvents) && (
-                <span className="absolute top-1 right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-blue-500 shadow-md shadow-blue-500/30 text-[9px] font-bold text-white ring-2 ring-navy-900">
+                <span className="absolute top-1 right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-blue-500 shadow-md shadow-blue-500/30 text-[10px] font-bold text-white ring-2 ring-navy-900">
                   {unreadCount > 0 ? unreadCount : '!'}
                 </span>
               )}
             </button>
 
             {showNotifications && (
-              <div className="absolute top-[48px] right-0 w-[360px] max-h-[520px] z-[9999] rounded-xl border border-navy-700 bg-navy-800/95 backdrop-blur-xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200">
-                {/* Header */}
+              <div className="absolute top-[52px] right-0 w-[360px] max-h-[520px] z-[9999] rounded-xl border border-navy-700 bg-navy-800/95 backdrop-blur-xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-200">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-navy-700 bg-navy-900">
                   <h3 className="text-sm font-semibold text-white">Notifications</h3>
                   {unreadCount > 0 && (
@@ -466,7 +449,6 @@ export default function AdminLayout() {
                   )}
                 </div>
 
-                {/* List */}
                 <div className="max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-navy-600 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {notifications.length === 0 ? (
                     <div className="p-8 text-center text-sm text-slate-500 italic">
@@ -507,7 +489,6 @@ export default function AdminLayout() {
                   )}
                 </div>
 
-                {/* Footer */}
                 <div className="p-2 border-t border-navy-700 bg-navy-900">
                   <button
                     type="button"
@@ -516,7 +497,7 @@ export default function AdminLayout() {
                       setShowNotifications(false);
                       navigate('/admin/notifications');
                     }}
-                    className="w-full text-xs bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 py-2 rounded-lg transition-colors font-medium"
+                    className="w-full text-xs bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 py-2.5 rounded-lg transition-colors font-medium"
                   >
                     View Full Logs
                   </button>
@@ -526,7 +507,6 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        {/* Content Render Outlet */}
         <main className="flex-1 overflow-y-auto bg-navy-950 relative">
           <Outlet />
         </main>
