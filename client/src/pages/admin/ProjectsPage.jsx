@@ -251,16 +251,15 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
 
 
 // ── Table row ─────────────────────────────────────────────────
-function ProjectRow({ project, onEdit, onDelete }) {
+function ProjectRow({ project, onEdit, onDelete, isFailed, onFail }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [imgError, setImgError] = useState(false);
   return (
     <tr className="border-b border-navy-800 hover:bg-white/[0.015] transition-colors group">
       {/* Title */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-navy-800 flex-shrink-0 overflow-hidden flex items-center justify-center text-xs font-bold text-blue-400">
-            {project.imageUrl && !imgError ? (
+            {project.imageUrl && !isFailed ? (
               <img 
                 src={project.imageUrl} 
                 alt={project.title || 'Project'} 
@@ -269,7 +268,7 @@ function ProjectRow({ project, onEdit, onDelete }) {
                 className="w-full h-full object-cover object-top" 
                 onError={(e) => {
                   if (import.meta.env.DEV) console.warn('Project image failed:', project.imageUrl);
-                  setImgError(true);
+                  onFail();
                 }}
               />
             ) : (
@@ -417,6 +416,11 @@ export default function ProjectsPage() {
   const [featFilter, setFeatFilter] = useState('all');
   const [page, setPage] = useState(1);
   const [modal, setModal] = useState(null); // null | 'create' | project
+  const [failedImages, setFailedImages] = useState({});
+
+  const markImageFailed = (id) => {
+    if (id) setFailedImages((prev) => ({ ...prev, [id]: true }));
+  };
 
   const filtered = useMemo(() => {
     let list = [...projects];
@@ -590,7 +594,14 @@ export default function ProjectsPage() {
                 </tr>
               ) : (
                 paged.map((p) => (
-                  <ProjectRow key={p._id} project={p} onEdit={setModal} onDelete={handleDelete} />
+                  <ProjectRow 
+                    key={p._id} 
+                    project={p} 
+                    onEdit={setModal} 
+                    onDelete={handleDelete} 
+                    isFailed={failedImages[p._id]}
+                    onFail={() => markImageFailed(p._id)}
+                  />
                 ))
               )}
             </tbody>

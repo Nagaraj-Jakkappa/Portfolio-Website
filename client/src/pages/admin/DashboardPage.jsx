@@ -138,13 +138,12 @@ function QuickAction({ icon, accent, label, desc, href }) {
   );
 }
 
-function ProjectRow({ p }) {
+function ProjectRow({ p, isFailed, onFail }) {
   const CAT = { web: 'blue', fullstack: 'green', ml: 'purple', other: 'slate' };
-  const [imgError, setImgError] = useState(false);
   return (
     <div className="flex items-center gap-3 py-3 border-b border-navy-800 last:border-0 group">
       <div className="w-8 h-8 rounded-lg bg-navy-800 flex items-center justify-center flex-shrink-0 text-xs font-bold text-blue-400 overflow-hidden">
-        {p.imageUrl && !imgError ? (
+        {p.imageUrl && !isFailed ? (
           <img 
             src={p.imageUrl} 
             alt={p.title || 'Project'} 
@@ -153,7 +152,7 @@ function ProjectRow({ p }) {
             className="w-full h-full object-cover"
             onError={(e) => {
               if (import.meta.env.DEV) console.warn('Project image failed:', p.imageUrl);
-              setImgError(true);
+              onFail();
             }} 
           />
         ) : (
@@ -203,6 +202,11 @@ export default function DashboardPage() {
   const [data, setData] = useState({ projects: [], messages: [], certificates: [], counts: {} });
   const [visitorData, setVisitorData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [failedImages, setFailedImages] = useState({});
+
+  const markImageFailed = (id) => {
+    if (id) setFailedImages((prev) => ({ ...prev, [id]: true }));
+  };
 
   useEffect(() => {
     Promise.all([
@@ -454,7 +458,14 @@ export default function DashboardPage() {
             ) : (data.projects || []).length === 0 ? (
               <p className="text-sm text-slate-700 py-10 text-center">No projects yet.</p>
             ) : (
-              data.projects.slice(0, 5).map((p) => <ProjectRow key={p._id} p={p} />)
+              data.projects.slice(0, 5).map((p) => (
+                <ProjectRow 
+                  key={p._id} 
+                  p={p} 
+                  isFailed={failedImages[p._id]} 
+                  onFail={() => markImageFailed(p._id)} 
+                />
+              ))
             )}
           </div>
         </Card>
