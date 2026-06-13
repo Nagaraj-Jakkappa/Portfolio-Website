@@ -94,8 +94,38 @@ router.get('/me', protect, async (req, res) => {
   }
 });
 
+// GET /api/auth/avatar/config-status
+router.get('/avatar/config-status', protect, (req, res) => {
+  res.json({
+    success: true,
+    cloudinary: {
+      cloudName: Boolean(process.env.CLOUDINARY_CLOUD_NAME),
+      apiKey: Boolean(process.env.CLOUDINARY_API_KEY),
+      apiSecret: Boolean(process.env.CLOUDINARY_API_SECRET),
+    },
+  });
+});
+
 // POST /api/auth/avatar
 router.post('/avatar', protect, (req, res) => {
+  const isCloudinaryConfigured = Boolean(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+  );
+
+  if (!isCloudinaryConfigured) {
+    console.error('Cloudinary missing env:', {
+      cloudName: Boolean(process.env.CLOUDINARY_CLOUD_NAME),
+      apiKey: Boolean(process.env.CLOUDINARY_API_KEY),
+      apiSecret: Boolean(process.env.CLOUDINARY_API_SECRET),
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'Cloudinary is not configured on the server.',
+    });
+  }
+
   upload.single('avatar')(req, res, async (err) => {
     if (err) {
       if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
@@ -105,7 +135,7 @@ router.post('/avatar', protect, (req, res) => {
     }
 
     if (!req.file) {
-      return res.status(400).json({ error: 'No image provided.' });
+      return res.status(400).json({ error: 'No image file uploaded.' });
     }
 
     try {
@@ -114,7 +144,7 @@ router.post('/avatar', protect, (req, res) => {
 
       // Delete old image if exists
       if (admin.avatarPublicId) {
-        await cloudinary.uploader.destroy(admin.avatarPublicId).catch(console.error);
+        await cloudinary.uploader.destroy(admin.avatarPublicId).catch(() => {});
       }
 
       // Upload new image
@@ -151,8 +181,16 @@ router.post('/avatar', protect, (req, res) => {
 
       res.json({ success: true, avatarUrl: admin.avatarUrl });
     } catch (error) {
-      console.error('Cloudinary Upload Error:', error);
-      res.status(500).json({ error: 'Error uploading image to Cloudinary.' });
+      console.error('Cloudinary avatar upload failed:', {
+        message: error.message,
+        http_code: error.http_code,
+        name: error.name,
+      });
+      res.status(500).json({
+        success: false,
+        message: 'Error uploading image to Cloudinary.',
+        detail: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      });
     }
   });
 });

@@ -267,7 +267,11 @@ export default function AdminLayout() {
       }
     } catch (err) {
       console.error('Upload failed', err);
-      alert(err.response?.data?.error || 'Upload failed');
+      const message =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        "Avatar upload failed. Please try again.";
+      alert(message);
       setAvatarUrl(admin?.avatarUrl || defaultAvatarPath); // Revert
     } finally {
       setUploadingAvatar(false);
