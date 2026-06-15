@@ -158,13 +158,13 @@ export default function ProjectDetail() {
 
         {/* Image */}
         {imageUrl && !imgError ? (
-          <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-2xl bg-slate-950/60 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700">
+          <div className="relative group w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-2xl bg-slate-950/60 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700">
             <img 
               src={imageUrl} 
               alt={title || "Project Preview"} 
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover object-top hover:object-bottom transition-all duration-[6000ms] ease-in-out cursor-ns-resize"
+              className="w-full h-full object-cover object-top transition-all duration-[10000ms] ease-linear group-hover:object-bottom cursor-ns-resize"
               onError={(e) => {
                 if (import.meta.env.DEV) console.warn('Project image failed:', imageUrl);
                 setImgError(true);
