@@ -5,7 +5,26 @@ const jwt = require('jsonwebtoken');
 const Project = require('../models/Project');
 const { protect } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
+const multer = require('multer');
+const streamifier = require('streamifier');
+const cloudinary = require('../utils/cloudinary');
 const router = express.Router();
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 3 * 1024 * 1024 }, // 3MB
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype === 'image/jpeg' ||
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/webp'
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPG, PNG, or WebP images are allowed.'), false);
+    }
+  },
+});
 
 const projectValidationRules = [
   body('title').trim().notEmpty().withMessage('Title is required'),
@@ -243,6 +262,124 @@ router.delete('/:id', protect, async (req, res) => {
     const deleted = await Project.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Project not found' });
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/projects/:id/gallery
+router.post('/:id/gallery', protect, upload.array('gallery', 6), async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid project ID' });
+    }
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files provided' });
+    }
+
+    if (project.gallery.length + req.files.length > 6) {
+      return res.status(400).json({ error: 'Maximum 6 gallery images allowed per project' });
+    }
+
+    const uploadPromises = req.files.map((file) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'techartistry/projects/gallery' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        streamifier.createReadStream(file.buffer).pipe(stream);
+      });
+    });
+
+    const results = await Promise.all(uploadPromises);
+    
+    results.forEach((result) => {
+      project.gallery.push(result.secure_url);
+      project.galleryPublicIds.push(result.public_id);
+    });
+
+    await project.save();
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/projects/:id/gallery
+router.delete('/:id/gallery', protect, async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+    if (!imageUrl) return res.status(400).json({ error: 'Image URL is required' });
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid project ID' });
+    }
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+
+    const index = project.gallery.indexOf(imageUrl);
+    if (index === -1) {
+      return res.status(404).json({ error: 'Image not found in gallery' });
+    }
+
+    const publicId = project.galleryPublicIds[index];
+    if (publicId) {
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (err) {
+        console.error('Cloudinary deletion failed:', err);
+      }
+    }
+
+    project.gallery.splice(index, 1);
+    if (publicId) {
+      project.galleryPublicIds.splice(index, 1);
+    }
+
+    await project.save();
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /api/projects/:id/gallery/reorder
+router.put('/:id/gallery/reorder', protect, async (req, res) => {
+  try {
+    const { gallery } = req.body;
+    if (!Array.isArray(gallery)) {
+      return res.status(400).json({ error: 'Gallery array is required' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid project ID' });
+    }
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+
+    // Validate that all URLs are existing gallery URLs
+    const isValid = gallery.every(url => project.gallery.includes(url));
+    if (!isValid || gallery.length !== project.gallery.length) {
+      return res.status(400).json({ error: 'Invalid gallery URLs provided for reordering' });
+    }
+
+    // Reorder public IDs to match the new gallery order
+    const newPublicIds = gallery.map(url => {
+      const index = project.gallery.indexOf(url);
+      return project.galleryPublicIds[index];
+    });
+
+    project.gallery = gallery;
+    project.galleryPublicIds = newPublicIds;
+
+    await project.save();
+    res.json(project);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

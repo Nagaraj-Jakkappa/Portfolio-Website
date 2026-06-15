@@ -22,6 +22,7 @@ import {
   Modal,
 } from '../../components/admin/ui/ui';
 import toast from 'react-hot-toast';
+import api from '../../api/axios';
 
 const IC = {
   plus: 'M12 5v14 M5 12h14',
@@ -72,6 +73,7 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
   );
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -103,6 +105,46 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
       toast.error(err?.response?.data?.error ?? 'Save failed');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleGalleryUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    if (form.gallery && form.gallery.length + files.length > 6) {
+      toast.error('Maximum 6 gallery images allowed');
+      return;
+    }
+
+    setUploadingGallery(true);
+    try {
+      const formData = new FormData();
+      files.forEach((file) => formData.append('gallery', file));
+
+      const res = await api.post(`/projects/${project._id}/gallery`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setForm((f) => ({ ...f, gallery: res.data.gallery }));
+      toast.success('Gallery images uploaded');
+    } catch (err) {
+      toast.error(err?.response?.data?.error || 'Upload failed');
+    } finally {
+      setUploadingGallery(false);
+      e.target.value = null;
+    }
+  };
+
+  const handleDeleteGalleryImage = async (url) => {
+    if (!window.confirm('Delete this gallery image?')) return;
+    try {
+      const res = await api.delete(`/projects/${project._id}/gallery`, {
+        data: { imageUrl: url },
+      });
+      setForm((f) => ({ ...f, gallery: res.data.gallery }));
+      toast.success('Gallery image deleted');
+    } catch (err) {
+      toast.error(err?.response?.data?.error || 'Delete failed');
     }
   };
 
@@ -242,6 +284,53 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
             }
             placeholder="Describe the results, metrics, or lessons learned..."
           />
+        </div>
+
+        <div className="pt-4 border-t border-navy-800 space-y-4">
+          <h3 className="text-sm font-semibold text-white">Project Gallery</h3>
+          <p className="text-xs text-slate-400">Upload multiple screenshots for the project marquee animation. Max 6 images (JPG, PNG, WebP).</p>
+          {editing ? (
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                {form.gallery?.map((url) => (
+                  <div key={url} className="relative group w-16 h-16 rounded-md overflow-hidden border border-navy-700 bg-navy-800">
+                    <img src={url} alt="Gallery" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteGalleryImage(url)}
+                      className="absolute top-1 right-1 bg-red-500/90 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Ic d={IC.close} size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              
+              {(form.gallery?.length || 0) < 6 && (
+                <div className="flex items-center gap-3">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp"
+                    id="gallery-upload"
+                    className="hidden"
+                    onChange={handleGalleryUpload}
+                  />
+                  <label
+                    htmlFor="gallery-upload"
+                    className="cursor-pointer btn-ghost px-4 py-2 rounded-md text-sm border border-navy-700 hover:border-blue-500/50 flex items-center gap-2"
+                  >
+                    {uploadingGallery ? <Spinner size={14} /> : <Ic d={IC.plus} size={14} />}
+                    {uploadingGallery ? 'Uploading...' : 'Add Images'}
+                  </label>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-sm text-amber-500/80 bg-amber-500/10 p-3 rounded border border-amber-500/20">
+              Please create the project first to upload gallery images.
+            </div>
+          )}
         </div>
       </div>
     </Modal>

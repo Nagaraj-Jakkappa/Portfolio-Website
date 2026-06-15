@@ -21,6 +21,8 @@ const projectSchema = new mongoose.Schema(
       solution: { type: String, default: '' },
       impact: { type: String, default: '' }
     },
+    gallery: [{ type: String, trim: true }],
+    galleryPublicIds: [{ type: String, trim: true }],
     featured: { type: Boolean, default: false },
     status: {
       type: String,
