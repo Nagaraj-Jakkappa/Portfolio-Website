@@ -96,6 +96,12 @@ export default function ProjectDetail() {
     { challenge: "Ensuring secure authentication and data protection.", solution: "Integrated JWT tokens with strict route guarding and validation." }
   ];
 
+  const galleryImages = Array.isArray(project.gallery) && project.gallery.length > 0
+    ? project.gallery.filter(Boolean)
+    : [imageUrl].filter(Boolean);
+
+  const loopImages = [...galleryImages, ...galleryImages];
+
   return (
     <article className="bg-navy-900 min-h-screen pt-24 pb-20 relative overflow-hidden">
       <Helmet>
@@ -157,19 +163,27 @@ export default function ProjectDetail() {
         </header>
 
         {/* Image */}
-        {imageUrl && !imgError ? (
-          <div className="relative group w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-2xl bg-slate-950/60 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700">
-            <img 
-              src={imageUrl} 
-              alt={title || "Project Preview"} 
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover object-top transition-all duration-[10000ms] ease-linear group-hover:object-bottom cursor-ns-resize"
-              onError={(e) => {
-                if (import.meta.env.DEV) console.warn('Project image failed:', imageUrl);
-                setImgError(true);
-              }}
-            />
+        {galleryImages.length > 0 && !imgError ? (
+          <div className="relative group w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-2xl bg-navy-950 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700 pause-animation-on-hover">
+            <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-navy-950 to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-navy-950 to-transparent z-10 pointer-events-none" />
+            
+            <div className="flex flex-col animate-project-marquee-up-slow w-full">
+              {loopImages.map((img, idx) => (
+                <img
+                  key={`${img}-${idx}`}
+                  src={img}
+                  alt={`${title || 'Project'} preview ${idx + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-auto object-cover border-b-[8px] border-navy-900"
+                  onError={() => {
+                    if (import.meta.env.DEV) console.warn('Project detail image failed:', img);
+                    setImgError(true);
+                  }}
+                />
+              ))}
+            </div>
           </div>
         ) : (
           <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl bg-navy-800 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700 flex flex-col items-center justify-center">

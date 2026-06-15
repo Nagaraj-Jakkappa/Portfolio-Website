@@ -96,3 +96,33 @@
 .stagger-children > *:nth-child(4) { animation-delay: 300ms; }
 .stagger-children > *:nth-child(5) { animation-delay: 400ms; }
 .stagger-children > *:nth-child(6) { animation-delay: 500ms; }
+
+/* Project Image Marquee */
+@keyframes project-marquee-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-project-marquee-up {
+  animation: project-marquee-up 24s linear infinite;
+}
+
+.animate-project-marquee-up-slow {
+  animation: project-marquee-up 34s linear infinite;
+}
+
+.pause-animation-on-hover:hover .animate-project-marquee-up,
+.pause-animation-on-hover:hover .animate-project-marquee-up-slow {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-project-marquee-up,
+  .animate-project-marquee-up-slow {
+    animation: none;
+  }
+}

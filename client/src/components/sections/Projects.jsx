@@ -43,22 +43,36 @@ function ProjectCard({ project }) {
 
   const [imgError, setImgError] = useState(false);
 
+  const galleryImages = Array.isArray(project.gallery) && project.gallery.length > 0
+    ? project.gallery.filter(Boolean)
+    : [imageUrl].filter(Boolean);
+
+  const loopImages = [...galleryImages, ...galleryImages];
+
   return (
     <div className="card-base group flex flex-col overflow-hidden transition-all duration-300">
       {/* Thumbnail */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-2xl bg-slate-950/60">
-        {imageUrl && !imgError ? (
-          <img
-            src={imageUrl}
-            alt={title || "Project thumbnail"}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover object-top transition-all duration-[8000ms] ease-linear group-hover:object-bottom"
-            onError={(e) => {
-              if (import.meta.env.DEV) console.warn('Project image failed:', imageUrl);
-              setImgError(true);
-            }}
-          />
+      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-2xl bg-navy-950 pause-animation-on-hover">
+        <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-navy-950 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-navy-950 to-transparent z-10 pointer-events-none" />
+
+        {galleryImages.length > 0 && !imgError ? (
+          <div className="flex flex-col animate-project-marquee-up w-full">
+            {loopImages.map((img, idx) => (
+              <img
+                key={`${img}-${idx}`}
+                src={img}
+                alt={`${title || 'Project'} preview ${idx + 1}`}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-auto object-cover border-b-4 border-navy-950"
+                onError={() => {
+                  if (import.meta.env.DEV) console.warn('Project image failed:', img);
+                  setImgError(true);
+                }}
+              />
+            ))}
+          </div>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-navy-800">
             <div className="w-16 h-16 rounded-2xl bg-navy-900 border border-navy-700 flex items-center justify-center mb-3">
