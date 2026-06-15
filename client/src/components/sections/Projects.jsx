@@ -53,7 +53,7 @@ function ProjectCard({ project }) {
             alt={title || "Project thumbnail"}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover object-top transition-all duration-[5000ms] ease-in-out group-hover:object-bottom group-hover:scale-105"
             onError={(e) => {
               if (import.meta.env.DEV) console.warn('Project image failed:', imageUrl);
               setImgError(true);

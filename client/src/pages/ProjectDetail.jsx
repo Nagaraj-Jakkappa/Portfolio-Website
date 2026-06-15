@@ -82,6 +82,20 @@ export default function ProjectDetail() {
   const fallbackSolution = `Developed a comprehensive application utilizing ${techStack?.join(', ') || 'modern web technologies'} to ensure high performance.`;
   const fallbackImpact = `Successfully delivered a functional product meeting all technical and design specifications.`;
 
+  // Safe fallbacks for the new UI sections so it works even before you update your DB
+  const featuresList = project.features || [
+    { title: "Comprehensive Architecture", desc: "Designed to handle high traffic and complex user flows efficiently." },
+    { title: "Modern User Experience", desc: "Responsive design optimized for desktop, tablet, and mobile devices." },
+    { title: "Secure & Optimized", desc: "Built with standard security practices and optimized rendering." }
+  ];
+
+  const highlightsList = project.highlights || ["Responsive UI", "REST API", "Optimized DB"];
+  
+  const challengesList = project.challenges || [
+    { challenge: "Handling complex state management and reducing re-renders.", solution: "Implemented context providers and optimized component lifecycle hooks." },
+    { challenge: "Ensuring secure authentication and data protection.", solution: "Integrated JWT tokens with strict route guarding and validation." }
+  ];
+
   return (
     <article className="bg-navy-900 min-h-screen pt-24 pb-20 relative overflow-hidden">
       <Helmet>
@@ -144,13 +158,13 @@ export default function ProjectDetail() {
 
         {/* Image */}
         {imageUrl && !imgError ? (
-          <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl bg-slate-950/60 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700">
+          <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-2xl bg-slate-950/60 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700">
             <img 
               src={imageUrl} 
               alt={title || "Project Preview"} 
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover object-top"
+              className="w-full h-full object-cover object-top hover:object-bottom transition-all duration-[6000ms] ease-in-out cursor-ns-resize"
               onError={(e) => {
                 if (import.meta.env.DEV) console.warn('Project image failed:', imageUrl);
                 setImgError(true);
@@ -170,16 +184,94 @@ export default function ProjectDetail() {
           {/* Main Content */}
           <div className="md:col-span-2 space-y-12">
             
-            {longDescription && (
-              <section>
-                <h2 className="text-2xl font-display font-bold text-white mb-4">Overview</h2>
-                <div className="prose prose-invert prose-blue max-w-none text-slate-300 leading-relaxed">
-                  {longDescription.split('\n').map((para, i) => (
-                    para.trim() ? <p key={i}>{para}</p> : <br key={i} />
-                  ))}
+            {/* About / Overview */}
+            <section>
+              <h2 className="text-2xl font-display font-bold text-white mb-4">About this Project</h2>
+              <div className="prose prose-invert prose-blue max-w-none text-slate-300 leading-relaxed">
+                {longDescription ? longDescription.split('\n').map((para, i) => (
+                  para.trim() ? <p key={i}>{para}</p> : <br key={i} />
+                )) : <p>{description}</p>}
+              </div>
+            </section>
+
+            {/* Key Features */}
+            <section>
+              <h2 className="text-2xl font-display font-bold text-white mb-6">Key Features</h2>
+              <div className="space-y-4">
+                {featuresList.map((feat, idx) => (
+                  <div key={idx} className="bg-navy-800/40 border border-navy-700 rounded-xl p-5 hover:border-navy-600 transition-colors">
+                    <div className="flex items-start gap-4">
+                      <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="text-white font-medium mb-2">{feat.title}</h4>
+                        <p className="text-sm text-slate-400">{feat.desc}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Highlights Badges */}
+            <section>
+              <h2 className="text-2xl font-display font-bold text-white mb-6">Highlights</h2>
+              <div className="flex flex-wrap gap-3">
+                {highlightsList.map((highlight, idx) => (
+                  <span key={idx} className="px-4 py-2 bg-navy-800 border border-navy-700 rounded-full text-sm font-medium text-slate-300">
+                    {highlight}
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            {/* Installation */}
+            <section>
+              <h2 className="text-2xl font-display font-bold text-white mb-6">Installation</h2>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-slate-400 mb-2">Clone the Repository</p>
+                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-xl p-4 font-mono text-sm text-slate-300 overflow-x-auto">
+                    git clone {githubUrl || 'https://github.com/username/project.git'}
+                  </div>
                 </div>
-              </section>
-            )}
+                <div>
+                  <p className="text-sm text-slate-400 mb-2">Install Dependencies</p>
+                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-xl p-4 font-mono text-sm text-slate-300 overflow-x-auto">
+                    npm install
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-400 mb-2">Run Development Server</p>
+                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-xl p-4 font-mono text-sm text-slate-300 overflow-x-auto">
+                    npm run dev
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Challenges & Solutions */}
+            <section>
+              <h2 className="text-2xl font-display font-bold text-white mb-6">Challenges & Solutions</h2>
+              <div className="space-y-6">
+                {challengesList.map((item, idx) => (
+                  <div key={idx} className="bg-navy-800/30 border border-navy-700/50 rounded-xl p-6">
+                    <div className="mb-5">
+                      <span className="inline-block text-[10px] font-bold tracking-widest uppercase text-red-400 mb-2">Challenge</span>
+                      <p className="text-slate-300 text-sm leading-relaxed">{item.challenge}</p>
+                    </div>
+                    <div className="pt-5 border-t border-navy-700/50">
+                      <span className="inline-block text-[10px] font-bold tracking-widest uppercase text-emerald-400 mb-2">Solution</span>
+                      <p className="text-slate-300 text-sm leading-relaxed">{item.solution}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
 
             <section className="bg-navy-800/50 rounded-2xl border border-navy-700 p-8 space-y-8">
               <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
