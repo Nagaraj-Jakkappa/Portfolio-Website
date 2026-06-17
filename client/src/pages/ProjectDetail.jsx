@@ -10,6 +10,7 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   useEffect(() => {
     async function fetchProject() {
@@ -28,6 +29,22 @@ export default function ProjectDetail() {
     }
     fetchProject();
   }, [slug]);
+
+  useEffect(() => {
+    if (!project) return;
+
+    const images = Array.isArray(project.gallery) && project.gallery.length > 0
+      ? project.gallery.filter(Boolean)
+      : [project.imageUrl].filter(Boolean);
+
+    if (images.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setActiveImageIndex((current) => (current + 1) % images.length);
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [project]);
 
   if (loading) {
     return (
@@ -100,8 +117,6 @@ export default function ProjectDetail() {
     ? project.gallery.filter(Boolean)
     : [imageUrl].filter(Boolean);
 
-  const loopImages = [...galleryImages, ...galleryImages];
-
   return (
     <article className="bg-navy-900 min-h-screen pt-24 pb-20 relative overflow-hidden">
       <Helmet>
@@ -164,26 +179,45 @@ export default function ProjectDetail() {
 
         {/* Image */}
         {galleryImages.length > 0 && !imgError ? (
-          <div className="relative group w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-2xl bg-navy-950 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700 pause-animation-on-hover">
-            <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-navy-950 to-transparent z-10 pointer-events-none" />
-            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-navy-950 to-transparent z-10 pointer-events-none" />
-            
-            <div className="flex flex-col animate-project-marquee-up-slow w-full">
-              {loopImages.map((img, idx) => (
-                <img
-                  key={`${img}-${idx}`}
-                  src={img}
-                  alt={`${title || 'Project'} preview ${idx + 1}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-auto object-cover border-b-[8px] border-navy-900"
-                  onError={() => {
-                    if (import.meta.env.DEV) console.warn('Project detail image failed:', img);
-                    setImgError(true);
-                  }}
-                />
-              ))}
-            </div>
+          <div className="relative group w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-2xl bg-navy-950 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700">
+            {galleryImages.map((img, idx) => (
+              <img
+                key={`${img}-${idx}`}
+                src={img}
+                alt={`${title || 'Project'} preview ${idx + 1}`}
+                loading={idx === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                className={`project-image-fade absolute inset-0 w-full h-full object-cover object-center transition-all duration-1000 ease-out ${
+                  idx === activeImageIndex
+                    ? 'opacity-100 scale-100'
+                    : 'opacity-0 scale-[1.01]'
+                } group-hover:scale-[1.025]`}
+                onError={() => {
+                  if (import.meta.env.DEV) console.warn('Project detail image failed:', img);
+                  setImgError(true);
+                }}
+              />
+            ))}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/50 via-transparent to-transparent pointer-events-none" />
+
+            {galleryImages.length > 1 && (
+              <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+                {galleryImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      idx === activeImageIndex
+                        ? 'w-8 bg-blue-400'
+                        : 'w-2 bg-white/35 hover:bg-white/60'
+                    }`}
+                    aria-label={`Show screenshot ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl bg-navy-800 shadow-2xl shadow-blue-900/10 mb-16 border border-navy-700 flex flex-col items-center justify-center">

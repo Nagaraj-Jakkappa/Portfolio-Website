@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useData';
 import { trackVisitorEvent } from '../../utils/visitorTracking';
@@ -47,34 +47,62 @@ function ProjectCard({ project }) {
     ? project.gallery.filter(Boolean)
     : [imageUrl].filter(Boolean);
 
-  const loopImages = [...galleryImages, ...galleryImages];
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (!galleryImages || galleryImages.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setActiveImageIndex((current) => (current + 1) % galleryImages.length);
+    }, 3500);
+
+    return () => clearInterval(timer);
+  }, [galleryImages.length]);
 
   return (
     <div className="card-base group flex flex-col overflow-hidden transition-all duration-300">
       {/* Thumbnail */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-2xl bg-navy-950 pause-animation-on-hover">
-        <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-navy-950 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-navy-950 to-transparent z-10 pointer-events-none" />
-
+      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-2xl bg-navy-950">
         {galleryImages.length > 0 && !imgError ? (
-          <div className="flex flex-col animate-project-marquee-up w-full">
-            {loopImages.map((img, idx) => (
+          <>
+            {galleryImages.map((img, idx) => (
               <img
                 key={`${img}-${idx}`}
                 src={img}
                 alt={`${title || 'Project'} preview ${idx + 1}`}
-                loading="lazy"
+                loading={idx === 0 ? 'eager' : 'lazy'}
                 decoding="async"
-                className="w-full h-auto object-cover border-b-4 border-navy-950"
+                className={`project-image-fade absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-out ${
+                  idx === activeImageIndex
+                    ? 'opacity-100 scale-100'
+                    : 'opacity-0 scale-[1.02]'
+                } group-hover:scale-[1.04]`}
                 onError={() => {
                   if (import.meta.env.DEV) console.warn('Project image failed:', img);
                   setImgError(true);
                 }}
               />
             ))}
-          </div>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-transparent to-transparent pointer-events-none z-10" />
+
+            {galleryImages.length > 1 && (
+              <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
+                {galleryImages.map((_, idx) => (
+                  <span
+                    key={idx}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      idx === activeImageIndex
+                        ? 'w-5 bg-blue-400'
+                        : 'w-1.5 bg-white/30'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-navy-800">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy-800 z-10">
             <div className="w-16 h-16 rounded-2xl bg-navy-900 border border-navy-700 flex items-center justify-center mb-3">
               <span className="font-display font-bold text-2xl text-blue-400/40">{title[0]}</span>
             </div>
@@ -83,12 +111,12 @@ function ProjectCard({ project }) {
         )}
         {/* Category badge */}
         <span
-          className={`absolute top-3 left-3 text-xs font-mono px-2 py-1 rounded-md border ${CATEGORY_COLOR[category] || CATEGORY_COLOR.other}`}
+          className={`absolute top-3 left-3 z-20 text-xs font-mono px-2 py-1 rounded-md border ${CATEGORY_COLOR[category] || CATEGORY_COLOR.other}`}
         >
           {category}
         </span>
         {project.featured && (
-          <span className="absolute top-3 right-3 text-[10px] font-bold uppercase px-2 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded">
+          <span className="absolute top-3 right-3 z-20 text-[10px] font-bold uppercase px-2 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded">
             Featured
           </span>
         )}
