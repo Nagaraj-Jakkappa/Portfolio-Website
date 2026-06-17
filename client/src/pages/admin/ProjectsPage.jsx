@@ -46,6 +46,8 @@ const EMPTY_FORM = {
   longDescription: '',
   techStack: '',
   imageUrl: '',
+  imageUrl2: '',
+  imageUrl3: '',
   liveUrl: '',
   githubUrl: '',
   featured: false,
@@ -66,6 +68,9 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
     editing
       ? {
           ...project,
+          imageUrl: project.imageUrl || project.gallery?.[0] || '',
+          imageUrl2: project.gallery?.[1] || '',
+          imageUrl3: project.gallery?.[2] || '',
           techStack: project.techStack?.join(', ') ?? '',
           caseStudy: project.caseStudy ?? { problem: '', solution: '', impact: '' },
         }
@@ -73,7 +78,6 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
   );
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [uploadingGallery, setUploadingGallery] = useState(false);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -89,14 +93,28 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
     if (!validate()) return;
     setSaving(true);
     try {
+      const gallery = [
+        form.imageUrl,
+        form.imageUrl2,
+        form.imageUrl3
+      ]
+        .map((url) => url?.trim())
+        .filter(Boolean);
+
       const payload = {
         ...form,
+        imageUrl: form.imageUrl?.trim(),
+        gallery,
         techStack: form.techStack
           .split(',')
           .map((s) => s.trim())
           .filter(Boolean),
         order: Number(form.order),
       };
+      
+      delete payload.imageUrl2;
+      delete payload.imageUrl3;
+
       if (editing) await onUpdate(project._id, payload);
       else await onCreate(payload);
       toast.success(editing ? 'Project updated' : 'Project created');
@@ -105,46 +123,6 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
       toast.error(err?.response?.data?.error ?? 'Save failed');
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleGalleryUpload = async (e) => {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
-
-    if (form.gallery && form.gallery.length + files.length > 6) {
-      toast.error('Maximum 6 gallery images allowed');
-      return;
-    }
-
-    setUploadingGallery(true);
-    try {
-      const formData = new FormData();
-      files.forEach((file) => formData.append('gallery', file));
-
-      const res = await api.post(`/projects/${project._id}/gallery`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      setForm((f) => ({ ...f, gallery: res.data.gallery }));
-      toast.success('Gallery images uploaded');
-    } catch (err) {
-      toast.error(err?.response?.data?.error || 'Upload failed');
-    } finally {
-      setUploadingGallery(false);
-      e.target.value = null;
-    }
-  };
-
-  const handleDeleteGalleryImage = async (url) => {
-    if (!window.confirm('Delete this gallery image?')) return;
-    try {
-      const res = await api.delete(`/projects/${project._id}/gallery`, {
-        data: { imageUrl: url },
-      });
-      setForm((f) => ({ ...f, gallery: res.data.gallery }));
-      toast.success('Gallery image deleted');
-    } catch (err) {
-      toast.error(err?.response?.data?.error || 'Delete failed');
     }
   };
 
@@ -214,13 +192,28 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
             placeholder="https://github.com/…"
           />
         </div>
-        <Input
-          label="Image URL"
-          value={form.imageUrl}
-          onChange={(e) => set('imageUrl', e.target.value)}
-          placeholder="https://res.cloudinary.com/…"
-          hint="Use Cloudinary free tier to host project screenshots"
-        />
+        <div className="space-y-3">
+          <Input
+            label="Image URL 1"
+            value={form.imageUrl}
+            onChange={(e) => set('imageUrl', e.target.value)}
+            placeholder="https://res.cloudinary.com/…"
+            hint="Main project screenshot. This is also used as the first marquee image. Use direct image URLs only."
+          />
+          <Input
+            label="Image URL 2"
+            value={form.imageUrl2}
+            onChange={(e) => set('imageUrl2', e.target.value)}
+            placeholder="https://res.cloudinary.com/…"
+            hint="Optional extra screenshots for the public vertical marquee."
+          />
+          <Input
+            label="Image URL 3"
+            value={form.imageUrl3}
+            onChange={(e) => set('imageUrl3', e.target.value)}
+            placeholder="https://res.cloudinary.com/…"
+          />
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <Select
             label="Category"
@@ -286,52 +279,6 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
           />
         </div>
 
-        <div className="pt-4 border-t border-navy-800 space-y-4">
-          <h3 className="text-sm font-semibold text-white">Project Gallery</h3>
-          <p className="text-xs text-slate-400">Upload multiple screenshots for the project marquee animation. Max 6 images (JPG, PNG, WebP).</p>
-          {editing ? (
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                {form.gallery?.map((url) => (
-                  <div key={url} className="relative group w-16 h-16 rounded-md overflow-hidden border border-navy-700 bg-navy-800">
-                    <img src={url} alt="Gallery" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteGalleryImage(url)}
-                      className="absolute top-1 right-1 bg-red-500/90 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Ic d={IC.close} size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              
-              {(form.gallery?.length || 0) < 6 && (
-                <div className="flex items-center gap-3">
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/jpeg,image/png,image/webp"
-                    id="gallery-upload"
-                    className="hidden"
-                    onChange={handleGalleryUpload}
-                  />
-                  <label
-                    htmlFor="gallery-upload"
-                    className="cursor-pointer btn-ghost px-4 py-2 rounded-md text-sm border border-navy-700 hover:border-blue-500/50 flex items-center gap-2"
-                  >
-                    {uploadingGallery ? <Spinner size={14} /> : <Ic d={IC.plus} size={14} />}
-                    {uploadingGallery ? 'Uploading...' : 'Add Images'}
-                  </label>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-sm text-amber-500/80 bg-amber-500/10 p-3 rounded border border-amber-500/20">
-              Please create the project first to upload gallery images.
-            </div>
-          )}
-        </div>
       </div>
     </Modal>
   );
