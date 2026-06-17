@@ -168,105 +168,6 @@ router.get('/slug/:slug', async (req, res) => {
   }
 });
 
-// GET /api/projects/:id
-router.get('/:id', async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id))
-      return res.status(400).json({ error: 'Invalid project ID' });
-    const project = await Project.findById(req.params.id).lean();
-    if (!project) return res.status(404).json({ error: 'Project not found' });
-    res.json(project);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /api/projects
-router.post('/', protect, projectValidationRules, validate, async (req, res) => {
-  try {
-    const slug = await generateUniqueSlug(req.body.title.trim());
-    const project = await Project.create({
-      title: req.body.title.trim(),
-      slug,
-      description: req.body.description.trim(),
-      longDescription: req.body.longDescription?.trim() || '',
-      techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
-      imageUrl: req.body.imageUrl?.trim() || '',
-      liveUrl: req.body.liveUrl?.trim() || '',
-      githubUrl: req.body.githubUrl?.trim() || '',
-      featured: Boolean(req.body.featured),
-      status: req.body.status || 'live',
-      category: req.body.category || 'web',
-      order: Number(req.body.order) || 0,
-      caseStudy: {
-        problem: req.body.caseStudy?.problem?.trim() || '',
-        solution: req.body.caseStudy?.solution?.trim() || '',
-        impact: req.body.caseStudy?.impact?.trim() || '',
-      },
-    });
-    res.status(201).json(project);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-// PUT /api/projects/:id
-router.put('/:id', protect, projectValidationRules, validate, async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id))
-      return res.status(400).json({ error: 'Invalid project ID' });
-      
-    const existing = await Project.findById(req.params.id);
-    if (!existing) return res.status(404).json({ error: 'Project not found' });
-
-    let slug = existing.slug;
-    if (req.body.title.trim() !== existing.title || !slug) {
-       slug = await generateUniqueSlug(req.body.title.trim(), existing._id);
-    }
-
-    const updated = await Project.findByIdAndUpdate(
-      req.params.id,
-      {
-        title: req.body.title.trim(),
-        slug,
-        description: req.body.description.trim(),
-        longDescription: req.body.longDescription?.trim() || '',
-        techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
-        imageUrl: req.body.imageUrl?.trim() || '',
-        liveUrl: req.body.liveUrl?.trim() || '',
-        githubUrl: req.body.githubUrl?.trim() || '',
-        featured: Boolean(req.body.featured),
-        status: req.body.status || 'live',
-        category: req.body.category || 'web',
-        order: Number(req.body.order) || 0,
-        caseStudy: {
-          problem: req.body.caseStudy?.problem?.trim() || '',
-          solution: req.body.caseStudy?.solution?.trim() || '',
-          impact: req.body.caseStudy?.impact?.trim() || '',
-        },
-      },
-      { new: true, runValidators: true }
-    );
-    if (!updated) return res.status(404).json({ error: 'Project not found' });
-    res.json(updated);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-// DELETE /api/projects/:id
-router.delete('/:id', protect, async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id))
-      return res.status(400).json({ error: 'Invalid project ID' });
-    const deleted = await Project.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: 'Project not found' });
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // POST /api/projects/:id/gallery
 router.post('/:id/gallery', protect, upload.array('gallery', 6), async (req, res) => {
   try {
@@ -380,6 +281,105 @@ router.put('/:id/gallery/reorder', protect, async (req, res) => {
 
     await project.save();
     res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/projects/:id
+router.get('/:id', async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id))
+      return res.status(400).json({ error: 'Invalid project ID' });
+    const project = await Project.findById(req.params.id).lean();
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/projects
+router.post('/', protect, projectValidationRules, validate, async (req, res) => {
+  try {
+    const slug = await generateUniqueSlug(req.body.title.trim());
+    const project = await Project.create({
+      title: req.body.title.trim(),
+      slug,
+      description: req.body.description.trim(),
+      longDescription: req.body.longDescription?.trim() || '',
+      techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
+      imageUrl: req.body.imageUrl?.trim() || '',
+      liveUrl: req.body.liveUrl?.trim() || '',
+      githubUrl: req.body.githubUrl?.trim() || '',
+      featured: Boolean(req.body.featured),
+      status: req.body.status || 'live',
+      category: req.body.category || 'web',
+      order: Number(req.body.order) || 0,
+      caseStudy: {
+        problem: req.body.caseStudy?.problem?.trim() || '',
+        solution: req.body.caseStudy?.solution?.trim() || '',
+        impact: req.body.caseStudy?.impact?.trim() || '',
+      },
+    });
+    res.status(201).json(project);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// PUT /api/projects/:id
+router.put('/:id', protect, projectValidationRules, validate, async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id))
+      return res.status(400).json({ error: 'Invalid project ID' });
+      
+    const existing = await Project.findById(req.params.id);
+    if (!existing) return res.status(404).json({ error: 'Project not found' });
+
+    let slug = existing.slug;
+    if (req.body.title.trim() !== existing.title || !slug) {
+       slug = await generateUniqueSlug(req.body.title.trim(), existing._id);
+    }
+
+    const updated = await Project.findByIdAndUpdate(
+      req.params.id,
+      {
+        title: req.body.title.trim(),
+        slug,
+        description: req.body.description.trim(),
+        longDescription: req.body.longDescription?.trim() || '',
+        techStack: Array.isArray(req.body.techStack) ? req.body.techStack : [],
+        imageUrl: req.body.imageUrl?.trim() || '',
+        liveUrl: req.body.liveUrl?.trim() || '',
+        githubUrl: req.body.githubUrl?.trim() || '',
+        featured: Boolean(req.body.featured),
+        status: req.body.status || 'live',
+        category: req.body.category || 'web',
+        order: Number(req.body.order) || 0,
+        caseStudy: {
+          problem: req.body.caseStudy?.problem?.trim() || '',
+          solution: req.body.caseStudy?.solution?.trim() || '',
+          impact: req.body.caseStudy?.impact?.trim() || '',
+        },
+      },
+      { new: true, runValidators: true }
+    );
+    if (!updated) return res.status(404).json({ error: 'Project not found' });
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// DELETE /api/projects/:id
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id))
+      return res.status(400).json({ error: 'Invalid project ID' });
+    const deleted = await Project.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Project not found' });
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
