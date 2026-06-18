@@ -227,8 +227,24 @@ function ProjectCard({ project }) {
 
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState('All');
-  const [showAll, setShowAll] = useState(false);
+  const [isGridView, setIsGridView] = useState(false);
   const { projects, loading, error } = useProjects(false);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(3);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) setItemsPerView(1);
+      else if (window.innerWidth < 1024) setItemsPerView(2);
+      else setItemsPerView(3);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const filters = ['All', 'Full Stack', 'Frontend', 'Backend', 'React', 'Node.js'];
 
@@ -246,7 +262,49 @@ export default function Projects() {
     return false;
   });
 
-  const displayed = showAll ? filteredProjects : filteredProjects.slice(0, 6);
+  const maxIndex = Math.max(0, filteredProjects.length - itemsPerView);
+
+  useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex);
+    }
+  }, [maxIndex, currentIndex]);
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && currentIndex < maxIndex) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+    if (isRightSwipe && currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  const nextSlide = () => {
+    if (currentIndex < maxIndex) setCurrentIndex(c => c + 1);
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) setCurrentIndex(c => c - 1);
+  };
+
+  const handleFilterChange = (f) => {
+    setActiveFilter(f);
+    setCurrentIndex(0);
+  };
 
   return (
     <section id="projects" className="section-padding bg-navy-900 relative overflow-hidden">
@@ -267,7 +325,7 @@ export default function Projects() {
               {filters.map(f => (
                 <button
                   key={f}
-                  onClick={() => { setActiveFilter(f); setShowAll(false); }}
+                  onClick={() => handleFilterChange(f)}
                   className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${activeFilter === f ? 'bg-blue-500 text-white' : 'bg-navy-800 text-slate-400 hover:bg-navy-700 hover:text-white'}`}
                 >
                   {f}
@@ -310,18 +368,83 @@ export default function Projects() {
 
         {!loading && !error && filteredProjects.length > 0 && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayed.map((p) => (
-                <ProjectCard key={p._id} project={p} />
-              ))}
-            </div>
-            {filteredProjects.length > 6 && (
-              <div className="text-center mt-12">
-                <button onClick={() => setShowAll((v) => !v)} className="btn-ghost px-8 py-3 rounded-full text-sm font-medium border border-navy-700 hover:border-blue-500/50 transition-colors">
-                  {showAll ? 'Show Less' : `Show All (${filteredProjects.length})`}
-                </button>
+            {isGridView ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProjects.map((p) => (
+                  <ProjectCard key={p._id} project={p} />
+                ))}
+              </div>
+            ) : (
+              <div className="relative group">
+                <div 
+                  className="overflow-hidden mx-auto"
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  <div 
+                    className="flex transition-transform duration-500 ease-out"
+                    style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
+                  >
+                    {filteredProjects.map((p) => (
+                      <div 
+                        key={p._id} 
+                        className="flex-shrink-0 px-3"
+                        style={{ width: `${100 / itemsPerView}%` }}
+                      >
+                        <ProjectCard project={p} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {filteredProjects.length > itemsPerView && (
+                  <>
+                    <button 
+                      onClick={prevSlide}
+                      disabled={currentIndex === 0}
+                      aria-label="Previous projects"
+                      className={`absolute left-0 top-1/2 -translate-y-1/2 -ml-2 md:-ml-6 w-12 h-12 flex items-center justify-center rounded-full bg-navy-800/90 border border-navy-700 text-white shadow-xl backdrop-blur-sm transition-all duration-300 z-10 ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover:opacity-100 hover:bg-navy-700 hover:border-blue-400/50 hover:text-blue-400 hover:shadow-blue-500/20 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-blue-400'}`}
+                    >
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={nextSlide}
+                      disabled={currentIndex === maxIndex}
+                      aria-label="Next projects"
+                      className={`absolute right-0 top-1/2 -translate-y-1/2 -mr-2 md:-mr-6 w-12 h-12 flex items-center justify-center rounded-full bg-navy-800/90 border border-navy-700 text-white shadow-xl backdrop-blur-sm transition-all duration-300 z-10 ${currentIndex === maxIndex ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover:opacity-100 hover:bg-navy-700 hover:border-blue-400/50 hover:text-blue-400 hover:shadow-blue-500/20 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-blue-400'}`}
+                    >
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
               </div>
             )}
+
+            {!isGridView && filteredProjects.length > itemsPerView && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    aria-label={`Go to slide ${idx + 1}`}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      currentIndex === idx ? 'w-8 bg-blue-400' : 'w-2 bg-navy-700 hover:bg-navy-600'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="text-center mt-12">
+              <button onClick={() => setIsGridView((v) => !v)} className="btn-ghost px-8 py-3 rounded-full text-sm font-medium border border-navy-700 hover:border-blue-500/50 transition-colors">
+                {isGridView ? 'View as Carousel' : `View All Projects (${filteredProjects.length})`}
+              </button>
+            </div>
           </>
         )}
       </div>
