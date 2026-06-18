@@ -21,7 +21,7 @@ let activeRequests = 0;
 let wakeUpTimeout = null;
 let wakeUpToastId = null;
 
-// Attach token on every request if present and handle wake-up UX
+// Attach wake-up UX
 api.interceptors.request.use((config) => {
   activeRequests++;
   
@@ -34,10 +34,6 @@ api.interceptors.request.use((config) => {
     }, 2000);
   }
 
-  const token = localStorage.getItem('adminToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
   return config;
 });
 
@@ -61,10 +57,8 @@ api.interceptors.response.use(
   },
   (err) => {
     handleResponse();
-    // Check for 401 (Unauthorized) and clear local storage
-    if (err.response?.status === 401 && !window.location.pathname.includes('/login')) {
-      localStorage.removeItem('adminToken');
-    }
+    // 401 is handled gracefully by components (like AuthContext)
+    // No need to clear localStorage anymore
     return Promise.reject(err);
   }
 );

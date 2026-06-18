@@ -67,8 +67,16 @@ router.post(
         }
       );
 
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 4 * 60 * 60 * 1000, // 4 hours
+      };
+
+      res.cookie('adminToken', token, cookieOptions);
+
       res.json({
-        token,
         username: admin.username,
         admin: {
           id: admin._id,
@@ -82,6 +90,17 @@ router.post(
     }
   }
 );
+
+// POST /api/auth/logout
+router.post('/logout', (req, res) => {
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  };
+  res.clearCookie('adminToken', cookieOptions);
+  res.json({ success: true, message: 'Logged out successfully' });
+});
 
 // GET /api/auth/me
 router.get('/me', protect, async (req, res) => {

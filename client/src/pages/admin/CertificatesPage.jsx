@@ -141,10 +141,7 @@ function CertCard({ cert, onEdit, onDelete }) {
             loading="lazy" 
             decoding="async" 
             className="w-full h-full object-contain p-1"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.parentElement.innerHTML = '<span class="text-xl text-slate-500">📜</span>';
-            }} 
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="text-blue-400">

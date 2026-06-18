@@ -8,31 +8,31 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      api
-        .get('/auth/me')
-        .then(({ data }) => setAdmin(data.admin))
-        .catch(() => logout())
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    // Just try to fetch `/auth/me`. If cookie is valid, it succeeds.
+    api
+      .get('/auth/me')
+      .then(({ data }) => setAdmin(data.admin))
+      .catch(() => {
+        // Only clear state on mount if `/me` fails, don't call full logout endpoint here
+        setAdmin(null);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const login = async (username, password) => {
     const { data } = await api.post('/auth/login', { username, password });
-    localStorage.setItem('adminToken', data.token);
-    api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     setAdmin(data.admin);
     return data;
   };
 
-  const logout = () => {
-    localStorage.removeItem('adminToken');
-    delete api.defaults.headers.common['Authorization'];
-    setAdmin(null);
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (err) {
+      console.error('Logout failed', err);
+    } finally {
+      setAdmin(null);
+    }
   };
 
   return (

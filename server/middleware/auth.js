@@ -2,14 +2,12 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin'); // Adjust this path to your Admin model
 
 const protect = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies?.adminToken;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.log('Auth Failed: No Bearer token in header');
+  if (!token) {
+    console.log('Auth Failed: No adminToken cookie');
     return res.status(401).json({ error: 'Unauthorized — no token provided' });
   }
-
-  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

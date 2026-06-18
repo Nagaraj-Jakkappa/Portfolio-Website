@@ -6,6 +6,7 @@ export default function Certifications() {
   const [certs, setCerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showOutcomes, setShowOutcomes] = useState({});
+  const [imgErrors, setImgErrors] = useState({});
 
   useEffect(() => {
     const fetchCerts = async () => {
@@ -100,16 +101,15 @@ export default function Certifications() {
                 <div className="flex items-center gap-4 mb-4 mt-2">
                   {/* LOGO CONTAINER */}
                   <div className="w-14 h-14 shrink-0 bg-navy-900 rounded-xl border border-white/5 flex items-center justify-center overflow-hidden group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] group-hover:border-blue-500/30 transition-all duration-300">
-                    {cert.organizationLogo ? (
+                    {cert.organizationLogo && !imgErrors[cert._id] ? (
                       <img
                         src={cert.organizationLogo}
                         alt={`${cert.organization || 'Organization'} logo`}
                         loading="lazy"
                         decoding="async"
                         className="w-full h-full object-contain p-2"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.parentElement.innerHTML = '<span class="text-2xl">📜</span>';
+                        onError={() => {
+                          setImgErrors(prev => ({ ...prev, [cert._id]: true }));
                         }}
                       />
                     ) : (

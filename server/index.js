@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 
 // Route Imports
 const projectRoutes = require('./routes/projects');
@@ -25,23 +27,50 @@ const { protect } = require('./middleware/auth');
 
 const app = express();
 
-// 1. Security Headers
-app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  next();
-});
+// 1. Security Headers (Helmet)
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "https:", "http://localhost:*"],
+      fontSrc: ["'self'", "data:", "https:"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      frameAncestors: ["'none'"],
+    },
+  },
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // Allow images to be loaded cross-origin if needed
+}));
 
-// 2. CORS Configuration
-const corsOptions = {
-  origin: [
+// 2. Cookie Parser
+app.use(cookieParser());
+
+// 3. Strict CORS Configuration & CSRF Origin Validation
+const getAllowedOrigins = () => {
+  const envUrls = process.env.CLIENT_URLS || process.env.CLIENT_URL;
+  if (envUrls) {
+    return envUrls.split(',').map(url => url.trim());
+  }
+  return [
     'https://techartistry.in',
     'https://www.techartistry.in',
-    /\.vercel\.app$/,
-    'http://localhost:5173', // Frontend Vite Port
-  ],
+    'http://localhost:5173',
+    'http://localhost:5174'
+  ];
+};
+const allowedOrigins = getAllowedOrigins();
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-confirm-delete', 'x-requested-with'],
@@ -49,7 +78,21 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-// 3. Request Parsing
+// CSRF Protection via Origin validation for state-changing routes
+app.use((req, res, next) => {
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    const origin = req.headers.origin;
+    if (!origin) {
+      return res.status(403).json({ error: 'CSRF validation failed: Missing origin' });
+    }
+    if (!allowedOrigins.includes(origin)) {
+      return res.status(403).json({ error: 'CSRF validation failed: Unknown origin' });
+    }
+  }
+  next();
+});
+
+// 4. Request Parsing
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
