@@ -377,33 +377,7 @@ export default function Projects() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3 md:gap-4 ml-auto lg:ml-0">
-                  {/* Arrows */}
-                  {!isGridView && filteredProjects.length > itemsPerView && (
-                    <div className="flex items-center gap-2 md:border-l border-navy-700 md:pl-4">
-                      <button 
-                        onClick={prevSlide}
-                        disabled={currentIndex === 0}
-                        aria-label="Previous projects"
-                        className={`w-9 h-9 flex items-center justify-center rounded-full bg-navy-800 border border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.1)] transition-all duration-300 ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 hover:bg-navy-700 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(34,211,238,0.25)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </button>
-                      <button 
-                        onClick={nextSlide}
-                        disabled={currentIndex === maxIndex}
-                        aria-label="Next projects"
-                        className={`w-9 h-9 flex items-center justify-center rounded-full bg-navy-800 border border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.1)] transition-all duration-300 ${currentIndex === maxIndex ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 hover:bg-navy-700 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(34,211,238,0.25)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    </div>
-                  )}
-
-                  <div className={`${!isGridView && filteredProjects.length > itemsPerView ? 'border-l border-navy-700 pl-3 md:pl-4' : ''}`}>
+                  <div>
                     <button 
                       onClick={() => { setIsGridView((v) => !v); setOpenCaseStudyId(null); }} 
                       className="btn-ghost px-5 py-2 rounded-full text-xs font-medium border border-navy-700 hover:border-blue-500/50 transition-colors flex items-center gap-2"
@@ -503,7 +477,30 @@ export default function Projects() {
                   </div>
                 </div>
 
-                {/* Arrows have been moved to the top-right controls row */}
+                {filteredProjects.length > itemsPerView && (
+                  <>
+                    <button 
+                      onClick={prevSlide}
+                      disabled={currentIndex === 0}
+                      aria-label="Previous projects"
+                      className={`hidden md:flex absolute left-2 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 items-center justify-center rounded-full bg-navy-950/80 backdrop-blur-md border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] transition-all duration-300 z-30 ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
+                    >
+                      <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={nextSlide}
+                      disabled={currentIndex === maxIndex}
+                      aria-label="Next projects"
+                      className={`hidden md:flex absolute right-2 md:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 items-center justify-center rounded-full bg-navy-950/80 backdrop-blur-md border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] transition-all duration-300 z-30 ${currentIndex === maxIndex ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
+                    >
+                      <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
