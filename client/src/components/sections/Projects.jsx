@@ -26,9 +26,8 @@ function getCaseStudy(title) {
   };
 }
 
-function ProjectCard({ project }) {
+function ProjectCard({ project, isOverlayOpen, onToggleOverlay }) {
   const { title, description, techStack, imageUrl, liveUrl, githubUrl, category } = project;
-  const [expanded, setExpanded] = useState(false);
   
   const dbCaseStudy = project.caseStudy;
   const hasDbCaseStudy = dbCaseStudy?.problem || dbCaseStudy?.solution || dbCaseStudy?.impact;
@@ -50,19 +49,19 @@ function ProjectCard({ project }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   useEffect(() => {
-    if (!galleryImages || galleryImages.length <= 1) return;
+    if (!galleryImages || galleryImages.length <= 1 || isOverlayOpen) return;
 
     const timer = setInterval(() => {
       setActiveImageIndex((current) => (current + 1) % galleryImages.length);
     }, 3500);
 
     return () => clearInterval(timer);
-  }, [galleryImages.length]);
+  }, [galleryImages.length, isOverlayOpen]);
 
   return (
-    <div className="card-base group flex flex-col overflow-hidden transition-all duration-300">
+    <div className="card-base h-full group flex flex-col overflow-hidden transition-all duration-300">
       {/* Thumbnail */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-2xl bg-navy-950">
+      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-2xl bg-navy-950 shrink-0">
         {galleryImages.length > 0 && !imgError ? (
           <>
             {galleryImages.map((img, idx) => (
@@ -109,6 +108,48 @@ function ProjectCard({ project }) {
             <span className="text-slate-500 font-mono text-xs uppercase tracking-widest">Project Preview</span>
           </div>
         )}
+
+        {/* Premium Case Study Overlay */}
+        <div 
+          className={`absolute inset-0 z-30 bg-navy-900/95 backdrop-blur-md border border-cyan-400/20 shadow-[0_0_30px_rgba(34,211,238,0.18)] transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] flex flex-col ${isOverlayOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
+        >
+          <div className="flex justify-between items-center p-4 border-b border-navy-700/50 shrink-0">
+            <h4 className="font-display font-bold text-white text-sm">Case Study</h4>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onToggleOverlay(); }}
+              aria-label="Close case study"
+              className="text-slate-400 hover:text-white bg-navy-800 hover:bg-navy-700 w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div 
+            className="p-4 overflow-y-auto flex-1 space-y-4 text-sm text-slate-300"
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+          >
+            {caseStudy.problem && (
+              <div>
+                <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Problem:</strong>
+                <span className="text-slate-400">{caseStudy.problem}</span>
+              </div>
+            )}
+            {caseStudy.solution && (
+              <div>
+                <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Solution:</strong>
+                <span className="text-slate-400">{caseStudy.solution}</span>
+              </div>
+            )}
+            {caseStudy.impact && (
+              <div>
+                <strong className="text-emerald-400 text-xs uppercase font-mono tracking-wider block mb-1">Impact:</strong>
+                <span className="text-emerald-400/80">{caseStudy.impact}</span>
+              </div>
+            )}
+          </div>
+        </div>
         {/* Category badge */}
         <span
           className={`absolute top-3 left-3 z-20 text-xs font-mono px-2 py-1 rounded-md border ${CATEGORY_COLOR[category] || CATEGORY_COLOR.other}`}
@@ -123,7 +164,7 @@ function ProjectCard({ project }) {
       </div>
 
       {/* Content */}
-      <div className="p-6 flex flex-col flex-1">
+      <div className="p-6 flex flex-col flex-grow">
         <h3 className="font-display font-semibold text-white text-xl mb-2 break-words group-hover:text-blue-400 transition-colors">
           {title}
         </h3>
@@ -144,43 +185,21 @@ function ProjectCard({ project }) {
         {/* Case Study Toggle */}
         <div className="mt-auto pt-4 border-t border-navy-700/50">
           <button 
-            onClick={() => {
-              if (!expanded) {
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!isOverlayOpen) {
                 trackVisitorEvent('case_study_open', { title, slug: project.slug });
               }
-              setExpanded(!expanded);
+              onToggleOverlay();
             }}
-            className="text-xs font-mono uppercase tracking-wider text-blue-400 hover:text-blue-300 flex items-center gap-2 mb-3"
+            className="text-xs font-mono uppercase tracking-wider text-blue-400 hover:text-blue-300 flex items-center gap-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
           >
-            {expanded ? '- Hide Case Study' : '+ View Case Study'}
+            {isOverlayOpen ? '- Hide Case Study' : '+ View Case Study'}
           </button>
-          
-          {expanded && (
-            <div className="space-y-3 text-sm text-slate-300 bg-navy-900/50 p-4 rounded-lg border border-navy-700 mb-4 animate-fade-up break-words">
-              {caseStudy.problem && (
-                <div>
-                  <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Problem:</strong>
-                  <span className="text-slate-400">{caseStudy.problem}</span>
-                </div>
-              )}
-              {caseStudy.solution && (
-                <div>
-                  <strong className="text-white text-xs uppercase font-mono tracking-wider block mb-1">Solution:</strong>
-                  <span className="text-slate-400">{caseStudy.solution}</span>
-                </div>
-              )}
-              {caseStudy.impact && (
-                <div>
-                  <strong className="text-emerald-400 text-xs uppercase font-mono tracking-wider block mb-1">Impact:</strong>
-                  <span className="text-emerald-400/80">{caseStudy.impact}</span>
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
         {/* Links */}
-        <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-3">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3">
           {project.slug && (
             <Link
               to={`/projects/${project.slug}`}
@@ -231,6 +250,7 @@ export default function Projects() {
   const { projects, loading, error } = useProjects(false);
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [openCaseStudyId, setOpenCaseStudyId] = useState(null);
   const [itemsPerView, setItemsPerView] = useState(3);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -287,23 +307,32 @@ export default function Projects() {
 
     if (isLeftSwipe && currentIndex < maxIndex) {
       setCurrentIndex((prev) => prev + 1);
+      setOpenCaseStudyId(null);
     }
     if (isRightSwipe && currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
+      setOpenCaseStudyId(null);
     }
   };
 
   const nextSlide = () => {
-    if (currentIndex < maxIndex) setCurrentIndex(c => c + 1);
+    if (currentIndex < maxIndex) {
+      setCurrentIndex(c => c + 1);
+      setOpenCaseStudyId(null);
+    }
   };
 
   const prevSlide = () => {
-    if (currentIndex > 0) setCurrentIndex(c => c - 1);
+    if (currentIndex > 0) {
+      setCurrentIndex(c => c - 1);
+      setOpenCaseStudyId(null);
+    }
   };
 
   const handleFilterChange = (f) => {
     setActiveFilter(f);
     setCurrentIndex(0);
+    setOpenCaseStudyId(null);
   };
 
   return (
@@ -328,39 +357,75 @@ export default function Projects() {
             </div>
             
             {/* Controls */}
-            <div className="flex flex-col items-start lg:items-end gap-4">
-              <button 
-                onClick={() => setIsGridView((v) => !v)} 
-                className="btn-ghost px-5 py-2 rounded-full text-xs font-medium border border-navy-700 hover:border-blue-500/50 transition-colors flex items-center gap-2"
-              >
-                {isGridView ? (
-                  <>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17l-5-5 5-5m10 10l5-5-5-5" />
-                    </svg>
-                    View as Carousel
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                    View All Projects ({filteredProjects.length})
-                  </>
-                )}
-              </button>
-              
-              {/* Filters */}
-              <div className="flex flex-wrap gap-2">
-                {filters.map(f => (
-                  <button
-                    key={f}
-                    onClick={() => handleFilterChange(f)}
-                    className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${activeFilter === f ? 'bg-blue-500 text-white' : 'bg-navy-800 text-slate-400 hover:bg-navy-700 hover:text-white'}`}
-                  >
-                    {f}
-                  </button>
-                ))}
+            <div className="flex flex-col lg:items-end gap-4 mt-4 lg:mt-0">
+              <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                {/* Filters */}
+                <div className="flex flex-wrap gap-2">
+                  {filters.map(f => (
+                    <button
+                      key={f}
+                      onClick={() => handleFilterChange(f)}
+                      className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+                        activeFilter === f 
+                          ? 'bg-cyan-400/10 border border-cyan-300/40 text-cyan-200 shadow-[0_0_20px_rgba(34,211,238,0.15)]' 
+                          : 'bg-navy-800 border border-transparent text-slate-400 hover:bg-navy-700 hover:border-cyan-500/30 hover:text-cyan-100'
+                      }`}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 md:gap-4 ml-auto lg:ml-0">
+                  {/* Arrows */}
+                  {!isGridView && filteredProjects.length > itemsPerView && (
+                    <div className="flex items-center gap-2 md:border-l border-navy-700 md:pl-4">
+                      <button 
+                        onClick={prevSlide}
+                        disabled={currentIndex === 0}
+                        aria-label="Previous projects"
+                        className={`w-9 h-9 flex items-center justify-center rounded-full bg-navy-800 border border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.1)] transition-all duration-300 ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 hover:bg-navy-700 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(34,211,238,0.25)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <button 
+                        onClick={nextSlide}
+                        disabled={currentIndex === maxIndex}
+                        aria-label="Next projects"
+                        className={`w-9 h-9 flex items-center justify-center rounded-full bg-navy-800 border border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.1)] transition-all duration-300 ${currentIndex === maxIndex ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 hover:bg-navy-700 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(34,211,238,0.25)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+
+                  <div className={`${!isGridView && filteredProjects.length > itemsPerView ? 'border-l border-navy-700 pl-3 md:pl-4' : ''}`}>
+                    <button 
+                      onClick={() => { setIsGridView((v) => !v); setOpenCaseStudyId(null); }} 
+                      className="btn-ghost px-5 py-2 rounded-full text-xs font-medium border border-navy-700 hover:border-blue-500/50 transition-colors flex items-center gap-2"
+                    >
+                      {isGridView ? (
+                        <>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17l-5-5 5-5m10 10l5-5-5-5" />
+                          </svg>
+                          View as Carousel
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                          </svg>
+                          View All Projects ({filteredProjects.length})
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -400,9 +465,14 @@ export default function Projects() {
         {!loading && !error && filteredProjects.length > 0 && (
           <>
             {isGridView ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                 {filteredProjects.map((p) => (
-                  <ProjectCard key={p._id} project={p} />
+                  <ProjectCard 
+                    key={p._id} 
+                    project={p} 
+                    isOverlayOpen={openCaseStudyId === p._id}
+                    onToggleOverlay={() => setOpenCaseStudyId(openCaseStudyId === p._id ? null : p._id)}
+                  />
                 ))}
               </div>
             ) : (
@@ -414,7 +484,7 @@ export default function Projects() {
                   onTouchEnd={handleTouchEnd}
                 >
                   <div 
-                    className="flex transition-transform duration-500 ease-out"
+                    className="flex transition-transform duration-500 ease-out items-stretch"
                     style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
                   >
                     {filteredProjects.map((p) => (
@@ -423,36 +493,17 @@ export default function Projects() {
                         className="flex-shrink-0 px-3"
                         style={{ width: `${100 / itemsPerView}%` }}
                       >
-                        <ProjectCard project={p} />
+                        <ProjectCard 
+                          project={p} 
+                          isOverlayOpen={openCaseStudyId === p._id}
+                          onToggleOverlay={() => setOpenCaseStudyId(openCaseStudyId === p._id ? null : p._id)}
+                        />
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {filteredProjects.length > itemsPerView && (
-                  <>
-                    <button 
-                      onClick={prevSlide}
-                      disabled={currentIndex === 0}
-                      aria-label="Previous projects"
-                      className={`absolute left-2 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-navy-950/80 border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] backdrop-blur-md transition-all duration-300 z-20 ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
-                    >
-                      <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                    </button>
-                    <button 
-                      onClick={nextSlide}
-                      disabled={currentIndex === maxIndex}
-                      aria-label="Next projects"
-                      className={`absolute right-2 md:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-navy-950/80 border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] backdrop-blur-md transition-all duration-300 z-20 ${currentIndex === maxIndex ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
-                    >
-                      <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  </>
-                )}
+                {/* Arrows have been moved to the top-right controls row */}
               </div>
             )}
 
@@ -461,7 +512,7 @@ export default function Projects() {
                 {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setCurrentIndex(idx)}
+                    onClick={() => { setCurrentIndex(idx); setOpenCaseStudyId(null); }}
                     aria-label={`Go to slide ${idx + 1}`}
                     aria-current={currentIndex === idx ? "true" : "false"}
                     className={`h-2 rounded-full transition-all duration-300 ${
