@@ -311,26 +311,57 @@ export default function Projects() {
       <div className="orb w-80 h-80 bg-blue-500 top-20 right-0 opacity-5" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12">
+        <div className="mb-8 md:mb-10">
           <p className="font-mono text-blue-400 text-sm tracking-widest uppercase mb-3">
             05 / Projects
           </p>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <h2 className="font-display font-bold text-4xl md:text-5xl text-white">
-              Featured <span className="gradient-text">work</span>
-            </h2>
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div>
+              <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-2">
+                Featured <span className="gradient-text">work</span>
+              </h2>
+              {!isGridView && (
+                <p className="text-slate-400 text-sm font-medium">
+                  Swipe or use arrows to explore selected projects.
+                </p>
+              )}
+            </div>
             
-            {/* Filters */}
-            <div className="flex flex-wrap gap-2">
-              {filters.map(f => (
-                <button
-                  key={f}
-                  onClick={() => handleFilterChange(f)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${activeFilter === f ? 'bg-blue-500 text-white' : 'bg-navy-800 text-slate-400 hover:bg-navy-700 hover:text-white'}`}
-                >
-                  {f}
-                </button>
-              ))}
+            {/* Controls */}
+            <div className="flex flex-col items-start lg:items-end gap-4">
+              <button 
+                onClick={() => setIsGridView((v) => !v)} 
+                className="btn-ghost px-5 py-2 rounded-full text-xs font-medium border border-navy-700 hover:border-blue-500/50 transition-colors flex items-center gap-2"
+              >
+                {isGridView ? (
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17l-5-5 5-5m10 10l5-5-5-5" />
+                    </svg>
+                    View as Carousel
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    View All Projects ({filteredProjects.length})
+                  </>
+                )}
+              </button>
+              
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2">
+                {filters.map(f => (
+                  <button
+                    key={f}
+                    onClick={() => handleFilterChange(f)}
+                    className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${activeFilter === f ? 'bg-blue-500 text-white' : 'bg-navy-800 text-slate-400 hover:bg-navy-700 hover:text-white'}`}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -404,9 +435,9 @@ export default function Projects() {
                       onClick={prevSlide}
                       disabled={currentIndex === 0}
                       aria-label="Previous projects"
-                      className={`absolute left-0 top-1/2 -translate-y-1/2 -ml-2 md:-ml-6 w-12 h-12 flex items-center justify-center rounded-full bg-navy-800/90 border border-navy-700 text-white shadow-xl backdrop-blur-sm transition-all duration-300 z-10 ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover:opacity-100 hover:bg-navy-700 hover:border-blue-400/50 hover:text-blue-400 hover:shadow-blue-500/20 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-blue-400'}`}
+                      className={`absolute left-2 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-navy-950/80 border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] backdrop-blur-md transition-all duration-300 z-20 ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
                     >
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
@@ -414,9 +445,9 @@ export default function Projects() {
                       onClick={nextSlide}
                       disabled={currentIndex === maxIndex}
                       aria-label="Next projects"
-                      className={`absolute right-0 top-1/2 -translate-y-1/2 -mr-2 md:-mr-6 w-12 h-12 flex items-center justify-center rounded-full bg-navy-800/90 border border-navy-700 text-white shadow-xl backdrop-blur-sm transition-all duration-300 z-10 ${currentIndex === maxIndex ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover:opacity-100 hover:bg-navy-700 hover:border-blue-400/50 hover:text-blue-400 hover:shadow-blue-500/20 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-blue-400'}`}
+                      className={`absolute right-2 md:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-navy-950/80 border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] backdrop-blur-md transition-all duration-300 z-20 ${currentIndex === maxIndex ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
                     >
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </button>
@@ -426,25 +457,20 @@ export default function Projects() {
             )}
 
             {!isGridView && filteredProjects.length > itemsPerView && (
-              <div className="flex justify-center items-center gap-2 mt-8">
+              <div className="flex justify-center items-center gap-2.5 mt-8">
                 {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentIndex(idx)}
                     aria-label={`Go to slide ${idx + 1}`}
+                    aria-current={currentIndex === idx ? "true" : "false"}
                     className={`h-2 rounded-full transition-all duration-300 ${
-                      currentIndex === idx ? 'w-8 bg-blue-400' : 'w-2 bg-navy-700 hover:bg-navy-600'
+                      currentIndex === idx ? 'w-8 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.5)]' : 'w-2 bg-slate-600/50 hover:bg-slate-500'
                     }`}
                   />
                 ))}
               </div>
             )}
-
-            <div className="text-center mt-12">
-              <button onClick={() => setIsGridView((v) => !v)} className="btn-ghost px-8 py-3 rounded-full text-sm font-medium border border-navy-700 hover:border-blue-500/50 transition-colors">
-                {isGridView ? 'View as Carousel' : `View All Projects (${filteredProjects.length})`}
-              </button>
-            </div>
           </>
         )}
       </div>
