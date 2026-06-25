@@ -47,6 +47,8 @@ const siteContentSchema = new mongoose.Schema(
         description: { type: String, default: '', maxlength: 500 },
         status: { type: String, default: 'Active', maxlength: 50 },
         variant: { type: String, default: 'small', maxlength: 20 },
+        color: { type: String, default: 'cyan', maxlength: 20 },
+        size: { type: String, default: 'normal', maxlength: 20 },
         order: { type: Number, default: 0 },
         isActive: { type: Boolean, default: true },
       },
@@ -95,9 +97,11 @@ const siteContentSchema = new mongoose.Schema(
     },
     impactMetrics: [
       {
-        label: { type: String, default: '', maxlength: 80 },
+        label: { type: String, default: '', maxlength: 200 },
         value: { type: String, default: '', maxlength: 20 },
-        description: { type: String, default: '', maxlength: 160 },
+        description: { type: String, default: '', maxlength: 500 },
+        color: { type: String, default: 'cyan', maxlength: 20 },
+        size: { type: String, default: 'normal', maxlength: 20 },
         order: { type: Number, default: 0 },
         isActive: { type: Boolean, default: true },
       },

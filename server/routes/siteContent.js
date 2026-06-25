@@ -43,6 +43,8 @@ const contentValidationRules = [
   body('currentlyBuilding.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
   body('currentlyBuilding.*.status').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
   body('currentlyBuilding.*.variant').optional({ checkFalsy: true }).isString().isIn(['small', 'medium', 'large']).withMessage('Variant must be small, medium, or large'),
+  body('currentlyBuilding.*.color').optional({ checkFalsy: true }).isString().isIn(['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose']),
+  body('currentlyBuilding.*.size').optional({ checkFalsy: true }).isString().isIn(['wide', 'normal', 'compact']),
   body('currentlyBuilding.*.order').optional().isNumeric(),
   body('currentlyBuilding.*.isActive').optional().isBoolean(),
 
@@ -89,7 +91,9 @@ const contentValidationRules = [
   body('impactMetrics').optional().isArray({ max: 10 }).withMessage('Too many metrics'),
   body('impactMetrics.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 80 }),
   body('impactMetrics.*.value').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
-  body('impactMetrics.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 160 }),
+  body('impactMetrics.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
+  body('impactMetrics.*.color').optional({ checkFalsy: true }).isString().isIn(['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose']),
+  body('impactMetrics.*.size').optional({ checkFalsy: true }).isString().isIn(['normal', 'large']),
   body('impactMetrics.*.order').optional().isNumeric(),
   body('impactMetrics.*.isActive').optional().isBoolean(),
 
@@ -203,6 +207,8 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         description: item.description?.trim() || '',
         status: item.status?.trim() || 'Active',
         variant: ['small', 'medium', 'large'].includes(item.variant) ? item.variant : 'small',
+        color: ['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose'].includes(item.color) ? item.color : 'cyan',
+        size: ['wide', 'normal', 'compact'].includes(item.size) ? item.size : 'normal',
         order: Number(item.order) || 0,
         isActive: typeof item.isActive === 'boolean' ? item.isActive : true,
       }));
@@ -266,6 +272,8 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         label: m.label?.trim() || '',
         value: m.value?.trim() || '',
         description: m.description?.trim() || '',
+        color: ['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose'].includes(m.color) ? m.color : 'cyan',
+        size: ['normal', 'large'].includes(m.size) ? m.size : 'normal',
         order: Number(m.order) || 0,
         isActive: typeof m.isActive === 'boolean' ? m.isActive : true,
       }));

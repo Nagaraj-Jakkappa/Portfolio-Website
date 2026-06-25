@@ -179,7 +179,7 @@ export default function ContentPage() {
   const addBuildItem = () =>
     setForm((f) => ({
       ...f,
-      currentlyBuilding: [...f.currentlyBuilding, { title: '', description: '', status: 'Active', variant: 'small', order: 0, isActive: true }],
+      currentlyBuilding: [...f.currentlyBuilding, { title: '', description: '', status: 'Active', order: 0, isActive: true, color: 'cyan', size: 'normal' }],
     }));
 
   const updateBuildItem = (i, key, val) =>
@@ -261,7 +261,7 @@ export default function ContentPage() {
 
   // ── Impact Metrics helpers ─────────────────────────────────
   const addImpactMetric = () =>
-    setForm((f) => ({ ...f, impactMetrics: [...f.impactMetrics, { label: '', value: '', description: '', order: 0, isActive: true }] }));
+    setForm((f) => ({ ...f, impactMetrics: [...f.impactMetrics, { label: '', value: '', description: '', order: 0, isActive: true, color: 'cyan', size: 'normal' }] }));
   const updateImpactMetric = (i, key, val) =>
     setForm((f) => ({ ...f, impactMetrics: f.impactMetrics.map((item, idx) => (idx === i ? { ...item, [key]: val } : item)) }));
   const removeImpactMetric = (i) =>
@@ -542,7 +542,7 @@ export default function ContentPage() {
                 <Ic d={IC.trash} size={13} />
               </button>
             </div>
-            <div className="grid grid-cols-[1fr_auto_auto] gap-3 items-end">
+            <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-3 items-end">
               <Input
                 label="Title"
                 value={item.title}
@@ -555,6 +555,34 @@ export default function ContentPage() {
                 onChange={(e) => updateBuildItem(i, 'status', e.target.value)}
                 placeholder="ACTIVE"
               />
+              <div className="flex flex-col gap-1.5 min-w-[120px]">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Theme Color</label>
+                <select
+                  value={item.color}
+                  onChange={(e) => updateBuildItem(i, 'color', e.target.value)}
+                  className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="blue">Blue</option>
+                  <option value="cyan">Cyan</option>
+                  <option value="emerald">Emerald</option>
+                  <option value="amber">Amber</option>
+                  <option value="violet">Violet</option>
+                  <option value="purple">Purple</option>
+                  <option value="rose">Rose</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5 min-w-[120px]">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size</label>
+                <select
+                  value={item.size}
+                  onChange={(e) => updateBuildItem(i, 'size', e.target.value)}
+                  className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="compact">Compact (1 col)</option>
+                  <option value="normal">Normal (1 col)</option>
+                  <option value="wide">Wide (2 col)</option>
+                </select>
+              </div>
               <Input
                 label="Order"
                 value={item.order}
@@ -602,7 +630,7 @@ export default function ContentPage() {
                 <Ic d={IC.trash} size={13} />
               </button>
             </div>
-            <div className="grid grid-cols-[1fr_auto_auto] gap-3 items-end">
+            <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-3 items-end">
               <Input
                 label="Value"
                 value={item.value}
@@ -615,6 +643,33 @@ export default function ContentPage() {
                 onChange={(e) => updateImpactMetric(i, 'label', e.target.value)}
                 placeholder="MERN UPGRADES"
               />
+              <div className="flex flex-col gap-1.5 min-w-[120px]">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Theme Color</label>
+                <select
+                  value={item.color}
+                  onChange={(e) => updateImpactMetric(i, 'color', e.target.value)}
+                  className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="blue">Blue</option>
+                  <option value="cyan">Cyan</option>
+                  <option value="emerald">Emerald</option>
+                  <option value="amber">Amber</option>
+                  <option value="violet">Violet</option>
+                  <option value="purple">Purple</option>
+                  <option value="rose">Rose</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5 min-w-[120px]">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size</label>
+                <select
+                  value={item.size}
+                  onChange={(e) => updateImpactMetric(i, 'size', e.target.value)}
+                  className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="normal">Normal</option>
+                  <option value="large">Large</option>
+                </select>
+              </div>
               <Input
                 label="Order"
                 value={item.order}
