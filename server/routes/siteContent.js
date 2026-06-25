@@ -42,6 +42,9 @@ const contentValidationRules = [
   body('currentlyBuilding.*.title').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
   body('currentlyBuilding.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
   body('currentlyBuilding.*.status').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
+  body('currentlyBuilding.*.variant').optional({ checkFalsy: true }).isString().isIn(['small', 'medium', 'large']).withMessage('Variant must be small, medium, or large'),
+  body('currentlyBuilding.*.order').optional().isNumeric(),
+  body('currentlyBuilding.*.isActive').optional().isBoolean(),
 
   // Now
   body('now').optional().isArray({ max: 20 }),
@@ -87,6 +90,8 @@ const contentValidationRules = [
   body('impactMetrics.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 80 }),
   body('impactMetrics.*.value').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
   body('impactMetrics.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 160 }),
+  body('impactMetrics.*.order').optional().isNumeric(),
+  body('impactMetrics.*.isActive').optional().isBoolean(),
 
   // Footer
   body('footer.brandName').optional({ checkFalsy: true }).isString().isLength({ max: 80 }),
@@ -197,6 +202,9 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         title: item.title?.trim() || '',
         description: item.description?.trim() || '',
         status: item.status?.trim() || 'Active',
+        variant: ['small', 'medium', 'large'].includes(item.variant) ? item.variant : 'small',
+        order: Number(item.order) || 0,
+        isActive: typeof item.isActive === 'boolean' ? item.isActive : true,
       }));
     }
 
@@ -258,6 +266,8 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         label: m.label?.trim() || '',
         value: m.value?.trim() || '',
         description: m.description?.trim() || '',
+        order: Number(m.order) || 0,
+        isActive: typeof m.isActive === 'boolean' ? m.isActive : true,
       }));
     }
 

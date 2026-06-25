@@ -46,6 +46,9 @@ const siteContentSchema = new mongoose.Schema(
         title: { type: String, default: '', maxlength: 200 },
         description: { type: String, default: '', maxlength: 500 },
         status: { type: String, default: 'Active', maxlength: 50 },
+        variant: { type: String, default: 'small', maxlength: 20 },
+        order: { type: Number, default: 0 },
+        isActive: { type: Boolean, default: true },
       },
     ],
     now: [
@@ -95,6 +98,8 @@ const siteContentSchema = new mongoose.Schema(
         label: { type: String, default: '', maxlength: 80 },
         value: { type: String, default: '', maxlength: 20 },
         description: { type: String, default: '', maxlength: 160 },
+        order: { type: Number, default: 0 },
+        isActive: { type: Boolean, default: true },
       },
     ],
     footer: {

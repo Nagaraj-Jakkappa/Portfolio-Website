@@ -5,27 +5,49 @@ const DEFAULT_ITEMS = [
     title: 'Pothole Detection',
     description: 'Upgrading my AI-based pothole detection project with MERN features like image uploads, prediction history, user reports, and admin analytics.',
     status: 'IMPROVING',
+    variant: 'large',
+    order: 1,
+    isActive: true,
   },
   {
     title: 'ThinkFast Quiz',
     description: 'Converting my frontend quiz app into a full MERN quiz platform with authentication, categories, scores, leaderboard, and admin question management.',
     status: 'ACTIVE',
+    variant: 'medium',
+    order: 2,
+    isActive: true,
   },
   {
     title: 'Mood-Based Travel Explorer',
     description: 'Improving the travel explorer frontend into a MERN app with saved trips, mood-based suggestions, user journals, and personalized travel boards.',
     status: 'IMPROVING',
+    variant: 'medium',
+    order: 3,
+    isActive: true,
   },
   {
     title: 'SkyCast Weather Forecast',
     description: 'Building the weather forecast app further with saved locations, forecast history, alerts, user preferences, and clean API integration.',
     status: 'ACTIVE',
+    variant: 'small',
+    order: 4,
+    isActive: true,
   },
   {
     title: 'TaskFlow To-Do List',
     description: 'Upgrading my task manager into a production-ready MERN app with login, task CRUD, priorities, reminders, filters, and dashboard insights.',
     status: 'ACTIVE',
+    variant: 'small',
+    order: 5,
+    isActive: true,
   },
+];
+
+const DEFAULT_METRICS = [
+  { value: '5', label: 'MERN UPGRADES', order: 1, isActive: true },
+  { value: 'JWT', label: 'SECURE AUTH', order: 2, isActive: true },
+  { value: 'API', label: 'REST BACKEND', order: 3, isActive: true },
+  { value: 'DB', label: 'MONGODB MODELS', order: 4, isActive: true },
 ];
 
 const STATUS_STYLES = {
@@ -40,93 +62,34 @@ function getStatusStyle(status) {
   return STATUS_STYLES[key] || STATUS_STYLES.active;
 }
 
+const SIZE_MAP = {
+  small: 'col-span-1 row-span-1',
+  medium: 'col-span-1 md:col-span-2 row-span-1',
+  large: 'col-span-1 md:col-span-2 row-span-2',
+};
+
 export default function CurrentlyBuilding({ content, loading }) {
-  const items =
-    Array.isArray(content?.currentlyBuilding) && content.currentlyBuilding.length > 0
-      ? content.currentlyBuilding
-      : DEFAULT_ITEMS;
+  const rawItems = Array.isArray(content?.currentlyBuilding) && content.currentlyBuilding.length > 0
+    ? content.currentlyBuilding
+    : DEFAULT_ITEMS;
+  
+  const items = rawItems
+    .filter(i => i.isActive !== false)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  const defaultMetrics = [
-    { value: '5', label: 'MERN UPGRADES' },
-    { value: 'JWT', label: 'SECURE AUTH' },
-    { value: 'API', label: 'REST BACKEND' },
-    { value: 'DB', label: 'MONGODB MODELS' }
-  ];
-
-  const metrics = Array.isArray(content?.impactMetrics) && content.impactMetrics.length > 0
+  const rawMetrics = Array.isArray(content?.impactMetrics) && content.impactMetrics.length > 0
     ? content.impactMetrics
-    : defaultMetrics;
+    : DEFAULT_METRICS;
+    
+  const metrics = rawMetrics
+    .filter(m => m.isActive !== false)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  const COLORS = ['text-white', 'text-blue-400', 'text-emerald-400', 'text-purple-400', 'text-amber-400', 'text-pink-400'];
+  const METRIC_COLORS = ['text-blue-400', 'text-emerald-400', 'text-purple-400', 'text-amber-400', 'text-pink-400', 'text-cyan-400'];
 
   return (
     <section id="currently-building" className="section-padding bg-navy-950 border-t border-navy-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row gap-12 items-start">
-          {/* Currently Building */}
-          <div className="flex-1 w-full">
-            <h2 className="font-display font-bold text-2xl text-white mb-6 flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              Currently Building & Learning
-            </h2>
-            <div className="space-y-4">
-              {loading ? (
-                [1, 2].map((i) => (
-                  <div key={i} className="card-base p-5 animate-pulse">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="h-4 bg-navy-700 rounded w-1/3" />
-                      <div className="h-4 bg-navy-700 rounded w-16" />
-                    </div>
-                    <div className="h-3 bg-navy-700 rounded w-full mb-2" />
-                    <div className="h-3 bg-navy-700 rounded w-5/6" />
-                  </div>
-                ))
-              ) : (
-                items.map((item, i) => (
-                  <div key={i} className="card-base p-5 group">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-white font-semibold">{item.title}</h3>
-                      <span
-                        className={`px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider border ${getStatusStyle(item.status)}`}
-                      >
-                        {item.status || 'Active'}
-                      </span>
-                    </div>
-                    <p className="text-slate-400 text-sm">{item.description}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Impact Metrics */}
-          <div className="flex-1 w-full">
-            <h2 className="font-display font-bold text-2xl text-white mb-6">
-              Engineering <span className="gradient-text">Impact</span>
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {loading ? (
-                [1, 2, 3, 4].map((i) => (
-                  <div key={i} className="card-base p-6 flex flex-col justify-center items-center text-center animate-pulse min-h-[140px]">
-                    <div className="h-10 bg-navy-700 rounded-md w-16 mb-4" />
-                    <div className="h-3 bg-navy-700 rounded w-24" />
-                  </div>
-                ))
-              ) : (
-                metrics.map((metric, i) => (
-                  <div key={i} className="card-base p-6 flex flex-col justify-center items-center text-center group">
-                    <span className={`font-display text-4xl md:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300 ${COLORS[i % COLORS.length]}`}>
-                      {metric.value}
-                    </span>
-                    <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">
-                      {metric.label}
-                    </span>
-                    {metric.description && (
-                      <span className="text-[10px] text-slate-500 mt-2 block">
-                        {metric.description}
-                      </span>
-                    )}
-                  </div>
                 ))
               )}
             </div>

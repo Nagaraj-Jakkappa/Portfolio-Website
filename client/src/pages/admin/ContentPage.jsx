@@ -179,7 +179,7 @@ export default function ContentPage() {
   const addBuildItem = () =>
     setForm((f) => ({
       ...f,
-      currentlyBuilding: [...f.currentlyBuilding, { title: '', description: '', status: 'Active' }],
+      currentlyBuilding: [...f.currentlyBuilding, { title: '', description: '', status: 'Active', variant: 'small', order: 0, isActive: true }],
     }));
 
   const updateBuildItem = (i, key, val) =>
@@ -261,7 +261,7 @@ export default function ContentPage() {
 
   // ── Impact Metrics helpers ─────────────────────────────────
   const addImpactMetric = () =>
-    setForm((f) => ({ ...f, impactMetrics: [...f.impactMetrics, { label: '', value: '', description: '' }] }));
+    setForm((f) => ({ ...f, impactMetrics: [...f.impactMetrics, { label: '', value: '', description: '', order: 0, isActive: true }] }));
   const updateImpactMetric = (i, key, val) =>
     setForm((f) => ({ ...f, impactMetrics: f.impactMetrics.map((item, idx) => (idx === i ? { ...item, [key]: val } : item)) }));
   const removeImpactMetric = (i) =>
@@ -519,11 +519,22 @@ export default function ContentPage() {
       </Section>
 
       {/* ── Currently Building ────────────────────────────── */}
-      <Section title="Currently Building">
+      <Section title="Currently Building (Bento Grid)">
         {form.currentlyBuilding.map((item, i) => (
-          <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3">
-            <div className="flex items-start justify-between">
-              <span className="text-xs text-slate-500 font-mono">Item #{i + 1}</span>
+          <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-slate-500 font-mono">Project #{i + 1}</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={item.isActive}
+                    onChange={(e) => updateBuildItem(i, 'isActive', e.target.checked)}
+                    className="w-4 h-4 rounded bg-navy-900 border-navy-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-navy-950"
+                  />
+                  <span className="text-xs text-slate-300">Visible</span>
+                </label>
+              </div>
               <button
                 onClick={() => removeBuildItem(i)}
                 className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
@@ -531,7 +542,7 @@ export default function ContentPage() {
                 <Ic d={IC.trash} size={13} />
               </button>
             </div>
-            <div className="grid grid-cols-[1fr_auto] gap-3">
+            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-end">
               <Input
                 label="Title"
                 value={item.title}
@@ -542,20 +553,92 @@ export default function ContentPage() {
                 label="Status"
                 value={item.status}
                 onChange={(e) => updateBuildItem(i, 'status', e.target.value)}
-                placeholder="Active"
+                placeholder="ACTIVE"
+              />
+              <div className="flex flex-col gap-1.5 min-w-[120px]">
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size (Variant)</label>
+                <select
+                  value={item.variant}
+                  onChange={(e) => updateBuildItem(i, 'variant', e.target.value)}
+                  className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="small">Small (1 col)</option>
+                  <option value="medium">Medium (2 col)</option>
+                  <option value="large">Large (2x2)</option>
+                </select>
+              </div>
+              <Input
+                label="Order"
+                value={item.order}
+                type="number"
+                onChange={(e) => updateBuildItem(i, 'order', e.target.value)}
+                className="w-20"
               />
             </div>
             <Textarea
               label="Description"
               value={item.description}
               onChange={(e) => updateBuildItem(i, 'description', e.target.value)}
-              placeholder="AI-powered resume intelligence platform..."
+              placeholder="Upgrading my project..."
               rows={2}
             />
           </div>
         ))}
         <Btn variant="ghost" onClick={addBuildItem}>
-          <Ic d={IC.plus} size={13} /> Add Item
+          <Ic d={IC.plus} size={13} /> Add Project
+        </Btn>
+      </Section>
+
+
+      {/* ── Engineering Impact Metrics ────────────────────── */}
+      <Section title="Engineering Impact Metrics">
+        {form.impactMetrics.map((item, i) => (
+          <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-slate-500 font-mono">Metric #{i + 1}</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={item.isActive}
+                    onChange={(e) => updateImpactMetric(i, 'isActive', e.target.checked)}
+                    className="w-4 h-4 rounded bg-navy-900 border-navy-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-navy-950"
+                  />
+                  <span className="text-xs text-slate-300">Visible</span>
+                </label>
+              </div>
+              <button
+                onClick={() => removeImpactMetric(i)}
+                className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+              >
+                <Ic d={IC.trash} size={13} />
+              </button>
+            </div>
+            <div className="grid grid-cols-[1fr_auto_auto] gap-3 items-end">
+              <Input
+                label="Value"
+                value={item.value}
+                onChange={(e) => updateImpactMetric(i, 'value', e.target.value)}
+                placeholder="5"
+              />
+              <Input
+                label="Label"
+                value={item.label}
+                onChange={(e) => updateImpactMetric(i, 'label', e.target.value)}
+                placeholder="MERN UPGRADES"
+              />
+              <Input
+                label="Order"
+                value={item.order}
+                type="number"
+                onChange={(e) => updateImpactMetric(i, 'order', e.target.value)}
+                className="w-20"
+              />
+            </div>
+          </div>
+        ))}
+        <Btn variant="ghost" onClick={addImpactMetric}>
+          <Ic d={IC.plus} size={13} /> Add Metric
         </Btn>
       </Section>
 
