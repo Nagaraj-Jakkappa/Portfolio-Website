@@ -6,7 +6,7 @@ const DEFAULT_ITEMS = [
     description: 'Upgrading my AI-based pothole detection project with MERN features like image uploads, prediction history, user reports, and admin analytics.',
     status: 'IMPROVING',
     color: 'emerald',
-    size: 'wide',
+    size: 'feature',
     order: 1,
     isActive: true,
   },
@@ -15,7 +15,7 @@ const DEFAULT_ITEMS = [
     description: 'Converting my frontend quiz app into a full MERN quiz platform with authentication, categories, scores, leaderboard, and admin question management.',
     status: 'ACTIVE',
     color: 'cyan',
-    size: 'normal',
+    size: 'wide',
     order: 2,
     isActive: true,
   },
@@ -24,7 +24,7 @@ const DEFAULT_ITEMS = [
     description: 'Improving the travel explorer frontend into a MERN app with saved trips, mood-based suggestions, user journals, and personalized travel boards.',
     status: 'IMPROVING',
     color: 'violet',
-    size: 'normal',
+    size: 'wide',
     order: 3,
     isActive: true,
   },
@@ -33,7 +33,7 @@ const DEFAULT_ITEMS = [
     description: 'Building the weather forecast app further with saved locations, forecast history, alerts, user preferences, and clean API integration.',
     status: 'ACTIVE',
     color: 'blue',
-    size: 'compact',
+    size: 'small',
     order: 4,
     isActive: true,
   },
@@ -42,7 +42,7 @@ const DEFAULT_ITEMS = [
     description: 'Upgrading my task manager into a production-ready MERN app with login, task CRUD, priorities, reminders, filters, and dashboard insights.',
     status: 'ACTIVE',
     color: 'amber',
-    size: 'compact',
+    size: 'small',
     order: 5,
     isActive: true,
   },
@@ -70,9 +70,11 @@ function getTheme(color) {
 }
 
 function getCardSizeClass(size) {
-  if (size === 'wide') return 'md:col-span-2 p-6';
-  if (size === 'compact') return 'md:col-span-1 p-4';
-  return 'md:col-span-1 p-5';
+  if (size === 'wide') return 'md:col-span-2 md:row-span-1 p-6';
+  if (size === 'tall') return 'md:col-span-1 md:row-span-2 p-5';
+  if (size === 'feature') return 'md:col-span-2 md:row-span-2 p-6';
+  // Default small
+  return 'md:col-span-1 md:row-span-1 p-5';
 }
 
 function getMetricSizeClass(size) {
@@ -133,7 +135,7 @@ export default function CurrentlyBuilding({ content, loading }) {
                           {item.status || 'Active'}
                         </span>
                       </div>
-                      <p className={`text-slate-400 leading-relaxed flex-grow ${item.size === 'compact' ? 'text-xs' : 'text-sm'}`}>
+                      <p className={`text-slate-400 leading-relaxed flex-grow ${item.size === 'small' ? 'text-xs' : 'text-sm'}`}>
                         {item.description}
                       </p>
                     </div>

@@ -48,7 +48,7 @@ const siteContentSchema = new mongoose.Schema(
         status: { type: String, default: 'Active', maxlength: 50 },
         variant: { type: String, default: 'small', maxlength: 20 },
         color: { type: String, default: 'cyan', maxlength: 20 },
-        size: { type: String, default: 'normal', maxlength: 20 },
+        size: { type: String, default: 'small', maxlength: 20 },
         order: { type: Number, default: 0 },
         isActive: { type: Boolean, default: true },
       },

@@ -179,7 +179,7 @@ export default function ContentPage() {
   const addBuildItem = () =>
     setForm((f) => ({
       ...f,
-      currentlyBuilding: [...f.currentlyBuilding, { title: '', description: '', status: 'Active', order: 0, isActive: true, color: 'cyan', size: 'normal' }],
+      currentlyBuilding: [...f.currentlyBuilding, { title: '', description: '', status: 'Active', order: 0, isActive: true, color: 'cyan', size: 'small' }],
     }));
 
   const updateBuildItem = (i, key, val) =>
@@ -578,9 +578,10 @@ export default function ContentPage() {
                   onChange={(e) => updateBuildItem(i, 'size', e.target.value)}
                   className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
                 >
-                  <option value="compact">Compact (1 col)</option>
-                  <option value="normal">Normal (1 col)</option>
-                  <option value="wide">Wide (2 col)</option>
+                  <option value="small">Small / 1 col</option>
+                  <option value="wide">Wide / 2 col</option>
+                  <option value="tall">Tall / 2 row</option>
+                  <option value="feature">Feature / 2x2</option>
                 </select>
               </div>
               <Input

@@ -6,11 +6,11 @@ const SiteContent = require('../models/SiteContent');
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const DEFAULT_ITEMS = [
-  { title: 'Pothole Detection', color: 'emerald', size: 'wide' },
-  { title: 'ThinkFast Quiz', color: 'cyan', size: 'normal' },
-  { title: 'Mood-Based Travel Explorer', color: 'violet', size: 'normal' },
-  { title: 'SkyCast Weather Forecast', color: 'blue', size: 'compact' },
-  { title: 'TaskFlow To-Do List', color: 'amber', size: 'compact' },
+  { title: 'Pothole Detection', color: 'emerald', size: 'feature' },
+  { title: 'ThinkFast Quiz', color: 'cyan', size: 'wide' },
+  { title: 'Mood-Based Travel Explorer', color: 'violet', size: 'wide' },
+  { title: 'SkyCast Weather Forecast', color: 'blue', size: 'small' },
+  { title: 'TaskFlow To-Do List', color: 'amber', size: 'small' },
 ];
 
 const DEFAULT_METRICS = [
@@ -43,8 +43,15 @@ async function updateStyles() {
           item.color = defaultMatch ? defaultMatch.color : 'cyan';
           updated = true;
         }
-        if (!item.size || !['wide', 'normal', 'compact'].includes(item.size)) {
-          item.size = defaultMatch ? defaultMatch.size : 'normal';
+        
+        // Update size, explicitly mapping normal and compact to small if encountered
+        if (item.size === 'normal' || item.size === 'compact') {
+          item.size = 'small';
+          updated = true;
+        }
+        
+        if (!item.size || !['small', 'wide', 'tall', 'feature'].includes(item.size)) {
+          item.size = defaultMatch ? defaultMatch.size : 'small';
           updated = true;
         }
       });

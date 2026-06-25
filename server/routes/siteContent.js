@@ -44,7 +44,7 @@ const contentValidationRules = [
   body('currentlyBuilding.*.status').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
   body('currentlyBuilding.*.variant').optional({ checkFalsy: true }).isString().isIn(['small', 'medium', 'large']).withMessage('Variant must be small, medium, or large'),
   body('currentlyBuilding.*.color').optional({ checkFalsy: true }).isString().isIn(['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose']),
-  body('currentlyBuilding.*.size').optional({ checkFalsy: true }).isString().isIn(['wide', 'normal', 'compact']),
+  body('currentlyBuilding.*.size').optional({ checkFalsy: true }).isString().isIn(['small', 'wide', 'tall', 'feature']),
   body('currentlyBuilding.*.order').optional().isNumeric(),
   body('currentlyBuilding.*.isActive').optional().isBoolean(),
 
@@ -208,7 +208,7 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         status: item.status?.trim() || 'Active',
         variant: ['small', 'medium', 'large'].includes(item.variant) ? item.variant : 'small',
         color: ['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose'].includes(item.color) ? item.color : 'cyan',
-        size: ['wide', 'normal', 'compact'].includes(item.size) ? item.size : 'normal',
+        size: ['small', 'wide', 'tall', 'feature'].includes(item.size) ? item.size : (item.size === 'normal' || item.size === 'compact' ? 'small' : 'small'),
         order: Number(item.order) || 0,
         isActive: typeof item.isActive === 'boolean' ? item.isActive : true,
       }));
