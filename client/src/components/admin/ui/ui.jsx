@@ -5,6 +5,7 @@
  * Import only what you need:
  *   import { StatCard, Card, Btn, Badge } from '../../components/admin/ui/ui';
  */
+import React, { useId, useEffect, useRef } from 'react';
 
 // ── Icon helper ───────────────────────────────────────────────
 export const Ic = ({ d, size = 15 }) => (
@@ -153,11 +154,20 @@ export function Btn({
 }
 
 // ── Input ─────────────────────────────────────────────────────
-export function Input({ label, error, hint, className = '', ...props }) {
+export function Input({ label, error, hint, className = '', id, ...props }) {
+  const generatedId = useId();
+  const inputId = id || generatedId;
+  const errorId = error ? `${inputId}-error` : undefined;
+  const hintId = hint ? `${inputId}-hint` : undefined;
+  const ariaDescribedBy = [errorId, hintId].filter(Boolean).join(' ') || undefined;
+
   return (
     <div className={className}>
-      {label && <label className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
+      {label && <label htmlFor={inputId} className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
       <input
+        id={inputId}
+        aria-invalid={!!error}
+        aria-describedby={ariaDescribedBy}
         className={`w-full bg-navy-950 border rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-700 outline-none transition-colors duration-150 ${
           error
             ? 'border-red-500/50 focus:border-red-400'
@@ -165,18 +175,25 @@ export function Input({ label, error, hint, className = '', ...props }) {
         }`}
         {...props}
       />
-      {hint && !error && <p className="text-xs text-slate-600 mt-1">{hint}</p>}
-      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+      {hint && !error && <p id={hintId} className="text-xs text-slate-600 mt-1">{hint}</p>}
+      {error && <p id={errorId} className="text-xs text-red-400 mt-1">{error}</p>}
     </div>
   );
 }
 
 // ── Textarea ──────────────────────────────────────────────────
-export function Textarea({ label, error, className = '', rows = 3, ...props }) {
+export function Textarea({ label, error, className = '', rows = 3, id, ...props }) {
+  const generatedId = useId();
+  const textareaId = id || generatedId;
+  const errorId = error ? `${textareaId}-error` : undefined;
+
   return (
     <div className={className}>
-      {label && <label className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
+      {label && <label htmlFor={textareaId} className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
       <textarea
+        id={textareaId}
+        aria-invalid={!!error}
+        aria-describedby={errorId}
         rows={rows}
         className={`w-full bg-navy-950 border rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-700 outline-none transition-colors duration-150 resize-none ${
           error
@@ -185,17 +202,21 @@ export function Textarea({ label, error, className = '', rows = 3, ...props }) {
         }`}
         {...props}
       />
-      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+      {error && <p id={errorId} className="text-xs text-red-400 mt-1">{error}</p>}
     </div>
   );
 }
 
 // ── Select ────────────────────────────────────────────────────
-export function Select({ label, children, className = '', ...props }) {
+export function Select({ label, children, className = '', id, ...props }) {
+  const generatedId = useId();
+  const selectId = id || generatedId;
+
   return (
     <div className={className}>
-      {label && <label className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
+      {label && <label htmlFor={selectId} className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>}
       <select
+        id={selectId}
         className="w-full bg-navy-950 border border-navy-800 focus:border-blue-400/50 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none transition-colors duration-150"
         {...props}
       >
@@ -207,25 +228,87 @@ export function Select({ label, children, className = '', ...props }) {
 
 // ── Modal ─────────────────────────────────────────────────────
 export function Modal({ open, onClose, title, subtitle, children, footer, maxWidth = 'max-w-xl' }) {
+  const generatedId = useId();
+  const titleId = title ? `${generatedId}-title` : undefined;
+  const subtitleId = subtitle ? `${generatedId}-subtitle` : undefined;
+
+  const modalRef = useRef(null);
+  const previousFocusRef = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      previousFocusRef.current = document.activeElement;
+      
+      // Focus the modal itself so screen readers start reading from it
+      if (modalRef.current) {
+        modalRef.current.focus();
+      }
+
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+        if (e.key === 'Tab') {
+          const focusableElements = modalRef.current.querySelectorAll(
+            'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
+          );
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === firstElement || document.activeElement === modalRef.current) {
+              lastElement?.focus();
+              e.preventDefault();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              firstElement?.focus();
+              e.preventDefault();
+            }
+          }
+        }
+      };
+
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = '';
+        if (previousFocusRef.current) {
+          previousFocusRef.current.focus();
+        }
+      };
+    }
+  }, [open, onClose]);
+
   if (!open) return null;
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center p-4 pt-20 overflow-y-auto"
       onClick={onClose}
     >
       <div
-        className={`bg-navy-900 border border-navy-800 rounded-2xl w-full ${maxWidth} shadow-2xl max-h-[85vh] overflow-y-auto`}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={subtitleId}
+        tabIndex={-1}
+        className={`bg-navy-900 border border-navy-800 rounded-2xl w-full ${maxWidth} shadow-2xl max-h-[85vh] overflow-y-auto outline-none`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-navy-800">
           <div>
-            <h2 className="text-sm font-semibold text-white">{title}</h2>
-            {subtitle && <p className="text-xs text-slate-600 mt-0.5">{subtitle}</p>}
+            {title && <h2 id={titleId} className="text-sm font-semibold text-white">{title}</h2>}
+            {subtitle && <p id={subtitleId} className="text-xs text-slate-600 mt-0.5">{subtitle}</p>}
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-600 hover:text-slate-300 hover:bg-white/5 rounded-lg transition-all"
+            aria-label="Close modal"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-600 hover:text-slate-300 hover:bg-white/5 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <svg
               width={14}
@@ -340,14 +423,17 @@ export function Spinner({ size = 16 }) {
 // ── Toggle ────────────────────────────────────────────────────
 export function Toggle({ value, onChange, label }) {
   return (
-    <label className="flex items-center gap-3 cursor-pointer select-none">
-      <div
-        onClick={() => onChange(!value)}
-        className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${value ? 'bg-blue-500' : 'bg-navy-800'}`}
-      >
-        <div
-          className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${value ? 'translate-x-4' : ''}`}
+    <label className="flex items-center gap-3 cursor-pointer select-none min-h-[44px]">
+      <div className="relative flex items-center">
+        <input 
+          type="checkbox" 
+          className="sr-only peer" 
+          checked={value} 
+          onChange={(e) => onChange(e.target.checked)} 
         />
+        <div className="w-9 h-5 bg-navy-800 rounded-full peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-navy-900 peer-checked:bg-blue-500 transition-colors duration-200">
+          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${value ? 'translate-x-4' : ''}`} />
+        </div>
       </div>
       {label && <span className="text-sm text-slate-300">{label}</span>}
     </label>

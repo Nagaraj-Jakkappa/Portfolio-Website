@@ -118,7 +118,7 @@ function ProjectCard({ project, isOverlayOpen, onToggleOverlay }) {
             <button 
               onClick={(e) => { e.stopPropagation(); onToggleOverlay(); }}
               aria-label="Close case study"
-              className="text-slate-400 hover:text-white bg-navy-800 hover:bg-navy-700 w-8 h-8 rounded-full flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="text-slate-400 hover:text-white bg-navy-800 hover:bg-navy-700 w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -380,6 +380,7 @@ export default function Projects() {
                   <div>
                     <button 
                       onClick={() => { setIsGridView((v) => !v); setOpenCaseStudyId(null); }} 
+                      aria-pressed={isGridView}
                       className="btn-ghost px-5 py-2 rounded-full text-xs font-medium border border-navy-700 hover:border-blue-500/50 transition-colors flex items-center gap-2"
                     >
                       {isGridView ? (
@@ -483,7 +484,7 @@ export default function Projects() {
                       onClick={prevSlide}
                       disabled={currentIndex === 0}
                       aria-label="Previous projects"
-                      className={`hidden md:flex absolute left-2 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 items-center justify-center rounded-full bg-navy-950/80 backdrop-blur-md border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] transition-all duration-300 z-30 ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
+                      className={`hidden md:flex absolute left-2 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 w-11 h-11 md:w-12 md:h-12 items-center justify-center rounded-full bg-navy-950/80 backdrop-blur-md border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] transition-all duration-300 z-30 ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
                     >
                       <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -493,7 +494,7 @@ export default function Projects() {
                       onClick={nextSlide}
                       disabled={currentIndex === maxIndex}
                       aria-label="Next projects"
-                      className={`hidden md:flex absolute right-2 md:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 items-center justify-center rounded-full bg-navy-950/80 backdrop-blur-md border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] transition-all duration-300 z-30 ${currentIndex === maxIndex ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
+                      className={`hidden md:flex absolute right-2 md:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 w-11 h-11 md:w-12 md:h-12 items-center justify-center rounded-full bg-navy-950/80 backdrop-blur-md border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)] transition-all duration-300 z-30 ${currentIndex === maxIndex ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 hover:bg-navy-900 hover:border-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] focus:outline-none focus:ring-2 focus:ring-cyan-400'}`}
                     >
                       <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -512,7 +513,7 @@ export default function Projects() {
                     onClick={() => { setCurrentIndex(idx); setOpenCaseStudyId(null); }}
                     aria-label={`Go to slide ${idx + 1}`}
                     aria-current={currentIndex === idx ? "true" : "false"}
-                    className={`h-2 rounded-full transition-all duration-300 ${
+                    className={`relative h-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-4 focus:ring-offset-navy-900 after:absolute after:-inset-5 after:content-[''] ${
                       currentIndex === idx ? 'w-8 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.5)]' : 'w-2 bg-slate-600/50 hover:bg-slate-500'
                     }`}
                   />
