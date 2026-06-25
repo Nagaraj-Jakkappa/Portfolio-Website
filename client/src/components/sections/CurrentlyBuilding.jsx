@@ -86,10 +86,10 @@ export default function CurrentlyBuilding({ content, loading }) {
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               Currently Building & Learning
             </h2>
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(140px,auto)]">
               {loading ? (
-                [1, 2].map((i) => (
-                  <div key={i} className="card-base p-5 animate-pulse">
+                [1, 2, 3, 4, 5].map((num, idx) => (
+                  <div key={num} className={`card-base p-5 animate-pulse ${idx === 0 ? 'md:col-span-2' : ''}`}>
                     <div className="flex justify-between items-start mb-4">
                       <div className="h-4 bg-navy-700 rounded w-1/3" />
                       <div className="h-4 bg-navy-700 rounded w-16" />
@@ -100,16 +100,16 @@ export default function CurrentlyBuilding({ content, loading }) {
                 ))
               ) : (
                 items.map((item, i) => (
-                  <div key={i} className="card-base p-5 group">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-white font-semibold">{item.title}</h3>
+                  <div key={i} className={`card-base p-5 group flex flex-col hover:border-slate-500/50 transition-colors ${i === 0 ? 'md:col-span-2' : ''}`}>
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-white font-semibold text-lg">{item.title}</h3>
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider border ${getStatusStyle(item.status)}`}
+                        className={`px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider border whitespace-nowrap ml-3 ${getStatusStyle(item.status)}`}
                       >
                         {item.status || 'Active'}
                       </span>
                     </div>
-                    <p className="text-slate-400 text-sm">{item.description}</p>
+                    <p className="text-slate-400 text-sm leading-relaxed flex-grow">{item.description}</p>
                   </div>
                 ))
               )}
