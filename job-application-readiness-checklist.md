@@ -81,7 +81,7 @@ Pin exactly 4 repositories to your profile overview. Ensure Trendora is NOT pinn
 
 Before clicking "Apply" on your first job application, complete this final checklist:
 
-- [ ] **Portfolio:** All project screenshots are uploaded via the Admin panel (per PACK IMG1).
+- [x] **Portfolio:** All project screenshots are uploaded and visually verified (per PACK LIVEQA2).
 - [ ] **Portfolio:** All live demo links on the portfolio are verified active.
 - [ ] **Resume:** Hosted PDF (`/Nagaraj_Jakkappa_Resume_2026.pdf`) is identical to the one you submit.
 - [ ] **Resume:** Project order matches the portfolio priority exactly.
@@ -95,4 +95,4 @@ Before clicking "Apply" on your first job application, complete this final check
 
 Your technical foundation is incredibly strong. By aligning your Resume, GitHub, and LinkedIn directly with the narrative presented on `techartistry.in`, you create a cohesive, highly professional brand. 
 
-Once the checklist above is complete, **start applying aggressively.** You are ready.
+Your portfolio project images have already been uploaded and formally verified. Once the remaining items on the checklist above are complete, **start applying aggressively.** You are ready.
