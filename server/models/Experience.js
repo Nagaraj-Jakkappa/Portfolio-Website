@@ -20,6 +20,8 @@ const experienceSchema = new mongoose.Schema(
       practices: [{ type: String }],       // rendered as bullet list
       takeaways: [{ type: String }],       // rendered as bullet list
     },
+    documentLabel: { type: String, default: 'View Certificate', trim: true },
+    documentUrl: { type: String, default: '', trim: true },
   },
   { timestamps: true }
 );

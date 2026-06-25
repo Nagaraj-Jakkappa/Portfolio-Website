@@ -218,8 +218,8 @@ function ExperienceCard({ item }) {
         </ul>
       )}
 
-      {/* Footer row (Tech stack + Breakdown toggle) */}
-      {(item.techStack?.length > 0 || hasBreakdown) && (
+      {/* Footer row (Tech stack + Breakdown toggle + Document link) */}
+      {(item.techStack?.length > 0 || hasBreakdown || item.documentUrl) && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-5 pt-4 border-t border-slate-800/80">
           <div className="flex flex-wrap gap-2">
             {item.techStack?.map((t, i) => (
@@ -246,6 +246,36 @@ function ExperienceCard({ item }) {
               {showBreakdown ? 'Hide Experience Breakdown' : 'View Experience Breakdown'}
             </button>
           )}
+
+          {item.documentUrl && !hasBreakdown && (
+            <a
+              href={item.documentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-mono uppercase tracking-wider text-emerald-400 hover:text-emerald-300 flex items-center gap-2 shrink-0 transition-colors duration-200 ml-auto sm:ml-0"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              {item.documentLabel || 'View Certificate'}
+            </a>
+          )}
+        </div>
+      )}
+
+      {item.documentUrl && hasBreakdown && (
+        <div className="flex justify-end mt-4">
+           <a
+              href={item.documentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-mono uppercase tracking-wider text-emerald-400 hover:text-emerald-300 flex items-center gap-2 shrink-0 transition-colors duration-200"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              {item.documentLabel || 'View Certificate'}
+            </a>
         </div>
       )}
 

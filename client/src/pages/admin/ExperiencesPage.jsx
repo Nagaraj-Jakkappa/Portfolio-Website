@@ -43,6 +43,9 @@ const EMPTY = {
   breakdownSkills: '',      // comma-separated → skillsApplied array
   breakdownPractices: '',   // newline-separated → practices array
   breakdownTakeaways: '',   // newline-separated → takeaways array
+  // Document fields
+  documentLabel: 'View Certificate',
+  documentUrl: '',
 };
 
 // ── Add / Edit Modal ──────────────────────────────────────────────────────────
@@ -65,6 +68,8 @@ function ExperienceModal({ item, onClose, onSave }) {
         breakdownTakeaways: Array.isArray(item.breakdown?.takeaways)
           ? item.breakdown.takeaways.join('\n')
           : '',
+        documentLabel: item.documentLabel || 'View Certificate',
+        documentUrl: item.documentUrl || '',
       };
     }
     return { ...EMPTY };
@@ -101,6 +106,8 @@ function ExperienceModal({ item, onClose, onSave }) {
             ? form.breakdownTakeaways.split('\n').map((l) => l.trim()).filter(Boolean)
             : [],
         },
+        documentLabel: form.documentLabel?.trim() || 'View Certificate',
+        documentUrl: form.documentUrl?.trim() || '',
       };
       // Remove the flat textarea fields – API doesn't need them
       delete payload.breakdownSkills;
@@ -181,6 +188,22 @@ function ExperienceModal({ item, onClose, onSave }) {
             value={form.endDate}
             onChange={(e) => set('endDate', e.target.value)}
             placeholder="e.g., Feb 2024"
+          />
+        </div>
+
+        {/* Document Links */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Input
+            label="Document Label"
+            value={form.documentLabel}
+            onChange={(e) => set('documentLabel', e.target.value)}
+            placeholder="View Certificate"
+          />
+          <Input
+            label="Document URL"
+            value={form.documentUrl}
+            onChange={(e) => set('documentUrl', e.target.value)}
+            placeholder="https://drive.google.com/file/d/.../view"
           />
         </div>
 

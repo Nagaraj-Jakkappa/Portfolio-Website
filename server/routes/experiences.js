@@ -42,6 +42,8 @@ const expValidation = [
   body('breakdown.practices.*').optional().isString(),
   body('breakdown.takeaways').optional().isArray(),
   body('breakdown.takeaways.*').optional().isString(),
+  body('documentLabel').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
+  body('documentUrl').optional({ checkFalsy: true }).isURL().withMessage('documentUrl must be a valid URL'),
 ];
 
 // ── Public: GET /api/experiences ─────────────────────────────────────────────
@@ -97,6 +99,8 @@ router.post('/', protect, expValidation, validate, async (req, res) => {
           ? req.body.breakdown.takeaways.filter(Boolean)
           : [],
       },
+      documentLabel: req.body.documentLabel?.trim() || 'View Certificate',
+      documentUrl: req.body.documentUrl?.trim() || '',
     });
     res.status(201).json(item);
   } catch (err) {
@@ -136,6 +140,8 @@ router.put('/:id', protect, expValidation, validate, async (req, res) => {
             ? req.body.breakdown.takeaways.filter(Boolean)
             : [],
         },
+        documentLabel: req.body.documentLabel?.trim() || 'View Certificate',
+        documentUrl: req.body.documentUrl?.trim() || '',
       },
       { new: true, runValidators: true }
     );
