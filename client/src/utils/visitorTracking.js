@@ -61,6 +61,14 @@ export function trackVisitorEvent(eventType, metadata = {}) {
     return;
   }
 
+  // Gate optional tracking behind consent
+  if (typeof window !== 'undefined') {
+    const consent = localStorage.getItem('techartistry_cookie_consent');
+    if (consent !== 'accepted') {
+      return;
+    }
+  }
+
   try {
     const payload = {
       eventType,

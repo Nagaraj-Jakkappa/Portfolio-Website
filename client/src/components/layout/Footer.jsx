@@ -99,6 +99,19 @@ const getWhatsAppHref = (value) => {
           </button>
         </div>
 
+        {/* Footer Links */}
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs text-slate-400 font-medium mt-2 mb-1">
+          <Link to="/privacy" className="hover:text-cyan-400 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded px-1">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-cyan-400 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded px-1">Terms</Link>
+          <Link to="/cookies" className="hover:text-cyan-400 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded px-1">Cookie Policy</Link>
+          <button 
+            onClick={() => window.dispatchEvent(new Event('open_cookie_settings'))}
+            className="hover:text-cyan-400 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded px-1"
+          >
+            Cookie Settings
+          </button>
+        </div>
+
         {/* Copyright / build line – centered */}
         <p className="text-slate-500 text-xs font-mono tracking-tight text-center">
           © {year}{' '}

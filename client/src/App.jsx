@@ -8,12 +8,16 @@ import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import api from './api/axios';
 import VisitorTracker from './components/analytics/VisitorTracker';
+import CookieBanner from './components/layout/CookieBanner';
 
 
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 
 // Lazy Pages
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const Terms = lazy(() => import('./pages/Terms'));
+const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
@@ -66,6 +70,7 @@ function PublicLayout() {
         <Outlet context={{ siteContent, contentLoading }} />
       </main>
       <Footer content={siteContent} />
+      <CookieBanner />
     </div>
   );
 }
@@ -83,6 +88,9 @@ export default function App() {
         <Route path="/" element={<PublicLayout />}>
           <Route index element={<HomeWithContext />} />
           <Route path="projects/:slug" element={<ProjectDetail />} />
+          <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<Terms />} />
+          <Route path="cookies" element={<CookiePolicy />} />
         </Route>
 
         {/* ADMIN LOGIN */}
