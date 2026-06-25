@@ -90,10 +90,56 @@ export default function CurrentlyBuilding({ content, loading }) {
   return (
     <section id="currently-building" className="section-padding bg-navy-950 border-t border-navy-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                ))
-              )}
-            </div>
-          </div>
+        
+        <h2 className="font-display font-bold text-2xl text-white mb-8 flex items-center gap-3">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          Currently Building & Learning
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[minmax(140px,auto)]">
+          {loading ? (
+            [1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className={`card-base p-5 animate-pulse ${i === 1 ? SIZE_MAP.large : i <= 3 ? SIZE_MAP.medium : SIZE_MAP.small}`}>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="h-4 bg-navy-700 rounded w-1/3" />
+                  <div className="h-4 bg-navy-700 rounded w-16" />
+                </div>
+                <div className="h-3 bg-navy-700 rounded w-full mb-2" />
+                <div className="h-3 bg-navy-700 rounded w-5/6" />
+              </div>
+            ))
+          ) : (
+            <>
+              {items.map((item, i) => (
+                <div 
+                  key={i} 
+                  className={`card-base p-5 group flex flex-col hover:border-slate-500/50 transition-colors ${SIZE_MAP[item.variant] || SIZE_MAP.small}`}
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-white font-semibold text-lg">{item.title}</h3>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider border ${getStatusStyle(item.status)}`}
+                    >
+                      {item.status || 'Active'}
+                    </span>
+                  </div>
+                  <p className="text-slate-400 text-sm leading-relaxed flex-grow">{item.description}</p>
+                </div>
+              ))}
+
+              {/* Metrics rendered as bento boxes */}
+              {metrics.map((metric, i) => (
+                <div key={`metric-${i}`} className="card-base p-5 flex flex-col justify-center items-center text-center col-span-1 row-span-1 hover:border-slate-500/50 transition-colors">
+                  <h4 className={`text-3xl font-display font-bold mb-1 ${METRIC_COLORS[i % METRIC_COLORS.length]}`}>
+                    {metric.value}
+                  </h4>
+                  <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                    {metric.label}
+                  </span>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     </section>
