@@ -22,7 +22,7 @@ const SIZE_MAP = {
 const FALLBACK_ITEMS = [
   {
     category: 'Learning',
-    description: 'Mastering MongoDB Aggregation Pipelines and deep-diving into Redux Toolkit for global state management.',
+    description: 'Production-focused MERN stack development, secure authentication, MongoDB data modeling, REST API structure, and deployment workflows.',
     icon: '🚀',
     themeColor: 'blue',
     size: 'wide',
@@ -31,7 +31,7 @@ const FALLBACK_ITEMS = [
   },
   {
     category: 'Building',
-    description: 'Refining TechArtistry.in and adding interactive AI simulations to showcase Deep Learning concepts.',
+    description: 'Upgrading my frontend projects into full MERN applications, including TaskFlow, ThinkFast Quiz, SkyCast Weather Forecast, Mood-Based Travel Explorer, and Pothole Detection.',
     icon: '🛠️',
     themeColor: 'emerald',
     size: 'small',
@@ -39,9 +39,9 @@ const FALLBACK_ITEMS = [
     order: 2
   },
   {
-    category: 'Reading',
-    description: 'Currently reading "Clean Code" by Robert C. Martin to improve my architectural decision-making.',
-    icon: '📖',
+    category: 'Practicing',
+    description: 'React UI polish, reusable components, API integration, form validation, Git/GitHub workflow, debugging, and clean project documentation.',
+    icon: '💻',
     themeColor: 'amber',
     size: 'small',
     visible: true,
@@ -49,7 +49,7 @@ const FALLBACK_ITEMS = [
   },
   {
     category: 'Current Goal',
-    description: 'Securing a Full-Stack Developer role in Bengaluru to contribute to high-impact web products.',
+    description: 'Become a job-ready junior frontend/full-stack developer by building production-ready MERN projects, improving problem-solving skills, and applying consistently for developer roles.',
     icon: '🎯',
     themeColor: 'violet',
     size: 'wide',
