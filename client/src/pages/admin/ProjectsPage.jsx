@@ -45,6 +45,7 @@ const EMPTY_FORM = {
   description: '',
   longDescription: '',
   techStack: '',
+  statusLabels: '',
   imageUrl: '',
   imageUrl2: '',
   imageUrl3: '',
@@ -72,6 +73,7 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
           imageUrl2: project.gallery?.[1] || '',
           imageUrl3: project.gallery?.[2] || '',
           techStack: project.techStack?.join(', ') ?? '',
+          statusLabels: project.statusLabels?.join(', ') ?? '',
           caseStudy: project.caseStudy ?? { problem: '', solution: '', impact: '' },
         }
       : EMPTY_FORM
@@ -106,6 +108,10 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
         imageUrl: form.imageUrl?.trim(),
         gallery,
         techStack: form.techStack
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        statusLabels: form.statusLabels
           .split(',')
           .map((s) => s.trim())
           .filter(Boolean),
@@ -177,6 +183,13 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
           value={form.techStack}
           onChange={(e) => set('techStack', e.target.value)}
           placeholder="React, Node.js, MongoDB, TailwindCSS"
+        />
+        <Input
+          label="Status Labels (comma-separated)"
+          value={form.statusLabels}
+          onChange={(e) => set('statusLabels', e.target.value)}
+          placeholder="Frontend Build, Backend Upgrade In Progress"
+          hint="Optional badges shown on the public project card. Leave empty for completed projects."
         />
         <div className="grid grid-cols-2 gap-3">
           <Input

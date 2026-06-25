@@ -35,6 +35,7 @@ const projectSchema = new mongoose.Schema(
       enum: ['web', 'ml', 'fullstack', 'other'],
       default: 'web',
     },
+    statusLabels: [{ type: String, trim: true }],
   },
   { timestamps: true }
 );

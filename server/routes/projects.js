@@ -39,6 +39,8 @@ const projectValidationRules = [
   body('caseStudy.problem').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Problem max 1000 chars'),
   body('caseStudy.solution').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Solution max 1000 chars'),
   body('caseStudy.impact').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Impact max 1000 chars'),
+  body('statusLabels').optional().isArray().withMessage('Status labels must be an array'),
+  body('statusLabels.*').optional().isString().isLength({ max: 100 }).withMessage('Each status label max 100 chars'),
 ];
 
 function slugify(text) {
@@ -322,6 +324,9 @@ router.post('/', protect, projectValidationRules, validate, async (req, res) => 
         solution: req.body.caseStudy?.solution?.trim() || '',
         impact: req.body.caseStudy?.impact?.trim() || '',
       },
+      statusLabels: Array.isArray(req.body.statusLabels)
+        ? req.body.statusLabels.map(s => s.trim()).filter(Boolean)
+        : [],
     });
     res.status(201).json(project);
   } catch (err) {
@@ -364,6 +369,9 @@ router.put('/:id', protect, projectValidationRules, validate, async (req, res) =
           solution: req.body.caseStudy?.solution?.trim() || '',
           impact: req.body.caseStudy?.impact?.trim() || '',
         },
+        statusLabels: Array.isArray(req.body.statusLabels)
+          ? req.body.statusLabels.map(s => s.trim()).filter(Boolean)
+          : [],
       },
       { new: true, runValidators: true }
     );
