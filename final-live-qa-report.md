@@ -42,7 +42,7 @@ No critical technical or security issues found.
 
 ## Important Fixes Before Applying
 
-1. **Upload Project Screenshots:** Use the Admin Panel to upload actual 16:10 screenshots for ResumeIQ, Techartistry, Trendora, etc.
+1. **Upload Project Screenshots:** Use the Admin Panel to upload actual 16:10 screenshots for ResumeIQ, Techartistry, Pothole Detection, etc.
 2. **Verify Live Demo Links:** Ensure all `liveUrl` database fields point to active servers. (If free-tier Render is used, be aware of cold-start times).
 3. **Verify Resume File:** Ensure `Nagaraj_Jakkappa_Resume_2026.pdf` exists in the `/public` folder and is exactly the version you want recruiters to see.
 
@@ -61,8 +61,9 @@ No critical technical or security issues found.
 | ------- | ------------ | ----- | ------------------ |
 | ResumeIQ/HYRR | Missing | Fallback letter displayed | Upload real UI screenshot via Admin |
 | Techartistry | Missing | Fallback letter displayed | Upload real UI screenshot via Admin |
-| Trendora | Missing | Fallback letter displayed | Upload real UI screenshot via Admin |
 | Pothole Detection | Missing | Fallback letter displayed | Upload real UI screenshot via Admin |
+
+*Note: Trendora is intentionally excluded for now because it is still in planning/building stage. Add later only after it has working frontend, backend, screenshots, GitHub, and live demo.*
 
 ---
 

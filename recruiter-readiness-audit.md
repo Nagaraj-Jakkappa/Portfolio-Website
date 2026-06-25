@@ -79,11 +79,13 @@ The Techartistry portfolio is an exceptionally strong, production-ready showcase
 
 ## Project Presentation Review
 
-- **Best 3 projects to highlight:** ResumeIQ/HYRR (SaaS), Techartistry (CMS Portfolio), Trendora (E-commerce).
+- **Best projects to highlight:** ResumeIQ/HYRR (SaaS), Techartistry (CMS Portfolio), Pothole Detection (Deep Learning).
 - **Projects that look smaller/basic:** ThinkFast Quiz, To-Do App. (These are correctly sorted to the back of the carousel).
 - **Image Quality:** Assuming actual screenshots are uploaded, the 16/10 aspect ratio and cross-fade gallery are highly professional.
 - **Case Studies:** Concise and impactful. The overlay prevents the user from losing context of the main page.
 - **Carousel Impact:** The carousel significantly improves browsing by condensing vertical space and allowing rapid horizontal scanning.
+
+*Note: Trendora is intentionally excluded for now because it is still in planning/building stage. Add later only after it has working frontend, backend, screenshots, GitHub, and live demo.*
 
 ---
 
@@ -145,7 +147,7 @@ The Techartistry portfolio is an exceptionally strong, production-ready showcase
 ## Recommended Final Fixes
 
 ### Must Fix Before Applying
-1. Upload high-resolution, professional screenshots for all featured projects via the Admin panel.
+1. Upload high-resolution, professional screenshots for all featured projects (ResumeIQ, Techartistry, Pothole Detection, etc.) via the Admin panel.
 2. Verify all live project URLs (`liveUrl`) are active and not returning 404/502 errors.
 3. Verify the Resume PDF is up-to-date and accessible at the expected route (`/Nagaraj_Jakkappa_Resume_2026.pdf`).
 

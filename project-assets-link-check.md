@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-- **Projects checked:** 8
+- **Projects checked:** 7
 - **Images uploaded/verified:** 0 (Manual action required via Admin Panel)
 - **Live links passed:** Pending manual verification
 - **Final Status:** **Almost ready.** Manual content action is required. Project screenshots must be uploaded by the owner through the Admin Panel before the portfolio is fully complete.
@@ -39,12 +39,13 @@ Please upload screenshots for the following projects in this exact order of prio
 | :--- | :--- | :--- | :--- |
 | **1. ResumeIQ/HYRR** | Main app dashboard, resume analyzer, or AI score screen | Manual Action Required | Needs Upload |
 | **2. Techartistry** | Portfolio homepage hero, or Admin dashboard | Manual Action Required | Needs Upload |
-| **3. Trendora** | Ecommerce homepage, or product detail/cart | Manual Action Required | Needs Upload |
-| **4. Pothole Detection** | Upload detection screen, or prediction results | Manual Action Required | Needs Upload |
-| **5. ThinkFast Quiz** | Quiz dashboard, or active question screen | Manual Action Required | Needs Upload |
-| **6. Mood Travel** | Mood selection screen, or destination results | Manual Action Required | Needs Upload |
-| **7. Weather App** | Weather dashboard, or forecast screen | Manual Action Required | Needs Upload |
-| **8. To-Do App** | Task dashboard, or add/edit task view | Manual Action Required | Needs Upload |
+| **3. Pothole Detection** | Upload detection screen, or prediction results | Manual Action Required | Needs Upload |
+| **4. ThinkFast Quiz** | Quiz dashboard, or active question screen | Manual Action Required | Needs Upload |
+| **5. Mood Travel** | Mood selection screen, or destination results | Manual Action Required | Needs Upload |
+| **6. Weather App** | Weather dashboard, or forecast screen | Manual Action Required | Needs Upload |
+| **7. To-Do App** | Task dashboard, or add/edit task view | Manual Action Required | Needs Upload |
+
+*Note: Trendora is intentionally excluded for now because it is still in planning/building stage. Add later only after it has working frontend, backend, screenshots, GitHub, and live demo.*
 
 ---
 
@@ -70,7 +71,6 @@ For each project, manually verify the following links to ensure recruiters do no
 | :--- | :--- | :--- | :--- |
 | **ResumeIQ/HYRR** | Needs Verification | Needs Verification | |
 | **Techartistry** | Needs Verification | Needs Verification | |
-| **Trendora** | Needs Verification | Needs Verification | |
 | **Pothole Detection** | Needs Verification | Needs Verification | |
 | **ThinkFast Quiz** | Needs Verification | Needs Verification | |
 | **Mood Travel** | Needs Verification | Needs Verification | |
