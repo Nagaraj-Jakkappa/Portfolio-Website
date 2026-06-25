@@ -129,8 +129,7 @@ export default function Contact({ content }) {
             Let's <span className="gradient-text">work together</span>
           </h2>
           <p className="text-slate-400 mt-4 max-w-xl">
-            Open to frontend roles, internships, and interesting projects. Drop me a message and
-            I'll reply within 24 hours.
+            Actively looking for Frontend and MERN Stack roles. Have a project or role in mind? Drop me a message and I'll reply within 24 hours.
           </p>
         </div>
 
@@ -211,7 +210,7 @@ export default function Contact({ content }) {
                       name="name"
                       value={form.name}
                       onChange={handleChange}
-                      placeholder="Recruiter Name"
+                      placeholder="Jane Doe"
                       className="input-base"
                       required
                     />

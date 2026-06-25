@@ -17,19 +17,19 @@ export default function Home({ content, loading }) {
   return (
     <>
       <Helmet>
-        <title>{content?.seo?.title || 'Nagaraj Jakkappa — Frontend Developer & React Specialist'}</title>
+        <title>{content?.seo?.title || 'Nagaraj Jakkappa — MERN Stack Developer Portfolio'}</title>
         <meta
           name="description"
-          content={content?.seo?.description || "Explore Techartistry.in, the professional portfolio of Nagaraj Jakkappa, a MERN Stack Developer building React, Node.js, MongoDB, AI-powered applications, secure admin dashboards, and production-ready full-stack web experiences."}
+          content={content?.seo?.description || "Explore full-stack React, Node.js, MongoDB, AI, and dashboard projects by Nagaraj Jakkappa."}
         />
         <meta
           name="keywords"
           content={content?.seo?.keywords || "Nagaraj Jakkappa, frontend developer, React developer, JavaScript, TypeScript, Karnataka, hire developer"}
         />
-        <meta property="og:title" content={content?.seo?.title || "Nagaraj Jakkappa — Frontend Developer"} />
+        <meta property="og:title" content={content?.seo?.title || "Nagaraj Jakkappa — MERN Stack Developer Portfolio"} />
         <meta
           property="og:description"
-          content={content?.seo?.description || "Explore Techartistry.in, the professional portfolio of Nagaraj Jakkappa, a MERN Stack Developer building React, Node.js, MongoDB, AI-powered applications, secure admin dashboards, and production-ready full-stack web experiences."}
+          content={content?.seo?.description || "Explore full-stack React, Node.js, MongoDB, AI, and dashboard projects by Nagaraj Jakkappa."}
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.techartistry.in/" />
@@ -54,7 +54,7 @@ export default function Home({ content, loading }) {
             "@type": "Person",
             "name": "Nagaraj Jakkappa",
             "url": "https://www.techartistry.in/",
-            "jobTitle": "Frontend Developer",
+            "jobTitle": "MERN Stack Developer",
             "alumniOf": "Alva's College",
             "address": {
               "@type": "PostalAddress",

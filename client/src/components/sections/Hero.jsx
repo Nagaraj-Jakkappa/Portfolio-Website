@@ -5,13 +5,13 @@ export default function Hero({ content }) {
   const hero = content?.hero || {};
   const resume = content?.resume || {};
 
-  const headline = hero.headline || "Crafting Digital\nArtistry Through Code";
-  const role = hero.role || 'Nagaraj Jakkappa @ Techartistry.in';
+  const headline = hero.headline || "Building Production-Ready\nWeb Applications";
+  const role = hero.role || 'Nagaraj Jakkappa | MERN Stack Developer';
   const subtitle =
     hero.subtitle ||
-    'BCA Graduate & Full-Stack Developer specializing in the MERN stack. I transform complex logic into elegant, high-performance web experiences with a focus on deep learning integration and minimalist UI.';
+    'Production-focused junior developer specializing in React, Node.js, and MongoDB. I build scalable full-stack applications, secure admin dashboards, and AI-integrated tools.';
 
-  const primaryCtaText = hero.primaryCtaText || 'Explore Projects';
+  const primaryCtaText = hero.primaryCtaText || 'View Projects';
   const primaryCtaHref = hero.primaryCtaHref || '#projects';
   const secondaryCtaText = hero.secondaryCtaText || 'View Resume';
   const resumeUrl = resume.resumeUrl || '/Nagaraj_Jakkappa_Resume_2026.pdf';

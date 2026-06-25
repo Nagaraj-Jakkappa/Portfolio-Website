@@ -36,23 +36,17 @@ const getWhatsAppHref = (value) => {
 
 const DEFAULT_BIO = [
   <>
-    Hey! I'm a passionate frontend developer from{' '}
-    <span className="text-slate-200 font-medium">Yadgir, Karnataka</span>, currently
-    hunting for my first full-time role after completing a BCA with a{' '}
-    <span className="text-blue-400 font-bold tracking-tight">CGPA of 8.26</span>.
+    I am a MERN Stack Developer from Yadgir, Karnataka, specializing in React, Node.js, and MongoDB. I focus on building secure, scalable, and production-ready web applications.
   </>,
   <>
-    I love building things that live on the internet — clean, fast, and accessible
-    interfaces powered by React. I've also dipped my hands into machine learning,
-    building a real{' '}
+    My experience ranges from developing robust SaaS platforms and secure portfolio CMS systems to integrating AI solutions like a{' '}
     <span className="text-slate-200 font-medium underline decoration-blue-500/30 underline-offset-4">
-      Pothole Detection
+      MobileNetV2/TensorFlow Pothole Detection
     </span>{' '}
-    system using YOLOv8.
+    system. I prioritize clean code, accessibility, and modern web security.
   </>,
   <>
-    When I'm not coding, I'm usually exploring new tech, reading about AI/ML research,
-    or working on side projects that solve real problems.
+    As a recent BCA graduate with a <span className="text-blue-400 font-bold tracking-tight">CGPA of 8.26</span>, I am actively seeking full-time frontend or full-stack roles where I can contribute to impactful products.
   </>,
 ];
 

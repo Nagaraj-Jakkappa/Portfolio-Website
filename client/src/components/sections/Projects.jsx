@@ -20,9 +20,9 @@ function getCaseStudy(title) {
     };
   }
   return {
-    problem: "Needed an efficient and user-friendly solution for this domain.",
-    solution: "Developed a responsive web application focusing on core usability and clean code.",
-    impact: "Delivered a functional, high-performance product meeting all requirements."
+    problem: "Required a responsive, high-performance web interface to solve domain-specific challenges.",
+    solution: "Developed a full-stack application focusing on core usability, clean code, and API integration.",
+    impact: "Delivered a scalable, production-ready product meeting all technical requirements."
   };
 }
 
@@ -247,7 +247,25 @@ function ProjectCard({ project, isOverlayOpen, onToggleOverlay }) {
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [isGridView, setIsGridView] = useState(false);
-  const { projects, loading, error } = useProjects(false);
+  const { projects: rawProjects, loading, error } = useProjects(false);
+
+  // Client-side priority sort (ResumeIQ/HYRR > Techartistry > Trendora > AI > Others)
+  const projects = [...(rawProjects || [])].sort((a, b) => {
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+
+    const getPriority = (title) => {
+      const t = (title || '').toLowerCase();
+      if (t.includes('hyrr') || t.includes('resumeiq')) return 1;
+      if (t.includes('techartistry') || t.includes('portfolio')) return 2;
+      if (t.includes('trendora')) return 3;
+      if (t.includes('pothole')) return 4;
+      if (t.includes('thinkfast')) return 5;
+      if (t.includes('mood')) return 6;
+      return 10;
+    };
+    return getPriority(a.title) - getPriority(b.title);
+  });
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [openCaseStudyId, setOpenCaseStudyId] = useState(null);
