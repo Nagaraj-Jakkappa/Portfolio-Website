@@ -519,7 +519,7 @@ export default function ContentPage() {
       </Section>
 
       {/* ── Currently Building ────────────────────────────── */}
-      <Section title="Currently Building (Bento Grid)">
+      <Section title="Currently Building">
         {form.currentlyBuilding.map((item, i) => (
           <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
             <div className="flex items-center justify-between mb-2">
@@ -542,7 +542,7 @@ export default function ContentPage() {
                 <Ic d={IC.trash} size={13} />
               </button>
             </div>
-            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-end">
+            <div className="grid grid-cols-[1fr_auto_auto] gap-3 items-end">
               <Input
                 label="Title"
                 value={item.title}
@@ -555,18 +555,6 @@ export default function ContentPage() {
                 onChange={(e) => updateBuildItem(i, 'status', e.target.value)}
                 placeholder="ACTIVE"
               />
-              <div className="flex flex-col gap-1.5 min-w-[120px]">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size (Variant)</label>
-                <select
-                  value={item.variant}
-                  onChange={(e) => updateBuildItem(i, 'variant', e.target.value)}
-                  className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
-                >
-                  <option value="small">Small (1 col)</option>
-                  <option value="medium">Medium (2 col)</option>
-                  <option value="large">Large (2x2)</option>
-                </select>
-              </div>
               <Input
                 label="Order"
                 value={item.order}
