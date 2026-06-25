@@ -2,14 +2,29 @@ import React from 'react';
 
 const DEFAULT_ITEMS = [
   {
-    title: 'ResumeIQ',
-    description: 'AI-powered resume intelligence platform leveraging NLP for ATS scoring.',
-    status: 'Active',
+    title: 'Pothole Detection',
+    description: 'Upgrading my AI-based pothole detection project with MERN features like image uploads, prediction history, user reports, and admin analytics.',
+    status: 'IMPROVING',
   },
   {
-    title: 'Portfolio Security Upgrade',
-    description: 'Implementing FAANG-level backend validation, JWT hardening, and isolated DB roles.',
-    status: 'Improving',
+    title: 'ThinkFast Quiz',
+    description: 'Converting my frontend quiz app into a full MERN quiz platform with authentication, categories, scores, leaderboard, and admin question management.',
+    status: 'ACTIVE',
+  },
+  {
+    title: 'Mood-Based Travel Explorer',
+    description: 'Improving the travel explorer frontend into a MERN app with saved trips, mood-based suggestions, user journals, and personalized travel boards.',
+    status: 'IMPROVING',
+  },
+  {
+    title: 'SkyCast Weather Forecast',
+    description: 'Building the weather forecast app further with saved locations, forecast history, alerts, user preferences, and clean API integration.',
+    status: 'ACTIVE',
+  },
+  {
+    title: 'TaskFlow To-Do List',
+    description: 'Upgrading my task manager into a production-ready MERN app with login, task CRUD, priorities, reminders, filters, and dashboard insights.',
+    status: 'ACTIVE',
   },
 ];
 
@@ -32,10 +47,10 @@ export default function CurrentlyBuilding({ content, loading }) {
       : DEFAULT_ITEMS;
 
   const defaultMetrics = [
-    { value: '3+', label: 'Production MERN Apps' },
-    { value: 'CMS', label: 'Secure Admin Panel' },
-    { value: 'JWT', label: 'Auth & Validation' },
-    { value: 'DB', label: 'Isolated Roles' }
+    { value: '5', label: 'MERN UPGRADES' },
+    { value: 'JWT', label: 'SECURE AUTH' },
+    { value: 'API', label: 'REST BACKEND' },
+    { value: 'DB', label: 'MONGODB MODELS' }
   ];
 
   const metrics = Array.isArray(content?.impactMetrics) && content.impactMetrics.length > 0
