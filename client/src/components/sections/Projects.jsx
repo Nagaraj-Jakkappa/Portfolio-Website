@@ -26,6 +26,16 @@ function getCaseStudy(title) {
   };
 }
 
+// Client-side status labels for projects currently being upgraded
+const UPGRADE_PROJECT_KEYWORDS = ['pothole', 'thinkfast', 'quiz', 'mood', 'travel', 'skycast', 'weather', 'taskflow', 'to-do', 'todo'];
+
+function getStatusLabels(title) {
+  const t = (title || '').toLowerCase();
+  const isUpgradeProject = UPGRADE_PROJECT_KEYWORDS.some((kw) => t.includes(kw));
+  if (!isUpgradeProject) return null;
+  return ['Frontend Build', 'Backend Upgrade In Progress'];
+}
+
 function ProjectCard({ project, isOverlayOpen, onToggleOverlay }) {
   const { title, description, techStack, imageUrl, liveUrl, githubUrl, category } = project;
   
@@ -181,6 +191,20 @@ function ProjectCard({ project, isOverlayOpen, onToggleOverlay }) {
         )}
 
         <p className="text-slate-400 text-sm leading-relaxed mb-4 break-words">{description}</p>
+
+        {/* Status labels for projects being upgraded */}
+        {getStatusLabels(title) && (
+          <div className="flex flex-wrap gap-1.5 mb-4">
+            {getStatusLabels(title).map((label) => (
+              <span
+                key={label}
+                className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded border bg-amber-500/10 text-amber-400 border-amber-500/20"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Case Study Toggle */}
         <div className="mt-auto pt-4 border-t border-navy-700/50">
