@@ -3,16 +3,20 @@
 const SESSION_KEY = 'techartistry_session_id';
 
 function getSessionId() {
-  let sessionId = localStorage.getItem(SESSION_KEY);
-  if (!sessionId) {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-      sessionId = crypto.randomUUID();
-    } else {
-      sessionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  try {
+    let sessionId = localStorage.getItem(SESSION_KEY);
+    if (!sessionId) {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        sessionId = crypto.randomUUID();
+      } else {
+        sessionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      }
+      localStorage.setItem(SESSION_KEY, sessionId);
     }
-    localStorage.setItem(SESSION_KEY, sessionId);
+    return sessionId;
+  } catch (error) {
+    return 'anonymous-session';
   }
-  return sessionId;
 }
 
 function getDeviceType() {
@@ -63,8 +67,12 @@ export function trackVisitorEvent(eventType, metadata = {}) {
 
   // Gate optional tracking behind consent
   if (typeof window !== 'undefined') {
-    const consent = localStorage.getItem('techartistry_cookie_consent');
-    if (consent !== 'accepted') {
+    try {
+      const consent = localStorage.getItem('techartistry_cookie_consent');
+      if (consent !== 'accepted') {
+        return;
+      }
+    } catch (error) {
       return;
     }
   }

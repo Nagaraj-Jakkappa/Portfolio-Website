@@ -114,6 +114,14 @@ app.use(
 );
 
 // 5. Public/Global Routes
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'Techartistry API',
+    health: '/api/health'
+  });
+});
+
 app.get('/api/health', (req, res) =>
   res.json({
     status: 'ok',
