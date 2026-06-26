@@ -101,7 +101,7 @@ const siteContentSchema = new mongoose.Schema(
         value: { type: String, default: '', maxlength: 20 },
         description: { type: String, default: '', maxlength: 500 },
         color: { type: String, default: 'cyan', maxlength: 20 },
-        size: { type: String, default: 'normal', maxlength: 20 },
+        size: { type: String, default: 'small', maxlength: 20 },
         order: { type: Number, default: 0 },
         isActive: { type: Boolean, default: true },
       },

@@ -572,16 +572,17 @@ export default function ContentPage() {
                 </select>
               </div>
               <div className="flex flex-col gap-1.5 min-w-[120px]">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size</label>
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Layout Size</label>
                 <select
                   value={item.size}
                   onChange={(e) => updateBuildItem(i, 'size', e.target.value)}
                   className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
                 >
-                  <option value="small">Small / 1 col</option>
-                  <option value="wide">Wide / 2 col</option>
-                  <option value="tall">Tall / 2 row</option>
-                  <option value="feature">Feature / 2x2</option>
+                  <option value="small">small (1 column)</option>
+                  <option value="wide">wide (2 columns)</option>
+                  <option value="tall">tall (2 rows)</option>
+                  <option value="feature">feature (2x2)</option>
+                  <option value="full">full (Full width)</option>
                 </select>
               </div>
               <Input
@@ -661,14 +662,15 @@ export default function ContentPage() {
                 </select>
               </div>
               <div className="flex flex-col gap-1.5 min-w-[120px]">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Size</label>
+                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Layout Size</label>
                 <select
                   value={item.size}
                   onChange={(e) => updateImpactMetric(i, 'size', e.target.value)}
                   className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
                 >
-                  <option value="normal">Normal</option>
-                  <option value="large">Large</option>
+                  <option value="small">small (Standard)</option>
+                  <option value="wide">wide (2 cols horizontal)</option>
+                  <option value="large">large (2 cols prominent)</option>
                 </select>
               </div>
               <Input

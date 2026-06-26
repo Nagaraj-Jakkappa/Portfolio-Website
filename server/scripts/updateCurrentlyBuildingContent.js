@@ -16,7 +16,7 @@ const NEW_BUILDING_CONTENT = [
     title: 'Pothole Detection',
     description: 'Upgrading my AI-based pothole detection project with MERN features like image uploads, prediction history, user reports, and admin analytics.',
     status: 'IMPROVING',
-    variant: 'large',
+    variant: 'small',
     order: 1,
     isActive: true,
   },
@@ -24,7 +24,7 @@ const NEW_BUILDING_CONTENT = [
     title: 'ThinkFast Quiz',
     description: 'Converting my frontend quiz app into a full MERN quiz platform with authentication, categories, scores, leaderboard, and admin question management.',
     status: 'ACTIVE',
-    variant: 'medium',
+    variant: 'small',
     order: 2,
     isActive: true,
   },
@@ -32,7 +32,7 @@ const NEW_BUILDING_CONTENT = [
     title: 'Mood-Based Travel Explorer',
     description: 'Improving the travel explorer frontend into a MERN app with saved trips, mood-based suggestions, user journals, and personalized travel boards.',
     status: 'IMPROVING',
-    variant: 'medium',
+    variant: 'wide',
     order: 3,
     isActive: true,
   },
@@ -40,7 +40,7 @@ const NEW_BUILDING_CONTENT = [
     title: 'SkyCast Weather Forecast',
     description: 'Building the weather forecast app further with saved locations, forecast history, alerts, user preferences, and clean API integration.',
     status: 'ACTIVE',
-    variant: 'small',
+    variant: 'full',
     order: 4,
     isActive: true,
   },
@@ -48,17 +48,17 @@ const NEW_BUILDING_CONTENT = [
     title: 'TaskFlow To-Do List',
     description: 'Upgrading my task manager into a production-ready MERN app with login, task CRUD, priorities, reminders, filters, and dashboard insights.',
     status: 'ACTIVE',
-    variant: 'small',
+    variant: 'full',
     order: 5,
     isActive: true,
   },
 ];
 
 const NEW_IMPACT_METRICS = [
-  { value: '5', label: 'MERN UPGRADES', description: '', order: 1, isActive: true },
-  { value: 'JWT', label: 'SECURE AUTH', description: '', order: 2, isActive: true },
-  { value: 'API', label: 'REST BACKEND', description: '', order: 3, isActive: true },
-  { value: 'DB', label: 'MONGODB MODELS', description: '', order: 4, isActive: true },
+  { value: '5', label: 'MERN UPGRADES', description: '', variant: 'small', order: 1, isActive: true },
+  { value: 'JWT', label: 'SECURE AUTH', description: '', variant: 'small', order: 2, isActive: true },
+  { value: 'API', label: 'REST BACKEND', description: '', variant: 'small', order: 3, isActive: true },
+  { value: 'DB', label: 'MONGODB MODELS', description: '', variant: 'small', order: 4, isActive: true },
 ];
 
 async function run() {

@@ -44,7 +44,7 @@ const contentValidationRules = [
   body('currentlyBuilding.*.status').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
   body('currentlyBuilding.*.variant').optional({ checkFalsy: true }).isString().isIn(['small', 'medium', 'large']).withMessage('Variant must be small, medium, or large'),
   body('currentlyBuilding.*.color').optional({ checkFalsy: true }).isString().isIn(['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose']),
-  body('currentlyBuilding.*.size').optional({ checkFalsy: true }).isString().isIn(['small', 'wide', 'tall', 'feature']),
+  body('currentlyBuilding.*.size').optional({ checkFalsy: true }).isString().isIn(['small', 'wide', 'tall', 'feature', 'full']),
   body('currentlyBuilding.*.order').optional().isNumeric(),
   body('currentlyBuilding.*.isActive').optional().isBoolean(),
 
@@ -93,7 +93,7 @@ const contentValidationRules = [
   body('impactMetrics.*.value').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
   body('impactMetrics.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
   body('impactMetrics.*.color').optional({ checkFalsy: true }).isString().isIn(['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose']),
-  body('impactMetrics.*.size').optional({ checkFalsy: true }).isString().isIn(['normal', 'large']),
+  body('impactMetrics.*.size').optional({ checkFalsy: true }).isString().isIn(['small', 'wide', 'large']),
   body('impactMetrics.*.order').optional().isNumeric(),
   body('impactMetrics.*.isActive').optional().isBoolean(),
 
