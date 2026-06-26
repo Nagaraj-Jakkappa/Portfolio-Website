@@ -519,12 +519,46 @@ export default function ContentPage() {
       </Section>
 
       {/* ── Currently Building ────────────────────────────── */}
-      <Section title="Currently Building">
-        {form.currentlyBuilding.map((item, i) => (
+      <Section title="Currently Building & Impact Layout">
+        
+        {/* Layout Preview Guide */}
+        <div className="mb-6 p-4 bg-navy-900 border border-navy-700 rounded-lg">
+          <h4 className="text-sm font-semibold text-white mb-2">Desktop Sketch Preview</h4>
+          <div className="text-xs text-slate-400 font-mono bg-navy-950 p-3 rounded border border-navy-800 mb-3 whitespace-pre">
+{`Top Area:
+[ Building 1 small ] [ Building 2 small ]   [ Impact 1 ] [ Impact 2 ]
+[ Building 3 wide across left ]             [ Impact 3 ] [ Impact 4 ]
+
+Bottom Area:
+[ Building 4 full width ]
+[ Building 5 full width ]`}
+          </div>
+          <h4 className="text-sm font-semibold text-white mb-2">Mobile Order</h4>
+          <div className="text-xs text-slate-400 font-mono bg-navy-950 p-3 rounded border border-navy-800">
+            Building 1 → Building 2 → Building 3 → Building 4 → Building 5 → Engineering Impact
+          </div>
+        </div>
+
+        <h3 className="text-lg font-bold text-white mb-2">Currently Building Cards</h3>
+        <p className="text-xs text-slate-400 mb-4">
+          Sketch layout recommendation: order 1 small, order 2 small, order 3 wide, order 4 full, order 5 full.
+        </p>
+
+        {form.currentlyBuilding.map((item, i) => {
+          const ord = Number(item.order) || i + 1;
+          let label = 'Extra / Full Width fallback';
+          if (ord === 1 || ord === 2) label = 'Top Left Small';
+          else if (ord === 3) label = 'Top Left Wide';
+          else if (ord === 4 || ord === 5) label = 'Bottom Full Width';
+
+          return (
           <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-4">
                 <span className="text-xs text-slate-500 font-mono">Project #{i + 1}</span>
+                <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider border border-blue-500/30 text-blue-400 bg-blue-500/10">
+                  Order {ord}: {label}
+                </span>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -578,11 +612,11 @@ export default function ContentPage() {
                   onChange={(e) => updateBuildItem(i, 'size', e.target.value)}
                   className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
                 >
-                  <option value="small">small (1 column)</option>
-                  <option value="wide">wide (2 columns)</option>
-                  <option value="tall">tall (2 rows)</option>
-                  <option value="feature">feature (2x2)</option>
-                  <option value="full">full (Full width)</option>
+                  <option value="small">small — Small Card</option>
+                  <option value="wide">wide — Wide Card</option>
+                  <option value="full">full — Full Width Card</option>
+                  <option value="tall">tall — Tall Card</option>
+                  <option value="feature">feature — Feature Card</option>
                 </select>
               </div>
               <Input
@@ -601,7 +635,7 @@ export default function ContentPage() {
               rows={2}
             />
           </div>
-        ))}
+        )})}
         <Btn variant="ghost" onClick={addBuildItem}>
           <Ic d={IC.plus} size={13} /> Add Project
         </Btn>
@@ -610,11 +644,26 @@ export default function ContentPage() {
 
       {/* ── Engineering Impact Metrics ────────────────────── */}
       <Section title="Engineering Impact Metrics">
-        {form.impactMetrics.map((item, i) => (
+        <p className="text-xs text-slate-400 mb-4">
+          For the current sketch layout, keep all 4 Engineering Impact metrics as small to render a clean 2x2 grid.
+        </p>
+
+        {form.impactMetrics.map((item, i) => {
+          const ord = Number(item.order) || i + 1;
+          let label = 'Extra Metric';
+          if (ord === 1) label = 'Impact Top Left';
+          else if (ord === 2) label = 'Impact Top Right';
+          else if (ord === 3) label = 'Impact Bottom Left';
+          else if (ord === 4) label = 'Impact Bottom Right';
+
+          return (
           <div key={i} className="p-4 bg-navy-950 border border-navy-800 rounded-lg space-y-3 mb-3">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-4">
                 <span className="text-xs text-slate-500 font-mono">Metric #{i + 1}</span>
+                <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-wider border border-blue-500/30 text-blue-400 bg-blue-500/10">
+                  Order {ord}: {label}
+                </span>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -668,9 +717,9 @@ export default function ContentPage() {
                   onChange={(e) => updateImpactMetric(i, 'size', e.target.value)}
                   className="w-full bg-navy-900 border border-navy-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
                 >
-                  <option value="small">small (Standard)</option>
-                  <option value="wide">wide (2 cols horizontal)</option>
-                  <option value="large">large (2 cols prominent)</option>
+                  <option value="small">small — Standard Metric</option>
+                  <option value="wide">wide — Wide Metric</option>
+                  <option value="large">large — Large Metric</option>
                 </select>
               </div>
               <Input
@@ -682,7 +731,7 @@ export default function ContentPage() {
               />
             </div>
           </div>
-        ))}
+        )})}
         <Btn variant="ghost" onClick={addImpactMetric}>
           <Ic d={IC.plus} size={13} /> Add Metric
         </Btn>
