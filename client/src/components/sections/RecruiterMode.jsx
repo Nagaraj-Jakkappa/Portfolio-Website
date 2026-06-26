@@ -104,7 +104,7 @@ export default function RecruiterMode({ items }) {
             <img
               src={engineeringWorkflowGif}
               alt="Engineering workflow animation"
-              className="relative z-10 w-full max-w-[280px] object-contain opacity-90 drop-shadow-2xl"
+              className="relative z-10 w-full max-w-[280px] object-contain opacity-90 drop-shadow-2xl [mask-image:radial-gradient(circle,_rgba(0,0,0,1)_62%,_rgba(0,0,0,0)_100%)] [-webkit-mask-image:radial-gradient(circle,_rgba(0,0,0,1)_62%,_rgba(0,0,0,0)_100%)]"
             />
           </div>
         </div>
