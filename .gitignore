@@ -69,4 +69,5 @@ coverage/
 # Misc
 # =========================
 *.zip
-*.tar.gzvenv-rembg/
+*.tar.gz
+venv-rembg/
