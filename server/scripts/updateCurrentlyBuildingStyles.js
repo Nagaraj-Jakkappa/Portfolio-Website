@@ -6,18 +6,18 @@ const SiteContent = require('../models/SiteContent');
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const DEFAULT_ITEMS = [
-  { title: 'Pothole Detection', color: 'emerald', size: 'feature' },
-  { title: 'ThinkFast Quiz', color: 'cyan', size: 'wide' },
+  { title: 'Pothole Detection', color: 'emerald', size: 'small' },
+  { title: 'ThinkFast Quiz', color: 'cyan', size: 'small' },
   { title: 'Mood-Based Travel Explorer', color: 'violet', size: 'wide' },
   { title: 'SkyCast Weather Forecast', color: 'blue', size: 'small' },
   { title: 'TaskFlow To-Do List', color: 'amber', size: 'small' },
 ];
 
 const DEFAULT_METRICS = [
-  { label: 'MERN UPGRADES', color: 'blue', size: 'normal' },
-  { label: 'SECURE AUTH', color: 'cyan', size: 'large' },
-  { label: 'REST BACKEND', color: 'emerald', size: 'normal' },
-  { label: 'MONGODB MODELS', color: 'violet', size: 'large' },
+  { label: 'MERN UPGRADES', color: 'blue', size: 'small' },
+  { label: 'SECURE AUTH', color: 'cyan', size: 'small' },
+  { label: 'REST BACKEND', color: 'emerald', size: 'wide' },
+  { label: 'MONGODB MODELS', color: 'violet', size: 'wide' },
 ];
 
 async function updateStyles() {

@@ -6,7 +6,7 @@ const DEFAULT_ITEMS = [
     description: 'Upgrading my AI-based pothole detection project with MERN features like image uploads, prediction history, user reports, and admin analytics.',
     status: 'IMPROVING',
     color: 'emerald',
-    size: 'feature',
+    size: 'small',
     order: 1,
     isActive: true,
   },
@@ -15,7 +15,7 @@ const DEFAULT_ITEMS = [
     description: 'Converting my frontend quiz app into a full MERN quiz platform with authentication, categories, scores, leaderboard, and admin question management.',
     status: 'ACTIVE',
     color: 'cyan',
-    size: 'wide',
+    size: 'small',
     order: 2,
     isActive: true,
   },
@@ -49,10 +49,10 @@ const DEFAULT_ITEMS = [
 ];
 
 const DEFAULT_METRICS = [
-  { value: '5', label: 'MERN UPGRADES', color: 'blue', size: 'normal', order: 1, isActive: true },
-  { value: 'JWT', label: 'SECURE AUTH', color: 'cyan', size: 'large', order: 2, isActive: true },
-  { value: 'API', label: 'REST BACKEND', color: 'emerald', size: 'normal', order: 3, isActive: true },
-  { value: 'DB', label: 'MONGODB MODELS', color: 'violet', size: 'large', order: 4, isActive: true },
+  { value: '5', label: 'MERN UPGRADES', color: 'blue', size: 'small', order: 1, isActive: true },
+  { value: 'JWT', label: 'SECURE AUTH', color: 'cyan', size: 'small', order: 2, isActive: true },
+  { value: 'API', label: 'REST BACKEND', color: 'emerald', size: 'wide', order: 3, isActive: true },
+  { value: 'DB', label: 'MONGODB MODELS', color: 'violet', size: 'wide', order: 4, isActive: true },
 ];
 
 const THEME_COLORS = {
@@ -102,17 +102,17 @@ export default function CurrentlyBuilding({ content, loading }) {
   return (
     <section id="currently-building" className="section-padding bg-navy-950 border-t border-navy-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row gap-12 items-start">
-          {/* Currently Building */}
-          <div className="flex-1 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left Side: Currently Building */}
+          <div className="lg:col-span-7 w-full">
             <h2 className="font-display font-bold text-2xl text-white mb-6 flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               Currently Building & Learning
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(140px,auto)]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5 auto-rows-[minmax(140px,auto)]">
               {loading ? (
                 [1, 2, 3, 4, 5].map((num, idx) => (
-                  <div key={num} className={`card-base p-5 animate-pulse ${idx === 0 ? 'md:col-span-2' : ''}`}>
+                  <div key={num} className={`card-base p-5 animate-pulse ${idx === 2 ? 'md:col-span-2' : ''}`}>
                     <div className="flex justify-between items-start mb-4">
                       <div className="h-4 bg-navy-700 rounded w-1/3" />
                       <div className="h-4 bg-navy-700 rounded w-16" />
@@ -145,12 +145,12 @@ export default function CurrentlyBuilding({ content, loading }) {
             </div>
           </div>
 
-          {/* Impact Metrics */}
-          <div className="flex-1 w-full">
+          {/* Right Side: Engineering Impact */}
+          <div className="lg:col-span-5 w-full">
             <h2 className="font-display font-bold text-2xl text-white mb-6">
               Engineering <span className="gradient-text">Impact</span>
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
               {loading ? (
                 [1, 2, 3, 4].map((i) => (
                   <div key={i} className="card-base p-6 flex flex-col justify-center items-center text-center animate-pulse min-h-[140px]">
@@ -161,10 +161,33 @@ export default function CurrentlyBuilding({ content, loading }) {
               ) : (
                 metrics.map((metric, i) => {
                   const theme = getTheme(metric.color);
-                  const metricSize = getMetricSizeClass(metric.size);
+                  // For metrics, "wide" makes it span 2 columns and flow horizontally
+                  const isWide = metric.size === 'wide' || metric.size === 'large'; 
+                  
+                  if (isWide) {
+                    return (
+                      <div key={i} className={`md:col-span-2 card-base p-6 flex flex-col sm:flex-row items-center sm:justify-between text-center sm:text-left group border-transparent ${theme.hover}`}>
+                        <div className="mb-2 sm:mb-0">
+                          <span className="text-xs text-slate-400 uppercase tracking-wider font-mono block mb-1">
+                            {metric.label}
+                          </span>
+                          {metric.description && (
+                            <span className="text-[10px] text-slate-500 max-w-[200px] block">
+                              {metric.description}
+                            </span>
+                          )}
+                        </div>
+                        <span className={`font-display font-bold text-4xl md:text-5xl group-hover:scale-110 transition-transform duration-300 ${theme.text}`}>
+                          {metric.value}
+                        </span>
+                      </div>
+                    );
+                  }
+
+                  // Default small/compact vertical metric card
                   return (
-                    <div key={i} className={`card-base p-6 flex flex-col justify-center items-center text-center group border-transparent ${theme.hover}`}>
-                      <span className={`font-display font-bold mb-2 group-hover:scale-110 transition-transform duration-300 ${metricSize} ${theme.text}`}>
+                    <div key={i} className={`md:col-span-1 card-base p-6 flex flex-col justify-center items-center text-center group border-transparent ${theme.hover}`}>
+                      <span className={`font-display font-bold text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform duration-300 ${theme.text}`}>
                         {metric.value}
                       </span>
                       <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">
