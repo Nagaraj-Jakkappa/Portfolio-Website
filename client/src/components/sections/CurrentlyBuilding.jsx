@@ -103,6 +103,67 @@ export default function CurrentlyBuilding({ content, loading }) {
     .filter(m => m.isActive !== false)
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
+  const renderImpactSection = (className = '') => (
+    <div className={`w-full ${className}`}>
+      <h2 className="font-display font-bold text-2xl text-white mb-6">
+        Engineering <span className="gradient-text">Impact</span>
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
+        {loading ? (
+          [1, 2, 3, 4].map((i) => (
+            <div key={i} className="card-base p-6 flex flex-col justify-center items-center text-center animate-pulse min-h-[140px]">
+              <div className="h-10 bg-navy-700 rounded-md w-16 mb-4" />
+              <div className="h-3 bg-navy-700 rounded w-24" />
+            </div>
+          ))
+        ) : (
+          metrics.map((metric, i) => {
+            const theme = getTheme(metric.color);
+            // For metrics, "wide" makes it span 2 columns and flow horizontally
+            const isWide = metric.size === 'wide' || metric.size === 'large'; 
+            
+            if (isWide) {
+              return (
+                <div key={i} className={`md:col-span-2 card-base p-6 flex flex-col sm:flex-row items-center sm:justify-between text-center sm:text-left group border-transparent ${theme.hover}`}>
+                  <div className="mb-2 sm:mb-0">
+                    <span className="text-xs text-slate-400 uppercase tracking-wider font-mono block mb-1">
+                      {metric.label}
+                    </span>
+                    {metric.description && (
+                      <span className="text-[10px] text-slate-500 max-w-[200px] block">
+                        {metric.description}
+                      </span>
+                    )}
+                  </div>
+                  <span className={`font-display font-bold text-4xl md:text-5xl group-hover:scale-110 transition-transform duration-300 ${theme.text}`}>
+                    {metric.value}
+                  </span>
+                </div>
+              );
+            }
+
+            // Default small/compact vertical metric card
+            return (
+              <div key={i} className={`md:col-span-1 card-base p-6 flex flex-col justify-center items-center text-center group border-transparent ${theme.hover}`}>
+                <span className={`font-display font-bold text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform duration-300 ${theme.text}`}>
+                  {metric.value}
+                </span>
+                <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">
+                  {metric.label}
+                </span>
+                {metric.description && (
+                  <span className="text-[10px] text-slate-500 mt-2 block">
+                    {metric.description}
+                  </span>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <section id="currently-building" className="section-padding bg-navy-950 border-t border-navy-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,65 +221,8 @@ export default function CurrentlyBuilding({ content, loading }) {
             </div>
           </div>
 
-          {/* Right Column: Engineering Impact Metrics */}
-          <div className="w-full">
-            <h2 className="font-display font-bold text-2xl text-white mb-6">
-              Engineering <span className="gradient-text">Impact</span>
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
-              {loading ? (
-                [1, 2, 3, 4].map((i) => (
-                  <div key={i} className="card-base p-6 flex flex-col justify-center items-center text-center animate-pulse min-h-[140px]">
-                    <div className="h-10 bg-navy-700 rounded-md w-16 mb-4" />
-                    <div className="h-3 bg-navy-700 rounded w-24" />
-                  </div>
-                ))
-              ) : (
-                metrics.map((metric, i) => {
-                  const theme = getTheme(metric.color);
-                  // For metrics, "wide" makes it span 2 columns and flow horizontally
-                  const isWide = metric.size === 'wide' || metric.size === 'large'; 
-                  
-                  if (isWide) {
-                    return (
-                      <div key={i} className={`md:col-span-2 card-base p-6 flex flex-col sm:flex-row items-center sm:justify-between text-center sm:text-left group border-transparent ${theme.hover}`}>
-                        <div className="mb-2 sm:mb-0">
-                          <span className="text-xs text-slate-400 uppercase tracking-wider font-mono block mb-1">
-                            {metric.label}
-                          </span>
-                          {metric.description && (
-                            <span className="text-[10px] text-slate-500 max-w-[200px] block">
-                              {metric.description}
-                            </span>
-                          )}
-                        </div>
-                        <span className={`font-display font-bold text-4xl md:text-5xl group-hover:scale-110 transition-transform duration-300 ${theme.text}`}>
-                          {metric.value}
-                        </span>
-                      </div>
-                    );
-                  }
-
-                  // Default small/compact vertical metric card
-                  return (
-                    <div key={i} className={`md:col-span-1 card-base p-6 flex flex-col justify-center items-center text-center group border-transparent ${theme.hover}`}>
-                      <span className={`font-display font-bold text-4xl md:text-5xl mb-2 group-hover:scale-110 transition-transform duration-300 ${theme.text}`}>
-                        {metric.value}
-                      </span>
-                      <span className="text-xs text-slate-400 uppercase tracking-wider font-mono">
-                        {metric.label}
-                      </span>
-                      {metric.description && (
-                        <span className="text-[10px] text-slate-500 mt-2 block">
-                          {metric.description}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
+          {/* Right Column: Engineering Impact Metrics (Desktop only here) */}
+          {renderImpactSection('hidden lg:block')}
         </div>
 
         {/* BOTTOM AREA (Full Width: Remaining Currently Building Items) */}
@@ -262,6 +266,9 @@ export default function CurrentlyBuilding({ content, loading }) {
             )}
           </div>
         )}
+
+        {/* Engineering Impact Metrics (Mobile only here) */}
+        {renderImpactSection('block lg:hidden mt-8')}
 
       </div>
     </section>
