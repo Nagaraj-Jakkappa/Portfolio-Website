@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { trackVisitorEvent } from '../../utils/visitorTracking';
+import developerWorkspace from '../../assets/illustrations/developer-workspace.png';
 
 export default function Hero({ content }) {
   const hero = content?.hero || {};
@@ -49,7 +50,8 @@ export default function Hero({ content }) {
       <div className="absolute inset-0 bg-gradient-to-b from-navy-950/50 via-transparent to-navy-900" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-        <div className="max-w-3xl stagger-children">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10">
+          <div className="max-w-3xl stagger-children">
           {/* Status Badge */}
           <div
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-400 text-[10px] uppercase tracking-widest font-mono mb-8 animate-fade-up"
@@ -151,6 +153,17 @@ export default function Hero({ content }) {
                 </div>
               </div>
             ))}
+          </div>
+          </div>
+
+          {/* Right side illustration (Desktop only) */}
+          <div className="relative hidden lg:flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
+            <img
+              src={developerWorkspace}
+              alt="Developer workspace illustration"
+              className="relative z-10 w-full max-w-[500px] object-contain drop-shadow-2xl"
+            />
           </div>
         </div>
       </div>
