@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { trackVisitorEvent } from '../../utils/visitorTracking';
-import developerWorkspace from '../../assets/illustrations/developer-workspace.png';
+import developerWorkspace from '../../assets/illustrations/developer-workspace.webp';
 
 export default function Hero({ content }) {
   const hero = content?.hero || {};
@@ -162,7 +162,7 @@ export default function Hero({ content }) {
             <img
               src={developerWorkspace}
               alt="Developer workspace illustration"
-              className="relative z-10 w-full max-w-[500px] object-contain drop-shadow-2xl"
+              className="relative z-10 w-full max-w-[560px] object-contain drop-shadow-2xl"
             />
           </div>
         </div>
