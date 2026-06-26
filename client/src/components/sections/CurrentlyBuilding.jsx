@@ -1,5 +1,4 @@
 import React from 'react';
-import engineeringWorkflowGif from '../../assets/illustrations/engineering-workflow.gif';
 
 const DEFAULT_ITEMS = [
   {
@@ -106,22 +105,9 @@ export default function CurrentlyBuilding({ content, loading }) {
 
   const renderImpactSection = (className = '') => (
     <div className={`w-full ${className}`}>
-      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6">
-        <div>
-          <h2 className="font-display font-bold text-2xl text-white">
-            Engineering <span className="gradient-text">Impact</span>
-          </h2>
-        </div>
-
-        <div className="hidden lg:flex relative w-full max-w-[300px] justify-center">
-          <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
-          <img
-            src={engineeringWorkflowGif}
-            alt="Engineering workflow animation"
-            className="relative z-10 w-full max-w-[280px] object-contain opacity-90 drop-shadow-2xl"
-          />
-        </div>
-      </div>
+      <h2 className="font-display font-bold text-2xl text-white mb-6">
+        Engineering <span className="gradient-text">Impact</span>
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
         {loading ? (
           [1, 2, 3, 4].map((i) => (

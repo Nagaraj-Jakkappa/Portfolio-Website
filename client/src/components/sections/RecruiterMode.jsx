@@ -1,4 +1,5 @@
 import React from 'react';
+import engineeringWorkflowGif from '../../assets/illustrations/engineering-workflow.gif';
 
 const THEME_MAP = {
   blue: { border: 'border-blue-500/30 hover:border-blue-500/60', bg: 'bg-blue-500/10', text: 'text-blue-400' },
@@ -79,21 +80,32 @@ export default function RecruiterMode({ items }) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
-          <div>
-            <p className="text-cyan-400 uppercase tracking-[0.25em] text-xs font-semibold mb-4">
-              Behind the Code
-            </p>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 mb-14">
+          <div className="flex flex-col md:flex-row md:items-end gap-8">
+            <div>
+              <p className="text-cyan-400 uppercase tracking-[0.25em] text-xs font-semibold mb-4">
+                Behind the Code
+              </p>
 
-            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight break-words max-w-3xl">
-              Engineering <span className="text-cyan-400">Highlights</span>
-            </h2>
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight break-words max-w-3xl">
+                Engineering <span className="text-cyan-400">Highlights</span>
+              </h2>
+            </div>
+
+            <div className="bg-cyan-500/10 border border-cyan-400/20 rounded-2xl p-5 max-w-md">
+              <p className="text-slate-300 text-sm leading-relaxed">
+                Focused on scalable product development, modern frontend architecture, and production-oriented systems.
+              </p>
+            </div>
           </div>
 
-          <div className="bg-cyan-500/10 border border-cyan-400/20 rounded-2xl p-5 max-w-md">
-            <p className="text-slate-300 text-sm leading-relaxed">
-              Focused on scalable product development, modern frontend architecture, and production-oriented systems.
-            </p>
+          <div className="hidden lg:flex relative w-full max-w-[300px] items-center justify-center shrink-0">
+            <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
+            <img
+              src={engineeringWorkflowGif}
+              alt="Engineering workflow animation"
+              className="relative z-10 w-full max-w-[280px] object-contain opacity-90 drop-shadow-2xl"
+            />
           </div>
         </div>
 
