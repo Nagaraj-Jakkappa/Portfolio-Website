@@ -99,13 +99,60 @@ export default function ProjectDetail() {
   const fallbackSolution = `Developed a comprehensive application utilizing ${techStack?.join(', ') || 'modern web technologies'} to ensure high performance.`;
   const fallbackImpact = `Successfully delivered a functional product meeting all technical and design specifications.`;
 
-  // Safe fallbacks for the new UI sections so it works even before you update your DB
-  const featuresList = project.features || [
-    { title: "Comprehensive Architecture", desc: "Designed to handle high traffic and complex user flows efficiently." },
-    { title: "Modern User Experience", desc: "Responsive design optimized for desktop, tablet, and mobile devices." },
-    { title: "Secure & Optimized", desc: "Built with standard security practices and optimized rendering." }
-  ];
+  // Helper to generate project-specific features
+  const getFeaturesForProject = (title, category) => {
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes('hyrr') || lowerTitle.includes('resumeiq')) {
+      return [
+        { title: 'ATS Resume Analysis', desc: 'Scan and analyze resumes against industry ATS standards.' },
+        { title: 'AI Resume Rewrite', desc: 'Generate impactful bullet points using Groq AI and LLMs.' },
+        { title: 'Secure User Authentication', desc: 'Protected routes and robust JWT-based user sessions.' },
+        { title: 'Resume Version Management', desc: 'Save, track, and compare multiple versions of user resumes.' },
+        { title: 'Subscription-ready Architecture', desc: 'Integrated with Razorpay for seamless premium tier upgrades.' }
+      ];
+    }
+    if (lowerTitle.includes('techartistry') || lowerTitle.includes('portfolio')) {
+      return [
+        { title: 'Dynamic Admin CMS', desc: 'Manage projects, experiences, and content via a secure dashboard.' },
+        { title: 'Secure Project Management', desc: 'Add, edit, or archive projects dynamically from the backend.' },
+        { title: 'Portfolio Analytics', desc: 'Track visitor insights and page views with built-in analytics.' },
+        { title: 'Certificate & Experience Management', desc: 'Seamlessly upload and showcase professional milestones.' },
+        { title: 'Optimized Media Delivery', desc: 'Fast and responsive media loading for optimal performance.' }
+      ];
+    }
+    if (lowerTitle.includes('pothole')) {
+      return [
+        { title: 'Image-based Pothole Detection', desc: 'Upload images to detect road anomalies and hazards.' },
+        { title: 'CNN-powered Classification', desc: 'Deep learning models trained for high accuracy object detection.' },
+        { title: 'Detection Result Preview', desc: 'Visualize the detected potholes with bounding boxes.' },
+        { title: 'Road Safety Use Case', desc: 'Practical application designed to improve civic infrastructure.' },
+        { title: 'MERN Upgrade Roadmap', desc: 'Currently migrating to a full web dashboard.' }
+      ];
+    }
+    
+    // Generic fallback based on category
+    if (category === 'web') {
+      return [
+        { title: 'Frontend Build', desc: 'Developed with modern, responsive UI techniques.' },
+        { title: 'Planned Backend Features', desc: 'Scalable architecture ready for robust backend integration.' },
+        { title: 'Optimized Performance', desc: 'Fast load times and smooth interactive transitions.' }
+      ];
+    }
+    if (category === 'fullstack') {
+      return [
+        { title: 'Full-Stack Architecture', desc: 'Seamless integration between frontend and backend.' },
+        { title: 'Secure Data Management', desc: 'Protected API endpoints and database schemas.' },
+        { title: 'Scalable Deployment', desc: 'Ready for production traffic and scalable hosting.' }
+      ];
+    }
+    return [
+      { title: 'Comprehensive Design', desc: 'Built to solve complex use-cases effectively.' },
+      { title: 'Modern User Experience', desc: 'Responsive and accessible across all devices.' },
+      { title: 'Secure & Optimized', desc: 'Built with industry-standard practices.' }
+    ];
+  };
 
+  const featuresList = project.features || getFeaturesForProject(title, category);
   const highlightsList = project.highlights || ["Responsive UI", "REST API", "Optimized DB"];
   
   const challengesList = project.challenges || [
@@ -242,6 +289,37 @@ export default function ProjectDetail() {
               </div>
             </section>
 
+            {/* Case Study */}
+            <section className="bg-navy-800/50 rounded-2xl border border-navy-700 p-8 space-y-8">
+              <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+                <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                Case Study
+              </h2>
+              
+              <div>
+                <h3 className="text-sm font-mono tracking-widest text-slate-400 uppercase mb-3">The Problem</h3>
+                <p className="text-slate-300 leading-relaxed">
+                  {hasCaseStudy ? caseStudy.problem : fallbackProblem}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-mono tracking-widest text-slate-400 uppercase mb-3">The Solution</h3>
+                <p className="text-slate-300 leading-relaxed">
+                  {hasCaseStudy ? caseStudy.solution : fallbackSolution}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-mono tracking-widest text-emerald-400 uppercase mb-3">The Impact</h3>
+                <p className="text-emerald-400/90 leading-relaxed font-medium">
+                  {hasCaseStudy ? caseStudy.impact : fallbackImpact}
+                </p>
+              </div>
+            </section>
+
             {/* Key Features */}
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-6">Key Features</h2>
@@ -276,31 +354,6 @@ export default function ProjectDetail() {
               </div>
             </section>
 
-            {/* Installation */}
-            <section>
-              <h2 className="text-2xl font-display font-bold text-white mb-6">Installation</h2>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-slate-400 mb-2">Clone the Repository</p>
-                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-xl p-4 font-mono text-sm text-slate-300 overflow-x-auto">
-                    git clone {githubUrl || 'https://github.com/username/project.git'}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-400 mb-2">Install Dependencies</p>
-                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-xl p-4 font-mono text-sm text-slate-300 overflow-x-auto">
-                    npm install
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-400 mb-2">Run Development Server</p>
-                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-xl p-4 font-mono text-sm text-slate-300 overflow-x-auto">
-                    npm run dev
-                  </div>
-                </div>
-              </div>
-            </section>
-
             {/* Challenges & Solutions */}
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-6">Challenges & Solutions</h2>
@@ -317,37 +370,6 @@ export default function ProjectDetail() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </section>
-
-
-            <section className="bg-navy-800/50 rounded-2xl border border-navy-700 p-8 space-y-8">
-              <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-                <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-                Case Study
-              </h2>
-              
-              <div>
-                <h3 className="text-sm font-mono tracking-widest text-slate-400 uppercase mb-3">The Problem</h3>
-                <p className="text-slate-300 leading-relaxed">
-                  {hasCaseStudy ? caseStudy.problem : fallbackProblem}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-mono tracking-widest text-slate-400 uppercase mb-3">The Solution</h3>
-                <p className="text-slate-300 leading-relaxed">
-                  {hasCaseStudy ? caseStudy.solution : fallbackSolution}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-mono tracking-widest text-emerald-400 uppercase mb-3">The Impact</h3>
-                <p className="text-emerald-400/90 leading-relaxed font-medium">
-                  {hasCaseStudy ? caseStudy.impact : fallbackImpact}
-                </p>
               </div>
             </section>
           </div>
@@ -399,6 +421,36 @@ export default function ProjectDetail() {
                 </a>
               )}
             </div>
+
+            {/* Installation - Collapsible */}
+            <details className="bg-navy-800/50 rounded-2xl border border-navy-700 group overflow-hidden">
+              <summary className="p-5 cursor-pointer flex items-center justify-between text-sm font-mono tracking-widest text-slate-300 uppercase select-none hover:text-white transition-colors">
+                Installation Guide
+                <svg className="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="p-5 pt-0 space-y-4 border-t border-navy-700/50 mt-1 bg-navy-900/20">
+                <div>
+                  <p className="text-xs text-slate-400 mb-2">Clone the Repository</p>
+                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-lg p-3 font-mono text-xs text-slate-300 overflow-x-auto">
+                    git clone {githubUrl || 'https://github.com/username/project.git'}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 mb-2">Install Dependencies</p>
+                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-lg p-3 font-mono text-xs text-slate-300 overflow-x-auto">
+                    npm install
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 mb-2">Run Development Server</p>
+                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-lg p-3 font-mono text-xs text-slate-300 overflow-x-auto">
+                    npm run dev
+                  </div>
+                </div>
+              </div>
+            </details>
           </div>
         </div>
       </div>
