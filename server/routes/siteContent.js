@@ -42,7 +42,6 @@ const contentValidationRules = [
   body('currentlyBuilding.*.title').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
   body('currentlyBuilding.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
   body('currentlyBuilding.*.status').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
-  body('currentlyBuilding.*.variant').optional({ checkFalsy: true }).isString().isIn(['small', 'medium', 'large']).withMessage('Variant must be small, medium, or large'),
   body('currentlyBuilding.*.color').optional({ checkFalsy: true }).isString().isIn(['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose']),
   body('currentlyBuilding.*.size').optional({ checkFalsy: true }).isString().isIn(['small', 'wide', 'tall', 'feature', 'full']),
   body('currentlyBuilding.*.order').optional().isNumeric(),
@@ -93,7 +92,7 @@ const contentValidationRules = [
   body('impactMetrics.*.value').optional({ checkFalsy: true }).isString().isLength({ max: 20 }),
   body('impactMetrics.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
   body('impactMetrics.*.color').optional({ checkFalsy: true }).isString().isIn(['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose']),
-  body('impactMetrics.*.size').optional({ checkFalsy: true }).isString().isIn(['small', 'wide', 'large']),
+  body('impactMetrics.*.size').optional({ checkFalsy: true }).isString().isIn(['small', 'normal', 'wide', 'large']),
   body('impactMetrics.*.order').optional().isNumeric(),
   body('impactMetrics.*.isActive').optional().isBoolean(),
 
@@ -206,9 +205,8 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         title: item.title?.trim() || '',
         description: item.description?.trim() || '',
         status: item.status?.trim() || 'Active',
-        variant: ['small', 'medium', 'large'].includes(item.variant) ? item.variant : 'small',
         color: ['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose'].includes(item.color) ? item.color : 'cyan',
-        size: ['small', 'wide', 'tall', 'feature'].includes(item.size) ? item.size : (item.size === 'normal' || item.size === 'compact' ? 'small' : 'small'),
+        size: ['small', 'wide', 'tall', 'feature', 'full'].includes(item.size) ? item.size : 'small',
         order: Number(item.order) || 0,
         isActive: typeof item.isActive === 'boolean' ? item.isActive : true,
       }));
@@ -273,7 +271,7 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         value: m.value?.trim() || '',
         description: m.description?.trim() || '',
         color: ['blue', 'cyan', 'emerald', 'amber', 'violet', 'purple', 'rose'].includes(m.color) ? m.color : 'cyan',
-        size: ['normal', 'large'].includes(m.size) ? m.size : 'normal',
+        size: ['small', 'normal', 'wide', 'large'].includes(m.size) ? m.size : 'small',
         order: Number(m.order) || 0,
         isActive: typeof m.isActive === 'boolean' ? m.isActive : true,
       }));
