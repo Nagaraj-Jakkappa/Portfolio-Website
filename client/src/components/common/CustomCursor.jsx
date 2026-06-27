@@ -1,19 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function CustomCursor({ settings }) {
-  const cursorRef = useRef(null);
-  const ringRef = useRef(null);
   const [isActive, setIsActive] = useState(false);
-  const requestRef = useRef(null);
-
-  // Use refs for positions to avoid re-renders on mousemove
-  const mouse = useRef({ x: -100, y: -100 });
-  const ring = useRef({ x: -100, y: -100 });
-  
-  const isHovering = useRef(false);
 
   useEffect(() => {
-    // Check if the device has a fine pointer (mouse) and no reduced motion preference
     const mediaQueryPointer = window.matchMedia('(pointer: fine)');
     const mediaQueryMotion = window.matchMedia('(prefers-reduced-motion: no-preference)');
 
@@ -26,98 +16,31 @@ export default function CustomCursor({ settings }) {
     setIsActive(canUseCustomCursor);
 
     if (canUseCustomCursor) {
+      const isValidColor = (c) => /^#([0-9A-F]{3}){1,2}$/i.test(c);
+      const color = settings?.color && isValidColor(settings.color) ? settings.color : '#22d3ee';
+      
+      // Create an SVG arrow cursor with the given color
+      const svgCursor = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M4.156 1.488a1 1 0 011.517.067l15 18a1 1 0 01-1.393 1.408l-5.69-3.793-2.616 5.231a1 1 0 01-1.789-.894l2.616-5.232-6.524 1.305a1 1 0 01-1.121-1.09l1-15z" fill="${color}" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      `;
+      
+      const encodedSvg = encodeURIComponent(svgCursor.trim()).replace(/'/g, "%27").replace(/"/g, "%22");
+      const cursorUrl = `url("data:image/svg+xml;charset=utf-8,${encodedSvg}") 4 4`;
+      
+      document.body.style.setProperty('--custom-cursor-url', cursorUrl);
       document.body.classList.add('custom-cursor-active');
     } else {
       document.body.classList.remove('custom-cursor-active');
+      document.body.style.removeProperty('--custom-cursor-url');
     }
 
     return () => {
       document.body.classList.remove('custom-cursor-active');
+      document.body.style.removeProperty('--custom-cursor-url');
     };
-  }, [settings?.isActive]);
+  }, [settings?.isActive, settings?.color]);
 
-  useEffect(() => {
-    if (!isActive) {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-      return;
-    }
-
-    const onMouseMove = (e) => {
-      mouse.current.x = e.clientX;
-      mouse.current.y = e.clientY;
-      
-      // Update dot immediately for responsiveness
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-      }
-    };
-
-    const updateRing = () => {
-      // Smooth follow for the ring
-      const dx = mouse.current.x - ring.current.x;
-      const dy = mouse.current.y - ring.current.y;
-      
-      // Speed factor
-      ring.current.x += dx * 0.15;
-      ring.current.y += dy * 0.15;
-
-      if (ringRef.current) {
-        // Apply transform and conditionally add scale based on hover state
-        const scale = isHovering.current ? 'scale(1.5)' : 'scale(1)';
-        ringRef.current.style.transform = `translate3d(${ring.current.x}px, ${ring.current.y}px, 0) ${scale}`;
-      }
-
-      requestRef.current = requestAnimationFrame(updateRing);
-    };
-
-    const handleMouseOver = (e) => {
-      const target = e.target;
-      const isInteractive =
-        target.tagName.toLowerCase() === 'a' ||
-        target.tagName.toLowerCase() === 'button' ||
-        target.closest('a') ||
-        target.closest('button') ||
-        target.closest('[role="button"]') ||
-        target.closest('.card-hover');
-        
-      isHovering.current = !!isInteractive;
-    };
-
-    window.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseover', handleMouseOver);
-    
-    // Start animation loop
-    requestRef.current = requestAnimationFrame(updateRing);
-
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-    };
-  }, [isActive]);
-
-  if (!isActive) return null;
-
-  const isValidColor = (c) => /^#([0-9A-F]{3}){1,2}$/i.test(c);
-  const color = settings?.color && isValidColor(settings.color) ? settings.color : '#22d3ee';
-
-  return (
-    <div 
-      className="pointer-events-none fixed inset-0 z-[9999]" 
-      aria-label={settings?.label || 'Premium Cursor'}
-    >
-      {/* Center Dot */}
-      <div
-        ref={cursorRef}
-        className="fixed top-0 left-0 w-[6px] h-[6px] -ml-[3px] -mt-[3px] rounded-full pointer-events-none"
-        style={{ backgroundColor: color }}
-      />
-      {/* Outer Ring */}
-      <div
-        ref={ringRef}
-        className="fixed top-0 left-0 w-6 h-6 -ml-3 -mt-3 rounded-full border border-solid pointer-events-none transition-transform duration-150 ease-out"
-        style={{ borderColor: `${color}40`, backgroundColor: 'transparent' }}
-      />
-    </div>
-  );
+  return null;
 }

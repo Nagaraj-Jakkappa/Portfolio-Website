@@ -21,11 +21,22 @@
     line-height: 1.6;
     overflow-x: hidden;
   }
-
-  /* Hide default cursor when custom cursor is active */
-  body.custom-cursor-active,
-  body.custom-cursor-active * {
-    cursor: none !important;
+  /* Custom pointer when active */
+  body.custom-cursor-active {
+    cursor: var(--custom-cursor-url), auto;
+  }
+  
+  body.custom-cursor-active a,
+  body.custom-cursor-active button,
+  body.custom-cursor-active [role="button"],
+  body.custom-cursor-active .card-hover {
+    cursor: var(--custom-cursor-url), pointer;
+  }
+  
+  body.custom-cursor-active input,
+  body.custom-cursor-active textarea,
+  body.custom-cursor-active [contenteditable="true"] {
+    cursor: text;
   }
 
   ::selection {
