@@ -469,19 +469,85 @@ export default function ContentPage() {
 
       {/* ── Resume ───────────────────────────────────────── */}
       <Section title="Resume">
-        <Input
-          label="Resume URL"
-          value={form.resume.resumeUrl}
-          onChange={(e) => setNested('resume', 'resumeUrl', e.target.value)}
-          placeholder="https://drive.google.com/file/…"
-          hint="PDF hosted on Google Drive, Cloudinary, etc."
-        />
-        <Input
-          label="Last Updated Text"
-          value={form.resume.updatedAtText}
-          onChange={(e) => setNested('resume', 'updatedAtText', e.target.value)}
-          placeholder="Updated June 2026"
-        />
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-300">Status:</span>
+            {form.resume.resumeUrl ? (
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+                Resume Active
+              </span>
+            ) : (
+              <span className="px-2.5 py-0.5 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-400 text-xs font-medium">
+                No Resume Added
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="p-4 bg-navy-900/40 rounded-xl border border-navy-700/50 mb-4">
+          <p className="text-xs text-slate-400 mb-1 leading-relaxed">
+            Paste a Google Drive, Cloudinary, or hosted PDF URL. Public <strong className="text-slate-300">View Resume</strong> and <strong className="text-slate-300">Download Resume</strong> buttons use this same URL.
+          </p>
+          <p className="text-[11px] text-cyan-400/80 mb-4">
+            For Google Drive, make sure the file access is set to "Anyone with the link".
+          </p>
+          <div className="space-y-4">
+            <Input
+              label={form.resume.resumeUrl ? "Replace Resume URL" : "Add Resume URL"}
+              value={form.resume.resumeUrl}
+              onChange={(e) => setNested('resume', 'resumeUrl', e.target.value)}
+              placeholder="https://drive.google.com/file/d/..."
+            />
+            <Input
+              label="Last Updated Text"
+              value={form.resume.updatedAtText}
+              onChange={(e) => setNested('resume', 'updatedAtText', e.target.value)}
+              placeholder="Updated June 2026"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            disabled={!form.resume.resumeUrl}
+            onClick={() => window.open(form.resume.resumeUrl, '_blank', 'noopener,noreferrer')}
+            className="px-4 py-2 text-xs font-medium text-blue-400 hover:text-white bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Preview Resume
+          </button>
+          
+          <button
+            type="button"
+            disabled={!form.resume.resumeUrl}
+            onClick={() => {
+              if (window.confirm('Are you sure you want to remove the resume link?')) {
+                setNested('resume', 'resumeUrl', '');
+                setNested('resume', 'updatedAtText', '');
+              }
+            }}
+            className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors border ${
+              form.resume.resumeUrl
+                ? 'text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/20 border-red-500/20'
+                : 'text-slate-500 bg-navy-800 border-navy-700 opacity-50 cursor-not-allowed'
+            }`}
+          >
+            Remove Resume
+          </button>
+
+          <button
+            type="button"
+            disabled={!form.resume.updatedAtText}
+            onClick={() => setNested('resume', 'updatedAtText', '')}
+            className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors border ${
+              form.resume.updatedAtText
+                ? 'text-slate-400 hover:text-white bg-navy-800 hover:bg-navy-700 border-navy-600'
+                : 'text-slate-500 bg-navy-800 border-navy-700 opacity-50 cursor-not-allowed'
+            }`}
+          >
+            Clear Updated Text
+          </button>
+        </div>
       </Section>
 
       {/* ── Social Links ─────────────────────────────────── */}
