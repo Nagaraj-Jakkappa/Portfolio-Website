@@ -9,7 +9,7 @@ import ProtectedRoute from './components/layout/ProtectedRoute';
 import api from './api/axios';
 import VisitorTracker from './components/analytics/VisitorTracker';
 import CookieBanner from './components/layout/CookieBanner';
-
+import CustomCursor from './components/common/CustomCursor';
 
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
@@ -71,6 +71,7 @@ function PublicLayout() {
       </main>
       <Footer content={siteContent} />
       <CookieBanner />
+      <CustomCursor settings={siteContent?.uiEffects?.customCursor} />
     </div>
   );
 }

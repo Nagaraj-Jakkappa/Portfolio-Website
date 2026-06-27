@@ -22,6 +22,12 @@
     overflow-x: hidden;
   }
 
+  /* Hide default cursor when custom cursor is active */
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
+  }
+
   ::selection {
     background-color: #38bdf840;
     color: #38bdf8;

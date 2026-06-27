@@ -145,6 +145,11 @@ const contentValidationRules = [
   body('mediaAssets.engineeringWorkflow.url').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }),
   body('mediaAssets.engineeringWorkflow.alt').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
   body('mediaAssets.engineeringWorkflow.isActive').optional().isBoolean(),
+  
+  // UI Effects
+  body('uiEffects.customCursor.isActive').optional().isBoolean(),
+  body('uiEffects.customCursor.color').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
+  body('uiEffects.customCursor.label').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
 ];
 
 // ── GET /api/site-content — Public ───────────────────────────
@@ -326,6 +331,17 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
           url: req.body.mediaAssets.engineeringWorkflow?.url?.trim() || '',
           alt: req.body.mediaAssets.engineeringWorkflow?.alt?.trim() || '',
           isActive: typeof req.body.mediaAssets.engineeringWorkflow?.isActive === 'boolean' ? req.body.mediaAssets.engineeringWorkflow.isActive : true
+        }
+      };
+    }
+
+    // UI Effects
+    if (req.body.uiEffects) {
+      payload.uiEffects = {
+        customCursor: {
+          isActive: typeof req.body.uiEffects.customCursor?.isActive === 'boolean' ? req.body.uiEffects.customCursor.isActive : true,
+          color: req.body.uiEffects.customCursor?.color?.trim() || '#22d3ee',
+          label: req.body.uiEffects.customCursor?.label?.trim() || 'Premium Cursor',
         }
       };
     }

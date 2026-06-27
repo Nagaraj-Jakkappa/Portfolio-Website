@@ -59,6 +59,9 @@ const EMPTY_CONTENT = {
     techStackIllustration: { url: '', alt: '', isActive: true },
     engineeringWorkflow: { url: '', alt: '', isActive: true },
   },
+  uiEffects: {
+    customCursor: { isActive: true, color: '#22d3ee', label: 'Premium Cursor' }
+  }
 };
 
 // ── Collapsible Section ─────────────────────────────────────
@@ -104,6 +107,7 @@ export default function ContentPage() {
             engineeringHighlights: Array.isArray(data.engineeringHighlights) ? data.engineeringHighlights : [],
             brandIdentity: { ...EMPTY_CONTENT.brandIdentity, ...data.brandIdentity },
             mediaAssets: { ...EMPTY_CONTENT.mediaAssets, ...data.mediaAssets },
+            uiEffects: { ...EMPTY_CONTENT.uiEffects, ...data.uiEffects },
           });
         }
       } catch {
@@ -169,6 +173,7 @@ export default function ContentPage() {
         engineeringHighlights: Array.isArray(data.engineeringHighlights) ? data.engineeringHighlights : [],
         brandIdentity: { ...EMPTY_CONTENT.brandIdentity, ...data.brandIdentity },
         mediaAssets: { ...EMPTY_CONTENT.mediaAssets, ...data.mediaAssets },
+        uiEffects: { ...EMPTY_CONTENT.uiEffects, ...data.uiEffects },
       });
       toast.success('Content saved!');
     } catch (err) {
@@ -1153,6 +1158,41 @@ Bottom Area:
               onChange={(e) => setNested('mediaAssets', 'engineeringWorkflow', { ...form.mediaAssets.engineeringWorkflow, alt: e.target.value })}
               placeholder="Animated workflow showing engineering process"
             />
+          </div>
+        </div>
+      </Section>
+
+      {/* ── UI Effects ─────────────────────────────── */}
+      <Section title="UI Effects">
+        <div className="space-y-6">
+          <div className="p-4 bg-navy-950 border border-navy-800 rounded-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-white">Custom Mouse Cursor</h4>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.uiEffects.customCursor.isActive}
+                  onChange={(e) => setNested('uiEffects', 'customCursor', { ...form.uiEffects.customCursor, isActive: e.target.checked })}
+                  className="w-4 h-4 rounded border-navy-600 bg-navy-900 text-blue-500 focus:ring-blue-500/50"
+                />
+                <span className="text-xs text-slate-400">Enable on Desktop</span>
+              </label>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Cursor Accent Color"
+                value={form.uiEffects.customCursor.color}
+                onChange={(e) => setNested('uiEffects', 'customCursor', { ...form.uiEffects.customCursor, color: e.target.value })}
+                placeholder="#22d3ee"
+                hint="Hex color for the cursor ring"
+              />
+              <Input
+                label="Accessibility Label"
+                value={form.uiEffects.customCursor.label}
+                onChange={(e) => setNested('uiEffects', 'customCursor', { ...form.uiEffects.customCursor, label: e.target.value })}
+                placeholder="Premium Cursor"
+              />
+            </div>
           </div>
         </div>
       </Section>

@@ -143,6 +143,13 @@ const siteContentSchema = new mongoose.Schema(
         isActive: { type: Boolean, default: true }
       }
     },
+    uiEffects: {
+      customCursor: {
+        isActive: { type: Boolean, default: true },
+        color: { type: String, trim: true, default: "#22d3ee" },
+        label: { type: String, trim: true, default: "Premium Cursor" }
+      }
+    }
   },
   { timestamps: true }
 );
