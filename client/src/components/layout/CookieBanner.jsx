@@ -51,35 +51,35 @@ export default function CookieBanner() {
   return (
     <>
       {!consent && !showPreferences && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6 pointer-events-none flex justify-center">
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-6 pointer-events-none flex justify-center">
           <div 
-            className="w-full max-w-4xl bg-navy-900/95 backdrop-blur-md border border-cyan-500/20 shadow-[0_0_30px_rgba(34,211,238,0.1)] rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-6 pointer-events-auto"
+            className="w-full max-w-4xl bg-navy-900/95 backdrop-blur-md border border-cyan-500/20 shadow-[0_0_30px_rgba(34,211,238,0.1)] rounded-xl sm:rounded-2xl p-3 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-6 pointer-events-auto"
             role="region"
             aria-label="Cookie consent banner"
           >
             <div className="flex-1">
-              <h3 className="text-white font-semibold mb-2">We value your privacy</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h3 className="text-white text-sm sm:text-base font-semibold mb-1 sm:mb-2">We value your privacy</h3>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
                 We use optional cookies to securely collect basic visitor insights to improve this portfolio. 
                 You can read more in our <Link to="/cookies" className="text-cyan-400 hover:underline focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded">Cookie Policy</Link>.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
               <button 
                 onClick={() => setShowPreferences(true)}
-                className="min-h-[44px] min-w-[44px] px-4 text-sm font-medium text-slate-300 hover:text-white bg-navy-800 hover:bg-navy-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] px-3 sm:px-4 text-xs sm:text-sm font-medium text-slate-300 hover:text-white bg-navy-800 hover:bg-navy-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500"
               >
                 Manage Preferences
               </button>
               <button 
                 onClick={handleReject}
-                className="min-h-[44px] min-w-[44px] px-4 text-sm font-medium text-slate-300 hover:text-white bg-navy-800 hover:bg-navy-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] px-3 sm:px-4 text-xs sm:text-sm font-medium text-slate-300 hover:text-white bg-navy-800 hover:bg-navy-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500"
               >
                 Reject All
               </button>
               <button 
                 onClick={handleAccept}
-                className="min-h-[44px] min-w-[44px] px-6 text-sm font-medium text-navy-950 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.3)]"
+                className="min-h-[36px] sm:min-h-[44px] min-w-[36px] sm:min-w-[44px] px-4 sm:px-6 text-xs sm:text-sm font-medium text-navy-950 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.3)]"
               >
                 Accept All
               </button>

@@ -94,6 +94,7 @@ export default function Contact({ content }) {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
+  const [apiError, setApiError] = useState(false);
 
   const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -110,7 +111,8 @@ export default function Contact({ content }) {
       setSent(true);
       setForm({ name: '', email: '', subject: '', message: '' });
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to send. Try emailing directly.');
+      toast.error('Failed to send. Try emailing directly.');
+      setApiError(true);
     } finally {
       setSubmitting(false);
     }
@@ -171,7 +173,40 @@ export default function Contact({ content }) {
 
           {/* Form */}
           <div className="lg:col-span-3 card-base p-6 md:p-8">
-            {sent ? (
+            {apiError ? (
+              <div className="h-full flex flex-col items-center justify-center text-center py-10">
+                <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-400/20 flex items-center justify-center mb-4">
+                  <svg
+                    className="w-8 h-8 text-red-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="font-display font-semibold text-white text-xl mb-2">
+                  Service Unavailable
+                </h3>
+                <p className="text-slate-400 text-sm mb-6 max-w-sm">
+                  Message service is temporarily unavailable. You can email me directly.
+                </p>
+                <a 
+                  href="mailto:nagupoojary33@gmail.com" 
+                  className="btn-primary py-2 px-6 rounded-lg text-sm"
+                >
+                  Email Me Directly
+                </a>
+                <button onClick={() => setApiError(false)} className="btn-ghost text-sm py-2 px-4 mt-4">
+                  Try Again
+                </button>
+              </div>
+            ) : sent ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-10">
                 <div className="w-16 h-16 rounded-full bg-blue-500/10 border border-blue-400/20 flex items-center justify-center mb-4">
                   <svg

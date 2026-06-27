@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { trackVisitorEvent } from '../../utils/visitorTracking';
 import api from '../../api/axios';
+import { fallbackCertifications } from '../../data/fallbackPortfolioData';
 
 export default function Certifications() {
   const [certs, setCerts] = useState([]);
@@ -58,6 +59,8 @@ export default function Certifications() {
     );
   }
 
+  const visibleCerts = certs?.length ? certs : (!loading ? fallbackCertifications : []);
+
   return (
     <section id="certifications" className="section-padding bg-navy-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,8 +87,8 @@ export default function Certifications() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {certs.length > 0 ? (
-            certs.map((cert) => (
+          {visibleCerts.length > 0 ? (
+            visibleCerts.map((cert) => (
               <div
                 key={cert._id}
                 className="card-base relative p-6 border-l-4 border-blue-500/30 hover:border-blue-500 transition-all duration-300 group overflow-hidden"

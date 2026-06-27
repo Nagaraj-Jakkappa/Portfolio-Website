@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useData';
 import { trackVisitorEvent } from '../../utils/visitorTracking';
+import { fallbackProjects } from '../../data/fallbackPortfolioData';
 
 function getCaseStudy(title) {
   const t = title.toLowerCase();
@@ -263,8 +264,10 @@ export default function Projects() {
   const [isGridView, setIsGridView] = useState(false);
   const { projects: rawProjects, loading, error } = useProjects(false);
 
+  const baseProjects = rawProjects?.length ? rawProjects : (!loading ? fallbackProjects : []);
+
   // Client-side priority sort (ResumeIQ/HYRR > Techartistry > Trendora > AI > Others)
-  const projects = [...(rawProjects || [])].sort((a, b) => {
+  const projects = [...baseProjects].sort((a, b) => {
     if (a.featured && !b.featured) return -1;
     if (!a.featured && b.featured) return 1;
 
@@ -298,7 +301,7 @@ export default function Projects() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const filters = ['All', 'Full Stack', 'Frontend', 'Backend', 'React', 'Node.js'];
+  const categories = ['All', ...new Set(projects.map((p) => p.category || 'Other'))];
 
   const filteredProjects = projects.filter(p => {
     if (activeFilter === 'All') return true;
@@ -453,14 +456,14 @@ export default function Projects() {
           </div>
         )}
 
-        {error && (
+        {error && projects.length === 0 && (
           <div className="text-center py-20 text-slate-500">
             <p>Could not load projects. Check that the API server is running.</p>
             <p className="text-xs font-mono mt-2 text-red-400/60">{error}</p>
           </div>
         )}
 
-        {!loading && !error && filteredProjects.length === 0 && (
+        {!loading && projects.length === 0 && !error && (
           <div className="text-center py-20 text-slate-500 bg-navy-800/50 rounded-2xl border border-navy-700">
             <p className="text-lg mb-2">No projects found for "{activeFilter}"</p>
             <button onClick={() => setActiveFilter('All')} className="text-blue-400 hover:underline">
@@ -469,7 +472,7 @@ export default function Projects() {
           </div>
         )}
 
-        {!loading && !error && filteredProjects.length > 0 && (
+        {!loading && filteredProjects.length > 0 && (
           <>
             {isGridView ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">

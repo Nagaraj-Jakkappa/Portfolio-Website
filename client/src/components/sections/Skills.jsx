@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api/axios';
 import techStackIllustration from '../../assets/illustrations/tech-stack-illustration.webp';
+import { fallbackSkills } from '../../data/fallbackPortfolioData';
 
 const LEVEL_COLORS = {
   Frontend: 'text-blue-400 border-blue-400/20 bg-blue-500/10',
@@ -29,7 +30,9 @@ export default function Skills({ content }) {
     fetchSkills();
   }, []);
 
-  const groupedSkills = (skills || []).reduce((acc, skill) => {
+  const visibleSkills = skills?.length ? skills : fallbackSkills;
+
+  const groupedSkills = (visibleSkills || []).reduce((acc, skill) => {
     const category = skill.category || 'Other';
     if (!acc[category]) acc[category] = [];
     acc[category].push(skill.name);
@@ -83,26 +86,30 @@ export default function Skills({ content }) {
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
-          {Object.entries(groupedSkills).map(([category, items]) => (
-            <div key={category} className="card-base card-hover p-6">
-              <h3
-                className={`font-display font-semibold uppercase tracking-widest mb-5 px-2 py-1 rounded-md border w-fit text-xs text-center md:text-left ${LEVEL_COLORS[category] || 'text-slate-400 border-slate-400/20 bg-slate-500/10'}`}
-              >
-                {category}
-              </h3>
-              <ul className="space-y-3">
-                {items.map((skillName, index) => (
-                  <li key={index} className="flex items-center gap-2 text-slate-300 text-sm">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400/60 flex-shrink-0" />
-                    {skillName}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {Object.keys(groupedSkills).length === 0 ? (
+            <div className="col-span-full text-slate-400">No skills available.</div>
+          ) : (
+            Object.entries(groupedSkills).map(([category, items]) => (
+              <div key={category} className="card-base card-hover p-6">
+                <h3
+                  className={`font-display font-semibold uppercase tracking-widest mb-5 px-2 py-1 rounded-md border w-fit text-xs text-center md:text-left ${LEVEL_COLORS[category] || 'text-slate-400 border-slate-400/20 bg-slate-500/10'}`}
+                >
+                  {category}
+                </h3>
+                <ul className="space-y-3">
+                  {items.map((skillName, index) => (
+                    <li key={index} className="flex items-center gap-2 text-slate-300 text-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-400/60 flex-shrink-0" />
+                      {skillName}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
         </div>
 
-            {skills.length === 0 && (
+            {visibleSkills.length === 0 && (
               <div className="mt-20 text-center border border-dashed border-slate-800 p-10 rounded-xl">
                 <p className="text-slate-500 font-mono text-sm">No skills found. Add them via Admin.</p>
               </div>
