@@ -16,6 +16,8 @@ export default function Hero({ content }) {
   const primaryCtaHref = hero.primaryCtaHref || '#projects';
   const secondaryCtaText = hero.secondaryCtaText || 'View Resume';
   const resumeUrl = resume.resumeUrl || '/Nagaraj_Jakkappa_Resume_2026.pdf';
+  
+  const heroMedia = content?.mediaAssets?.heroIllustration || { isActive: true, url: '', alt: '' };
 
   const handleScroll = (id) => {
     document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -157,14 +159,17 @@ export default function Hero({ content }) {
           </div>
 
           {/* Right side illustration (Desktop only) */}
-          <div className="relative hidden lg:flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
-            <img
-              src={developerWorkspace}
-              alt="Developer workspace illustration"
-              className="relative z-10 w-full max-w-[560px] object-contain drop-shadow-2xl"
-            />
-          </div>
+          {heroMedia.isActive && (
+            <div className="relative hidden lg:flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
+              <img
+                src={heroMedia.url || developerWorkspace}
+                alt={heroMedia.alt || "Developer workspace illustration"}
+                className="relative z-10 w-full max-w-[560px] object-contain drop-shadow-2xl"
+                onError={(e) => { e.target.src = developerWorkspace; }}
+              />
+            </div>
+          )}
         </div>
       </div>
 

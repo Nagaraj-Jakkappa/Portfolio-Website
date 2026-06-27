@@ -62,7 +62,9 @@ const FALLBACK_ITEMS = [
   }
 ];
 
-export default function RecruiterMode({ items }) {
+export default function RecruiterMode({ items, content }) {
+  const engineeringMedia = content?.mediaAssets?.engineeringWorkflow || { isActive: true, url: '', alt: '' };
+  
   const sourceItems = Array.isArray(items) && items.length > 0 ? items : (items === undefined ? FALLBACK_ITEMS : []);
 
   const visibleItems = sourceItems
@@ -99,14 +101,17 @@ export default function RecruiterMode({ items }) {
             </div>
           </div>
 
-          <div className="hidden lg:flex relative w-full max-w-[300px] items-center justify-center shrink-0">
-            <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
-            <img
-              src={engineeringWorkflowGif}
-              alt="Engineering workflow animation"
-              className="relative z-10 w-full max-w-[280px] object-contain opacity-90 drop-shadow-2xl [mask-image:radial-gradient(circle,_rgba(0,0,0,1)_62%,_rgba(0,0,0,0)_100%)] [-webkit-mask-image:radial-gradient(circle,_rgba(0,0,0,1)_62%,_rgba(0,0,0,0)_100%)]"
-            />
-          </div>
+          {engineeringMedia.isActive && (
+            <div className="hidden lg:flex relative w-full max-w-[300px] items-center justify-center shrink-0">
+              <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
+              <img
+                src={engineeringMedia.url || engineeringWorkflowGif}
+                alt={engineeringMedia.alt || "Engineering workflow animation"}
+                className="relative z-10 w-full max-w-[280px] object-contain opacity-90 drop-shadow-2xl [mask-image:radial-gradient(circle,_rgba(0,0,0,1)_62%,_rgba(0,0,0,0)_100%)] [-webkit-mask-image:radial-gradient(circle,_rgba(0,0,0,1)_62%,_rgba(0,0,0,0)_100%)]"
+                onError={(e) => { e.target.src = engineeringWorkflowGif; }}
+              />
+            </div>
+          )}
         </div>
 
         {/* Bento Grid Cards */}

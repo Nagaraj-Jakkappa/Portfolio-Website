@@ -54,6 +54,11 @@ const EMPTY_CONTENT = {
   techPulse: [],
   engineeringHighlights: [],
   brandIdentity: { wordmarkUrl: '', logomarkUrl: '', faviconUrl: '' },
+  mediaAssets: {
+    heroIllustration: { url: '', alt: '', isActive: true },
+    techStackIllustration: { url: '', alt: '', isActive: true },
+    engineeringWorkflow: { url: '', alt: '', isActive: true },
+  },
 };
 
 // ── Collapsible Section ─────────────────────────────────────
@@ -98,6 +103,7 @@ export default function ContentPage() {
             techPulse: Array.isArray(data.techPulse) ? data.techPulse : [],
             engineeringHighlights: Array.isArray(data.engineeringHighlights) ? data.engineeringHighlights : [],
             brandIdentity: { ...EMPTY_CONTENT.brandIdentity, ...data.brandIdentity },
+            mediaAssets: { ...EMPTY_CONTENT.mediaAssets, ...data.mediaAssets },
           });
         }
       } catch {
@@ -162,6 +168,7 @@ export default function ContentPage() {
         techPulse: Array.isArray(data.techPulse) ? data.techPulse : [],
         engineeringHighlights: Array.isArray(data.engineeringHighlights) ? data.engineeringHighlights : [],
         brandIdentity: { ...EMPTY_CONTENT.brandIdentity, ...data.brandIdentity },
+        mediaAssets: { ...EMPTY_CONTENT.mediaAssets, ...data.mediaAssets },
       });
       toast.success('Content saved!');
     } catch (err) {
@@ -1056,6 +1063,98 @@ Bottom Area:
             </div>
           </div>
         )}
+      </Section>
+
+      {/* ── Media Assets ─────────────────────────────── */}
+      <Section title="Media Assets">
+        <div className="space-y-6">
+          {/* Hero Illustration */}
+          <div className="p-4 bg-navy-950 border border-navy-800 rounded-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-white">Hero Illustration</h4>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.mediaAssets.heroIllustration.isActive}
+                  onChange={(e) => setNested('mediaAssets', 'heroIllustration', { ...form.mediaAssets.heroIllustration, isActive: e.target.checked })}
+                  className="w-4 h-4 rounded border-navy-600 bg-navy-900 text-blue-500 focus:ring-blue-500/50"
+                />
+                <span className="text-xs text-slate-400">Active</span>
+              </label>
+            </div>
+            <Input
+              label="Image URL"
+              value={form.mediaAssets.heroIllustration.url}
+              onChange={(e) => setNested('mediaAssets', 'heroIllustration', { ...form.mediaAssets.heroIllustration, url: e.target.value })}
+              placeholder="https://res.cloudinary.com/..."
+              hint="Overrides the local developer-workspace.webp if set and active."
+            />
+            <Input
+              label="Alt Text"
+              value={form.mediaAssets.heroIllustration.alt}
+              onChange={(e) => setNested('mediaAssets', 'heroIllustration', { ...form.mediaAssets.heroIllustration, alt: e.target.value })}
+              placeholder="Hero illustration showing developer workspace"
+            />
+          </div>
+
+          {/* Tech Stack Illustration */}
+          <div className="p-4 bg-navy-950 border border-navy-800 rounded-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-white">Tech Stack Illustration</h4>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.mediaAssets.techStackIllustration.isActive}
+                  onChange={(e) => setNested('mediaAssets', 'techStackIllustration', { ...form.mediaAssets.techStackIllustration, isActive: e.target.checked })}
+                  className="w-4 h-4 rounded border-navy-600 bg-navy-900 text-blue-500 focus:ring-blue-500/50"
+                />
+                <span className="text-xs text-slate-400">Active</span>
+              </label>
+            </div>
+            <Input
+              label="Image URL"
+              value={form.mediaAssets.techStackIllustration.url}
+              onChange={(e) => setNested('mediaAssets', 'techStackIllustration', { ...form.mediaAssets.techStackIllustration, url: e.target.value })}
+              placeholder="https://res.cloudinary.com/..."
+              hint="Overrides the local tech-stack-illustration.webp if set and active."
+            />
+            <Input
+              label="Alt Text"
+              value={form.mediaAssets.techStackIllustration.alt}
+              onChange={(e) => setNested('mediaAssets', 'techStackIllustration', { ...form.mediaAssets.techStackIllustration, alt: e.target.value })}
+              placeholder="Abstract representation of technology stack"
+            />
+          </div>
+
+          {/* Engineering Workflow GIF */}
+          <div className="p-4 bg-navy-950 border border-navy-800 rounded-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-white">Engineering Workflow GIF</h4>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.mediaAssets.engineeringWorkflow.isActive}
+                  onChange={(e) => setNested('mediaAssets', 'engineeringWorkflow', { ...form.mediaAssets.engineeringWorkflow, isActive: e.target.checked })}
+                  className="w-4 h-4 rounded border-navy-600 bg-navy-900 text-blue-500 focus:ring-blue-500/50"
+                />
+                <span className="text-xs text-slate-400">Active</span>
+              </label>
+            </div>
+            <Input
+              label="Image URL"
+              value={form.mediaAssets.engineeringWorkflow.url}
+              onChange={(e) => setNested('mediaAssets', 'engineeringWorkflow', { ...form.mediaAssets.engineeringWorkflow, url: e.target.value })}
+              placeholder="https://res.cloudinary.com/..."
+              hint="Overrides the local engineering-workflow.gif if set and active."
+            />
+            <Input
+              label="Alt Text"
+              value={form.mediaAssets.engineeringWorkflow.alt}
+              onChange={(e) => setNested('mediaAssets', 'engineeringWorkflow', { ...form.mediaAssets.engineeringWorkflow, alt: e.target.value })}
+              placeholder="Animated workflow showing engineering process"
+            />
+          </div>
+        </div>
       </Section>
 
       {/* ── Bottom Save ──────────────────────────────────── */}

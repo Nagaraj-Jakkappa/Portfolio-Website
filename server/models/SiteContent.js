@@ -126,6 +126,23 @@ const siteContentSchema = new mongoose.Schema(
       logomarkUrl: { type: String, default: '', maxlength: 1000 },
       faviconUrl: { type: String, default: '', maxlength: 1000 },
     },
+    mediaAssets: {
+      heroIllustration: {
+        url: { type: String, trim: true },
+        alt: { type: String, trim: true },
+        isActive: { type: Boolean, default: true }
+      },
+      techStackIllustration: {
+        url: { type: String, trim: true },
+        alt: { type: String, trim: true },
+        isActive: { type: Boolean, default: true }
+      },
+      engineeringWorkflow: {
+        url: { type: String, trim: true },
+        alt: { type: String, trim: true },
+        isActive: { type: Boolean, default: true }
+      }
+    },
   },
   { timestamps: true }
 );

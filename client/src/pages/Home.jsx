@@ -78,7 +78,7 @@ export default function Home({ content, loading }) {
 
       <NowSection items={content?.now} />
 
-      <Skills />
+      <Skills content={content} />
 
       <GithubPulse items={content?.techPulse} />
 
@@ -86,7 +86,7 @@ export default function Home({ content, loading }) {
 
       <Projects />
 
-      <RecruiterMode items={content?.engineeringHighlights} />
+      <RecruiterMode items={content?.engineeringHighlights} content={content} />
 
       <Contact content={content} />
     </>

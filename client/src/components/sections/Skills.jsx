@@ -9,7 +9,8 @@ const LEVEL_COLORS = {
   Tools: 'text-amber-400 border-amber-400/20 bg-amber-500/10',
 };
 
-export default function Skills() {
+export default function Skills({ content }) {
+  const techMedia = content?.mediaAssets?.techStackIllustration || { isActive: true, url: '', alt: '' };
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -108,14 +109,17 @@ export default function Skills() {
             )}
           </div>
 
-          <div className="relative hidden lg:flex w-full lg:w-2/5 items-center justify-center lg:mt-10 xl:mt-0">
-            <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
-            <img
-              src={techStackIllustration}
-              alt="Web development tech stack illustration"
-              className="relative z-10 w-full max-w-[420px] object-contain drop-shadow-2xl opacity-90"
-            />
-          </div>
+          {techMedia.isActive && (
+            <div className="relative hidden lg:flex w-full lg:w-2/5 items-center justify-center lg:mt-10 xl:mt-0">
+              <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-3xl" />
+              <img
+                src={techMedia.url || techStackIllustration}
+                alt={techMedia.alt || "Web development tech stack illustration"}
+                className="relative z-10 w-full max-w-[420px] object-contain drop-shadow-2xl opacity-90"
+                onError={(e) => { e.target.src = techStackIllustration; }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </section>

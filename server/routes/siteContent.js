@@ -132,6 +132,19 @@ const contentValidationRules = [
   body('navbar.*.type').optional({ checkFalsy: true }).isIn(['section', 'external']).withMessage('Type must be section or external'),
   body('navbar.*.visible').optional().isBoolean(),
   body('navbar.*.order').optional().isNumeric(),
+  
+  // Media Assets
+  body('mediaAssets.heroIllustration.url').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }),
+  body('mediaAssets.heroIllustration.alt').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
+  body('mediaAssets.heroIllustration.isActive').optional().isBoolean(),
+  
+  body('mediaAssets.techStackIllustration.url').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }),
+  body('mediaAssets.techStackIllustration.alt').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
+  body('mediaAssets.techStackIllustration.isActive').optional().isBoolean(),
+  
+  body('mediaAssets.engineeringWorkflow.url').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }),
+  body('mediaAssets.engineeringWorkflow.alt').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
+  body('mediaAssets.engineeringWorkflow.isActive').optional().isBoolean(),
 ];
 
 // ── GET /api/site-content — Public ───────────────────────────
@@ -293,6 +306,27 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         wordmarkUrl: req.body.brandIdentity.wordmarkUrl?.trim() || '',
         logomarkUrl: req.body.brandIdentity.logomarkUrl?.trim() || '',
         faviconUrl: req.body.brandIdentity.faviconUrl?.trim() || '',
+      };
+    }
+
+    // Media Assets
+    if (req.body.mediaAssets) {
+      payload.mediaAssets = {
+        heroIllustration: {
+          url: req.body.mediaAssets.heroIllustration?.url?.trim() || '',
+          alt: req.body.mediaAssets.heroIllustration?.alt?.trim() || '',
+          isActive: typeof req.body.mediaAssets.heroIllustration?.isActive === 'boolean' ? req.body.mediaAssets.heroIllustration.isActive : true
+        },
+        techStackIllustration: {
+          url: req.body.mediaAssets.techStackIllustration?.url?.trim() || '',
+          alt: req.body.mediaAssets.techStackIllustration?.alt?.trim() || '',
+          isActive: typeof req.body.mediaAssets.techStackIllustration?.isActive === 'boolean' ? req.body.mediaAssets.techStackIllustration.isActive : true
+        },
+        engineeringWorkflow: {
+          url: req.body.mediaAssets.engineeringWorkflow?.url?.trim() || '',
+          alt: req.body.mediaAssets.engineeringWorkflow?.alt?.trim() || '',
+          isActive: typeof req.body.mediaAssets.engineeringWorkflow?.isActive === 'boolean' ? req.body.mediaAssets.engineeringWorkflow.isActive : true
+        }
       };
     }
 
