@@ -301,7 +301,7 @@ export default function Projects() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const categories = ['All', ...new Set(projects.map((p) => p.category || 'Other'))];
+  const filters = ['All', 'Full Stack', 'Frontend', 'Backend', 'React', 'Node.js'];
 
   const filteredProjects = projects.filter(p => {
     if (activeFilter === 'All') return true;
