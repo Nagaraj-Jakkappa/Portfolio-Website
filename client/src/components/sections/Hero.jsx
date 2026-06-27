@@ -15,7 +15,7 @@ export default function Hero({ content }) {
   const primaryCtaText = hero.primaryCtaText || 'View Projects';
   const primaryCtaHref = hero.primaryCtaHref || '#projects';
   const secondaryCtaText = hero.secondaryCtaText || 'View Resume';
-  const resumeUrl = resume.resumeUrl || '/Nagaraj_Jakkappa_Resume_2026.pdf';
+  const resumeUrl = resume.resumeUrl || '';
   
   const heroMedia = content?.mediaAssets?.heroIllustration || { isActive: true, url: '', alt: '' };
 
@@ -118,16 +118,18 @@ export default function Hero({ content }) {
               </svg>
             </button>
 
-            <button
-              onClick={viewResume}
-              className="btn-ghost rounded-full px-8 flex items-center gap-2 border-blue-500/30 hover:border-blue-500/60"
-            >
-              {secondaryCtaText}
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            </button>
+            {resumeUrl && (
+              <button
+                onClick={viewResume}
+                className="btn-ghost rounded-full px-8 flex items-center gap-2 border-blue-500/30 hover:border-blue-500/60"
+              >
+                {secondaryCtaText}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            )}
             
             <button
               onClick={() => handleScroll('#contact')}

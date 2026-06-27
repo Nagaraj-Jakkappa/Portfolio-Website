@@ -3,7 +3,7 @@ import { trackVisitorEvent } from '../../utils/visitorTracking';
 import api from '../../api/axios';
 import { fallbackCertifications } from '../../data/fallbackPortfolioData';
 
-export default function Certifications() {
+export default function Certifications({ content }) {
   const [certs, setCerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showOutcomes, setShowOutcomes] = useState({});
@@ -60,6 +60,14 @@ export default function Certifications() {
   }
 
   const visibleCerts = certs?.length ? certs : (!loading ? fallbackCertifications : []);
+  const resumeUrl = content?.resume?.resumeUrl || '';
+
+  const getResumeDownloadUrl = (url) => {
+    if (!url) return '';
+    const match = url.match(/\/file\/d\/([^/]+)/);
+    if (match?.[1]) return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+    return url;
+  };
 
   return (
     <section id="certifications" className="section-padding bg-navy-950">
@@ -71,19 +79,21 @@ export default function Certifications() {
             </p>
             <h2 className="font-display font-bold text-4xl text-white">Certifications & Education</h2>
           </div>
-          
-          <a
-            href="/Nagaraj_Jakkappa_Resume_2026.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackVisitorEvent('resume_download')}
-            className="btn-primary rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-500/20 w-fit"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Download Resume
-          </a>
+          {resumeUrl && (
+            <a
+              href={getResumeDownloadUrl(resumeUrl)}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackVisitorEvent('resume_download')}
+              className="btn-primary rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-500/20 w-fit"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download Resume
+            </a>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">

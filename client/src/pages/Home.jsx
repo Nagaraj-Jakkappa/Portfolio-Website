@@ -82,7 +82,7 @@ export default function Home({ content, loading }) {
 
       <GithubPulse items={content?.techPulse} />
 
-      <Certifications />
+      <Certifications content={content} />
 
       <Projects />
 
