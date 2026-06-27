@@ -98,7 +98,8 @@ export default function CustomCursor({ settings }) {
 
   if (!isActive) return null;
 
-  const color = settings?.color || '#22d3ee';
+  const isValidColor = (c) => /^#([0-9A-F]{3}){1,2}$/i.test(c);
+  const color = settings?.color && isValidColor(settings.color) ? settings.color : '#22d3ee';
 
   return (
     <div 
@@ -108,14 +109,14 @@ export default function CustomCursor({ settings }) {
       {/* Center Dot */}
       <div
         ref={cursorRef}
-        className="fixed top-0 left-0 w-2 h-2 -ml-1 -mt-1 rounded-full pointer-events-none"
+        className="fixed top-0 left-0 w-[6px] h-[6px] -ml-[3px] -mt-[3px] rounded-full pointer-events-none"
         style={{ backgroundColor: color }}
       />
       {/* Outer Ring */}
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 w-8 h-8 -ml-4 -mt-4 rounded-full border border-solid pointer-events-none transition-[transform,border-color] duration-100 ease-out"
-        style={{ borderColor: `${color}80`, backgroundColor: `${color}10` }}
+        className="fixed top-0 left-0 w-6 h-6 -ml-3 -mt-3 rounded-full border border-solid pointer-events-none transition-transform duration-150 ease-out"
+        style={{ borderColor: `${color}40`, backgroundColor: 'transparent' }}
       />
     </div>
   );
