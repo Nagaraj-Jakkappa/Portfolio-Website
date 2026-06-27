@@ -99,60 +99,13 @@ export default function ProjectDetail() {
   const fallbackSolution = `Developed a comprehensive application utilizing ${techStack?.join(', ') || 'modern web technologies'} to ensure high performance.`;
   const fallbackImpact = `Successfully delivered a functional product meeting all technical and design specifications.`;
 
-  // Helper to generate project-specific features
-  const getFeaturesForProject = (title, category) => {
-    const lowerTitle = title.toLowerCase();
-    if (lowerTitle.includes('hyrr') || lowerTitle.includes('resumeiq')) {
-      return [
-        { title: 'ATS Resume Analysis', desc: 'Scan and analyze resumes against industry ATS standards.' },
-        { title: 'AI Resume Rewrite', desc: 'Generate impactful bullet points using Groq AI and LLMs.' },
-        { title: 'Secure User Authentication', desc: 'Protected routes and robust JWT-based user sessions.' },
-        { title: 'Resume Version Management', desc: 'Save, track, and compare multiple versions of user resumes.' },
-        { title: 'Subscription-ready Architecture', desc: 'Integrated with Razorpay for seamless premium tier upgrades.' }
-      ];
-    }
-    if (lowerTitle.includes('techartistry') || lowerTitle.includes('portfolio')) {
-      return [
-        { title: 'Dynamic Admin CMS', desc: 'Manage projects, experiences, and content via a secure dashboard.' },
-        { title: 'Secure Project Management', desc: 'Add, edit, or archive projects dynamically from the backend.' },
-        { title: 'Portfolio Analytics', desc: 'Track visitor insights and page views with built-in analytics.' },
-        { title: 'Certificate & Experience Management', desc: 'Seamlessly upload and showcase professional milestones.' },
-        { title: 'Optimized Media Delivery', desc: 'Fast and responsive media loading for optimal performance.' }
-      ];
-    }
-    if (lowerTitle.includes('pothole')) {
-      return [
-        { title: 'Image-based Pothole Detection', desc: 'Upload images to detect road anomalies and hazards.' },
-        { title: 'CNN-powered Classification', desc: 'Deep learning models trained for high accuracy object detection.' },
-        { title: 'Detection Result Preview', desc: 'Visualize the detected potholes with bounding boxes.' },
-        { title: 'Road Safety Use Case', desc: 'Practical application designed to improve civic infrastructure.' },
-        { title: 'MERN Upgrade Roadmap', desc: 'Currently migrating to a full web dashboard.' }
-      ];
-    }
-    
-    // Generic fallback based on category
-    if (category === 'web') {
-      return [
-        { title: 'Frontend Build', desc: 'Developed with modern, responsive UI techniques.' },
-        { title: 'Planned Backend Features', desc: 'Scalable architecture ready for robust backend integration.' },
-        { title: 'Optimized Performance', desc: 'Fast load times and smooth interactive transitions.' }
-      ];
-    }
-    if (category === 'fullstack') {
-      return [
-        { title: 'Full-Stack Architecture', desc: 'Seamless integration between frontend and backend.' },
-        { title: 'Secure Data Management', desc: 'Protected API endpoints and database schemas.' },
-        { title: 'Scalable Deployment', desc: 'Ready for production traffic and scalable hosting.' }
-      ];
-    }
-    return [
-      { title: 'Comprehensive Design', desc: 'Built to solve complex use-cases effectively.' },
-      { title: 'Modern User Experience', desc: 'Responsive and accessible across all devices.' },
-      { title: 'Secure & Optimized', desc: 'Built with industry-standard practices.' }
-    ];
-  };
+  // Generic fallback if features are empty
+  const featuresList = (project.features && project.features.length > 0) ? project.features : [
+    { title: "Focused Project Architecture", description: "Built with a clear structure, reusable components, and practical implementation details." },
+    { title: "Responsive User Experience", description: "Designed to work cleanly across desktop and mobile screens." },
+    { title: "Maintainable Implementation", description: "Organized with readable code, reusable patterns, and deployment-ready structure." }
+  ];
 
-  const featuresList = project.features || getFeaturesForProject(title, category);
   const highlightsList = project.highlights || ["Responsive UI", "REST API", "Optimized DB"];
   
   const challengesList = project.challenges || [
@@ -334,7 +287,7 @@ export default function ProjectDetail() {
                       </div>
                       <div>
                         <h4 className="text-white font-medium mb-2">{feat.title}</h4>
-                        <p className="text-sm text-slate-400">{feat.desc}</p>
+                        <p className="text-sm text-slate-400">{feat.description || feat.desc}</p>
                       </div>
                     </div>
                   </div>

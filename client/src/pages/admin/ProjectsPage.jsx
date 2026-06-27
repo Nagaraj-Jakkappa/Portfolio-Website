@@ -60,6 +60,7 @@ const EMPTY_FORM = {
     solution: '',
     impact: '',
   },
+  features: [],
 };
 
 // ── Project Form Modal ────────────────────────────────────────
@@ -75,6 +76,7 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
           techStack: project.techStack?.join(', ') ?? '',
           statusLabels: project.statusLabels?.join(', ') ?? '',
           caseStudy: project.caseStudy ?? { problem: '', solution: '', impact: '' },
+          features: project.features ?? [],
         }
       : EMPTY_FORM
   );
@@ -115,6 +117,7 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
           .split(',')
           .map((s) => s.trim())
           .filter(Boolean),
+        features: (form.features || []).filter(f => f.title?.trim() || f.description?.trim()),
         order: Number(form.order),
       };
       
@@ -290,6 +293,58 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
             }
             placeholder="Describe the results, metrics, or lessons learned..."
           />
+        </div>
+
+        <div className="pt-4 border-t border-navy-800 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-white">Features (Optional)</h3>
+            <button
+              type="button"
+              className="px-3 py-1 text-xs font-medium bg-navy-800 hover:bg-navy-700 text-blue-400 rounded-md transition-colors"
+              onClick={() => set('features', [...(form.features || []), { title: '', description: '' }])}
+            >
+              + Add Feature
+            </button>
+          </div>
+          <div className="space-y-4">
+            {(form.features || []).map((feature, idx) => (
+              <div key={idx} className="p-4 rounded-xl bg-navy-800/50 border border-navy-700 relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = [...form.features];
+                    next.splice(idx, 1);
+                    set('features', next);
+                  }}
+                  className="absolute top-3 right-3 text-slate-500 hover:text-red-400 p-1"
+                >
+                  <Ic d={IC.close} size={14} />
+                </button>
+                <div className="space-y-3 mt-2">
+                  <Input
+                    label={`Feature ${idx + 1} Title`}
+                    value={feature.title || ''}
+                    onChange={(e) => {
+                      const next = [...form.features];
+                      next[idx].title = e.target.value;
+                      set('features', next);
+                    }}
+                    placeholder="e.g. Dynamic Admin CMS"
+                  />
+                  <Textarea
+                    label="Description"
+                    value={feature.description || ''}
+                    onChange={(e) => {
+                      const next = [...form.features];
+                      next[idx].description = e.target.value;
+                      set('features', next);
+                    }}
+                    placeholder="Describe this feature..."
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>
