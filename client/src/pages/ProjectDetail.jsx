@@ -11,6 +11,13 @@ export default function ProjectDetail() {
   const [error, setError] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [copiedIndex, setCopiedIndex] = useState(null);
+
+  const handleCopy = (text, idx) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(idx);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
 
   useEffect(() => {
     async function fetchProject() {
@@ -104,6 +111,13 @@ export default function ProjectDetail() {
     { title: "Focused Project Architecture", description: "Built with a clear structure, reusable components, and practical implementation details." },
     { title: "Responsive User Experience", description: "Designed to work cleanly across desktop and mobile screens." },
     { title: "Maintainable Implementation", description: "Organized with readable code, reusable patterns, and deployment-ready structure." }
+  ];
+
+  // Generic fallback if installation steps are empty
+  const installationStepsList = (project.installationSteps && project.installationSteps.length > 0) ? project.installationSteps : [
+    { label: "Clone the Repository", command: `git clone ${githubUrl || 'https://github.com/username/project.git'}` },
+    { label: "Install Dependencies", command: "npm install" },
+    { label: "Run Development Server", command: "npm run dev" }
   ];
 
   const highlightsList = project.highlights || ["Responsive UI", "REST API", "Optimized DB"];
@@ -384,24 +398,35 @@ export default function ProjectDetail() {
                 </svg>
               </summary>
               <div className="p-5 pt-0 space-y-4 border-t border-navy-700/50 mt-1 bg-navy-900/20">
-                <div>
-                  <p className="text-xs text-slate-400 mb-2">Clone the Repository</p>
-                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-lg p-3 font-mono text-xs text-slate-300 overflow-x-auto">
-                    git clone {githubUrl || 'https://github.com/username/project.git'}
+                {installationStepsList.map((step, idx) => (
+                  <div key={idx}>
+                    <p className="text-xs text-slate-400 mb-2">{step.label}</p>
+                    <div className="bg-[#0d1117] border border-navy-700/50 rounded-lg p-3 flex items-center justify-between gap-3 font-mono text-xs text-slate-300">
+                      <span className="overflow-x-auto whitespace-nowrap scrollbar-hide">{step.command}</span>
+                      <button
+                        onClick={() => handleCopy(step.command, idx)}
+                        className="shrink-0 flex items-center gap-1 px-2 py-1 bg-navy-800 hover:bg-navy-700 text-slate-400 hover:text-white rounded border border-navy-700 transition-colors"
+                        aria-label={`Copy ${step.label} command`}
+                      >
+                        {copiedIndex === idx ? (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className="text-[10px] uppercase tracking-wider text-emerald-400">Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <span className="text-[10px] uppercase tracking-wider">Copy</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 mb-2">Install Dependencies</p>
-                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-lg p-3 font-mono text-xs text-slate-300 overflow-x-auto">
-                    npm install
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 mb-2">Run Development Server</p>
-                  <div className="bg-[#0d1117] border border-navy-700/50 rounded-lg p-3 font-mono text-xs text-slate-300 overflow-x-auto">
-                    npm run dev
-                  </div>
-                </div>
+                ))}
               </div>
             </details>
           </div>

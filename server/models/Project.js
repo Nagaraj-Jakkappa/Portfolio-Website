@@ -25,6 +25,10 @@ const projectSchema = new mongoose.Schema(
       title: { type: String, trim: true },
       description: { type: String, trim: true }
     }],
+    installationSteps: [{
+      label: { type: String, trim: true },
+      command: { type: String, trim: true }
+    }],
     gallery: [{ type: String, trim: true }],
     galleryPublicIds: [{ type: String, trim: true }],
     featured: { type: Boolean, default: false },

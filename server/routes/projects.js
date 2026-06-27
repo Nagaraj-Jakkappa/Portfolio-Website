@@ -42,6 +42,9 @@ const projectValidationRules = [
   body('features').optional().isArray().withMessage('Features must be an array'),
   body('features.*.title').optional({ checkFalsy: true }).isString().isLength({ max: 200 }).withMessage('Feature title max 200 chars'),
   body('features.*.description').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Feature description max 1000 chars'),
+  body('installationSteps').optional().isArray().withMessage('Installation steps must be an array'),
+  body('installationSteps.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 200 }).withMessage('Step label max 200 chars'),
+  body('installationSteps.*.command').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }).withMessage('Step command max 1000 chars'),
   body('statusLabels').optional().isArray().withMessage('Status labels must be an array'),
   body('statusLabels.*').optional().isString().isLength({ max: 100 }).withMessage('Each status label max 100 chars'),
 ];

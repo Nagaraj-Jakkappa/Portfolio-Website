@@ -61,6 +61,7 @@ const EMPTY_FORM = {
     impact: '',
   },
   features: [],
+  installationSteps: [],
 };
 
 // ── Project Form Modal ────────────────────────────────────────
@@ -77,6 +78,7 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
           statusLabels: project.statusLabels?.join(', ') ?? '',
           caseStudy: project.caseStudy ?? { problem: '', solution: '', impact: '' },
           features: project.features ?? [],
+          installationSteps: project.installationSteps ?? [],
         }
       : EMPTY_FORM
   );
@@ -118,6 +120,7 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
           .map((s) => s.trim())
           .filter(Boolean),
         features: (form.features || []).filter(f => f.title?.trim() || f.description?.trim()),
+        installationSteps: (form.installationSteps || []).filter(s => s.label?.trim() || s.command?.trim()),
         order: Number(form.order),
       };
       
@@ -340,6 +343,58 @@ function ProjectModal({ project, onClose, onCreate, onUpdate }) {
                       set('features', next);
                     }}
                     placeholder="Describe this feature..."
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-navy-800 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-white">Installation Guide (Optional)</h3>
+            <button
+              type="button"
+              className="px-3 py-1 text-xs font-medium bg-navy-800 hover:bg-navy-700 text-blue-400 rounded-md transition-colors"
+              onClick={() => set('installationSteps', [...(form.installationSteps || []), { label: '', command: '' }])}
+            >
+              + Add Step
+            </button>
+          </div>
+          <div className="space-y-4">
+            {(form.installationSteps || []).map((step, idx) => (
+              <div key={idx} className="p-4 rounded-xl bg-navy-800/50 border border-navy-700 relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = [...form.installationSteps];
+                    next.splice(idx, 1);
+                    set('installationSteps', next);
+                  }}
+                  className="absolute top-3 right-3 text-slate-500 hover:text-red-400 p-1"
+                >
+                  <Ic d={IC.close} size={14} />
+                </button>
+                <div className="space-y-3 mt-2">
+                  <Input
+                    label={`Step ${idx + 1} Label`}
+                    value={step.label || ''}
+                    onChange={(e) => {
+                      const next = [...form.installationSteps];
+                      next[idx].label = e.target.value;
+                      set('installationSteps', next);
+                    }}
+                    placeholder="e.g. Clone Repository"
+                  />
+                  <Input
+                    label="Command"
+                    value={step.command || ''}
+                    onChange={(e) => {
+                      const next = [...form.installationSteps];
+                      next[idx].command = e.target.value;
+                      set('installationSteps', next);
+                    }}
+                    placeholder="e.g. git clone https://..."
                   />
                 </div>
               </div>
