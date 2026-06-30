@@ -24,19 +24,25 @@ export default function Hero({ content }) {
   };
 
   const handlePrimaryCta = () => {
-    if (primaryCtaHref.startsWith('http') || primaryCtaHref.startsWith('/')) {
-      window.open(primaryCtaHref, '_blank', 'noopener,noreferrer');
+    const rawHref = (primaryCtaHref || '#projects').trim();
+    if (rawHref.startsWith('http') || rawHref.startsWith('/')) {
+      window.open(rawHref, '_blank', 'noopener,noreferrer');
       return;
     }
     
     // Auto-prepend # if admin forgot it
-    const targetId = primaryCtaHref.startsWith('#') ? primaryCtaHref : `#${primaryCtaHref}`;
+    const targetId = rawHref.startsWith('#') ? rawHref : `#${rawHref}`;
     
-    const target = document.querySelector(targetId);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.location.href = '/' + targetId;
+    try {
+      const target = document.querySelector(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.location.href = '/' + targetId;
+      }
+    } catch (e) {
+      console.warn("Invalid selector:", targetId);
+      window.location.href = '/#projects';
     }
   };
 

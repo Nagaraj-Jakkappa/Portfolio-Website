@@ -40,8 +40,9 @@ export default function Navbar({ content }) {
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  const handleNav = (href) => {
+  const handleNav = (rawHref) => {
     setOpen(false);
+    const href = (rawHref || '').trim();
     const targetId = href.startsWith('http') || href.startsWith('/') || href.startsWith('#') ? href : `#${href}`;
     
     if (!isHome && targetId.startsWith('#')) {
@@ -49,9 +50,13 @@ export default function Navbar({ content }) {
       return;
     }
     if (targetId.startsWith('#')) {
-      const target = document.querySelector(targetId);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
+      try {
+        const target = document.querySelector(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      } catch (e) {
+        console.warn("Invalid selector in navbar:", targetId);
       }
     } else {
       window.open(targetId, '_blank', 'noopener,noreferrer');
