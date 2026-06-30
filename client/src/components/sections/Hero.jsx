@@ -24,10 +24,19 @@ export default function Hero({ content }) {
   };
 
   const handlePrimaryCta = () => {
-    if (primaryCtaHref.startsWith('#')) {
-      handleScroll(primaryCtaHref);
-    } else {
+    if (primaryCtaHref.startsWith('http') || primaryCtaHref.startsWith('/')) {
       window.open(primaryCtaHref, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    
+    // Auto-prepend # if admin forgot it
+    const targetId = primaryCtaHref.startsWith('#') ? primaryCtaHref : `#${primaryCtaHref}`;
+    
+    const target = document.querySelector(targetId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = '/' + targetId;
     }
   };
 

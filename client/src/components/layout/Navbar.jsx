@@ -42,13 +42,19 @@ export default function Navbar({ content }) {
 
   const handleNav = (href) => {
     setOpen(false);
-    if (!isHome) {
-      window.location.href = '/' + href;
+    const targetId = href.startsWith('http') || href.startsWith('/') || href.startsWith('#') ? href : `#${href}`;
+    
+    if (!isHome && targetId.startsWith('#')) {
+      window.location.href = '/' + targetId;
       return;
     }
-    const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
+    if (targetId.startsWith('#')) {
+      const target = document.querySelector(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      window.open(targetId, '_blank', 'noopener,noreferrer');
     }
   };
 
