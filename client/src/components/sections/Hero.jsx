@@ -10,7 +10,7 @@ export default function Hero({ content }) {
   const role = hero.role || 'Nagaraj Jakkappa | MERN Stack Developer';
   const subtitle =
     hero.subtitle ||
-    'Production-focused junior developer specializing in React, Node.js, and MongoDB. I build scalable full-stack applications, secure admin dashboards, and AI-integrated tools.';
+    'I build and ship full-stack web apps with React, Node.js, Express, and MongoDB — from AI-powered SaaS platforms to secure CMS dashboards, with clean code, responsive UI, and production-minded security.';
 
   const primaryCtaText = hero.primaryCtaText || 'View Projects';
   const primaryCtaHref = hero.primaryCtaHref || '#projects';
@@ -182,9 +182,9 @@ export default function Hero({ content }) {
             style={{ animationDelay: '500ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             {[
-              { val: '8.26', label: 'BCA CGPA' },
-              { val: 'MERN', label: 'Stack' },
               { val: '6+', label: 'Live Projects' },
+              { val: 'MERN', label: 'Stack' },
+              { val: '8.26', label: 'BCA CGPA' },
               { val: '1', label: 'Internship' },
             ].map(({ val, label }) => (
               <div key={label}>
