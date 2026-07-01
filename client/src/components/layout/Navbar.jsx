@@ -87,9 +87,10 @@ export default function Navbar({ content }) {
             <span 
               className="text-base sm:text-lg md:text-2xl text-white transition-colors group-hover:text-blue-200"
               style={{
-                fontFamily: '"Grape Nuts", cursive',
-                letterSpacing: '0.03em',
-                fontWeight: 400
+                fontFamily: '"Liu Jian Mao Cao", cursive',
+                fontWeight: 400,
+                fontStyle: 'normal',
+                letterSpacing: '0.03em'
               }}
             >
               NAGARAJ JAKKAPPA
