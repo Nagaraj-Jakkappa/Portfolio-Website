@@ -169,8 +169,10 @@ const contentValidationRules = [
   body('homepageSections').optional().isArray(),
   body('homepageSections.*.key').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
   body('homepageSections.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
+  body('homepageSections.*.navLabel').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
   body('homepageSections.*.order').optional().isNumeric(),
   body('homepageSections.*.isLocked').optional().isBoolean(),
+  body('homepageSections.*.showInNav').optional().isBoolean(),
 ];
 
 // ── GET /api/site-content — Public ───────────────────────────
@@ -383,8 +385,10 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
       payload.homepageSections = req.body.homepageSections.map((s) => ({
         key: s.key?.trim() || '',
         label: s.label?.trim() || '',
+        navLabel: s.navLabel?.trim() || '',
         order: Number(s.order) || 0,
         isLocked: typeof s.isLocked === 'boolean' ? s.isLocked : false,
+        showInNav: typeof s.showInNav === 'boolean' ? s.showInNav : true,
       }));
     }
 

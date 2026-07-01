@@ -1,12 +1,42 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+const sectionAnchors = {
+  projects: "#projects",
+  about: "#about",
+  skills: "#skills",
+  experience: "#experience",
+  certifications: "#certifications",
+  currentlyBuilding: "#currently-building",
+  techPulse: "#tech-pulse",
+  now: "#now",
+  engineeringHighlights: "#engineering-highlights",
+  contact: "#contact",
+};
+
+const DEFAULT_NAV_LABELS = {
+  projects: "Projects",
+  about: "About",
+  skills: "Skills",
+  experience: "Experience",
+  certifications: "Certifications",
+  currentlyBuilding: "Building",
+  techPulse: "Tech Pulse",
+  now: "Now",
+  engineeringHighlights: "Highlights",
+  contact: "Contact"
+};
+
 const NAV_LINKS = [
-  { label: 'About', href: '#about' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Recognition', href: '#certifications' },
   { label: 'Projects', href: '#projects' },
+  { label: 'About', href: '#about' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Certifications', href: '#certifications' },
+  { label: 'Building', href: '#currently-building' },
+  { label: 'Tech Pulse', href: '#tech-pulse' },
+  { label: 'Now', href: '#now' },
+  { label: 'Highlights', href: '#engineering-highlights' },
   { label: 'Contact', href: '#contact' },
 ];
 
@@ -16,12 +46,15 @@ export default function Navbar({ content }) {
   const location = useLocation();
   const isHome = location.pathname === '/';
 
-  const navLinks =
-    Array.isArray(content?.navbar) && content.navbar.length > 0
-      ? [...content.navbar]
-          .filter((n) => n.visible !== false)
-          .sort((a, b) => (a.order || 0) - (b.order || 0))
-      : NAV_LINKS;
+  const navLinks = Array.isArray(content?.homepageSections) && content.homepageSections.length > 0
+    ? [...content.homepageSections]
+        .filter((sec) => sec.key !== 'hero' && sec.showInNav !== false)
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+        .map((sec) => ({
+          label: sec.navLabel || sec.label || DEFAULT_NAV_LABELS[sec.key] || sec.key,
+          href: sectionAnchors[sec.key] || `#${sec.key}`
+        }))
+    : NAV_LINKS;
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);

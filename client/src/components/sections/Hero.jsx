@@ -84,7 +84,7 @@ export default function Hero({ content }) {
   const headlineParts = headline.split('\n');
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-navy-950">
+    <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-navy-950">
       {/* Background grid */}
       <div className="absolute inset-0 bg-grid-pattern opacity-100" />
 

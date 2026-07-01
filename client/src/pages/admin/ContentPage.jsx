@@ -149,6 +149,18 @@ export default function ContentPage() {
     setForm((f) => ({ ...f, homepageSections: list }));
   };
 
+  const updateHomepageSectionNavLabel = (index, navLabel) => {
+    const list = [...form.homepageSections];
+    list[index] = { ...list[index], navLabel };
+    setForm((f) => ({ ...f, homepageSections: list }));
+  };
+
+  const updateHomepageSectionShowInNav = (index, showInNav) => {
+    const list = [...form.homepageSections];
+    list[index] = { ...list[index], showInNav };
+    setForm((f) => ({ ...f, homepageSections: list }));
+  };
+
   // ── Save ───────────────────────────────────────────────────
   const handleSave = async () => {
     setSaving(true);
@@ -399,7 +411,8 @@ export default function ContentPage() {
       {/* ── Homepage Layout Controls ─────────────────────────── */}
       <Section title="Homepage Layout Controls" defaultOpen>
         <p className="text-sm text-slate-400 mb-4">
-          Drag/move sections to reorder how they appear on the homepage. Locked sections (like Hero) cannot be moved.
+          Drag/move sections to reorder how they appear on the homepage. Locked sections (like Hero) cannot be moved.<br/>
+          Navbar links follow the same order as homepage sections. <code>Show in Navbar</code> only affects navigation links, not homepage visibility. Labels here are used for Admin organization and navbar labels where supported.
         </p>
         <div className="space-y-2">
           {form.homepageSections.map((sec, i) => (
@@ -422,12 +435,28 @@ export default function ContentPage() {
                   <Ic d={IC.chevDown} size={14} />
                 </button>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Input
                   value={sec.label}
                   onChange={(e) => updateHomepageSectionLabel(i, e.target.value)}
                   placeholder="Section Label"
                 />
+                <Input
+                  value={sec.navLabel || ''}
+                  onChange={(e) => updateHomepageSectionNavLabel(i, e.target.value)}
+                  placeholder="Navbar Label"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-1.5 cursor-pointer text-sm text-slate-400 hover:text-white">
+                  <input
+                    type="checkbox"
+                    checked={sec.showInNav !== false}
+                    onChange={(e) => updateHomepageSectionShowInNav(i, e.target.checked)}
+                    className="rounded border-navy-700 bg-navy-800 text-cyan-500 focus:ring-cyan-500/50"
+                  />
+                  <span>Show in Nav</span>
+                </label>
               </div>
               <div className="w-24 text-xs text-slate-500 uppercase tracking-wider text-right">
                 {sec.isLocked ? <span className="text-rose-400">Locked</span> : `Order: ${sec.order}`}
