@@ -417,7 +417,7 @@ export default function ContentPage() {
       {/* ── Homepage Layout Controls ─────────────────────────── */}
       <Section title="Homepage Layout Controls" defaultOpen>
         <p className="text-sm text-slate-400 mb-4">
-          Drag/move sections to reorder how they appear on the homepage. Locked sections (like Hero) cannot be moved.<br/>
+          Drag/move sections to reorder how they appear on the homepage. Locked sections (like Home) cannot be moved.<br/>
           Desktop Nav is kept short for recruiters. Mobile Nav can show all homepage links. These toggles only affect navbar visibility, not homepage section visibility.
         </p>
         <div className="space-y-2">
@@ -494,12 +494,17 @@ export default function ContentPage() {
           onChange={(e) => setNested('hero', 'badge', e.target.value)}
           placeholder="OPEN FOR FRONTEND & FULL STACK ROLES"
         />
-        <Input
-          label="Headline"
-          value={form.hero.headline}
-          onChange={(e) => setNested('hero', 'headline', e.target.value)}
-          placeholder="Building Production-Ready Web Applications"
-        />
+        <div>
+          <Input
+            label="Headline"
+            value={form.hero.headline}
+            onChange={(e) => setNested('hero', 'headline', e.target.value)}
+            placeholder="Building Production-Ready Web Applications"
+          />
+          <p className="text-xs text-slate-500 mt-1">
+            Tip: The phrase “Web Applications” is automatically highlighted with the site gradient when present in the headline.
+          </p>
+        </div>
         <Input
           label="Name"
           value={form.hero.name}

@@ -9,7 +9,7 @@ if (!MONGO_URI) {
 }
 
 const defaultOrder = [
-  { key: "hero", label: "Hero", order: 1, isLocked: true },
+  { key: "hero", label: "Home", order: 1, isLocked: true },
   { key: "projects", label: "Featured Work", order: 2, isLocked: false },
   { key: "about", label: "About", order: 3, isLocked: false },
   { key: "skills", label: "My Tech Stack", order: 4, isLocked: false },

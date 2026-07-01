@@ -80,8 +80,22 @@ export default function Hero({ content }) {
     window.open(resumeUrl, '_blank', 'noopener,noreferrer');
   };
 
-  // Parse headline for gradient styling
-  const headlineParts = headline.split('\n');
+  const renderHeroHeadline = (text) => {
+    const phrase = "Web Applications";
+    if (!text?.includes(phrase)) return text;
+
+    const [before, after] = text.split(phrase);
+
+    return (
+      <>
+        {before}
+        <span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 bg-clip-text text-transparent">
+          {phrase}
+        </span>
+        {after}
+      </>
+    );
+  };
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-navy-950">
@@ -109,19 +123,10 @@ export default function Hero({ content }) {
 
           {/* Heading */}
           <h1
-            className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] text-white mb-6 animate-fade-up"
+            className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] text-white mb-6 animate-fade-up whitespace-pre-wrap"
             style={{ animationDelay: '100ms', opacity: 0, animationFillMode: 'forwards' }}
           >
-            {headlineParts.length > 1 ? (
-              <>
-                {headlineParts[0]}
-                <br />
-                <span className="gradient-text italic pr-2">{headlineParts[1].split(' ')[0]}</span>{' '}
-                {headlineParts[1].split(' ').slice(1).join(' ')}
-              </>
-            ) : (
-              headline
-            )}
+            {renderHeroHeadline(headline)}
           </h1>
 
           {/* Role / Sub-brand */}
@@ -165,22 +170,8 @@ export default function Hero({ content }) {
             style={{ animationDelay: '400ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             <a
-              href={primaryCtaText === 'View Projects' ? '#projects' : (primaryCtaHref || '#projects')}
-              onClick={(event) => {
-                event.preventDefault();
-                
-                if (primaryCtaText === 'View Projects' || primaryCtaHref === '#projects' || primaryCtaHref === 'projects') {
-                  const target = document.getElementById("projects");
-                  if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  } else {
-                    window.location.href = '/#projects';
-                  }
-                } else {
-                  handlePrimaryCta();
-                }
-              }}
-              className="btn-primary rounded-full px-8 flex items-center gap-2"
+              href={primaryCtaHref || '#projects'}
+              className="btn-primary rounded-full px-8 flex items-center gap-2 justify-center"
             >
               {primaryCtaText}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,24 +180,29 @@ export default function Hero({ content }) {
             </a>
 
             {resumeUrl && (
-              <button
-                onClick={viewResume}
-                className="btn-ghost rounded-full px-8 flex items-center gap-2 border-blue-500/30 hover:border-blue-500/60"
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  if (typeof trackVisitorEvent === 'function') trackVisitorEvent('resume_click');
+                }}
+                className="btn-ghost rounded-full px-8 flex items-center gap-2 justify-center border-blue-500/30 hover:border-blue-500/60"
               >
                 {secondaryCtaText}
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
-              </button>
+              </a>
             )}
             
-            <button
-              onClick={() => handleScroll('#contact')}
-              className="btn-ghost rounded-full px-8 flex items-center gap-2"
+            <a
+              href="#contact"
+              className="btn-ghost rounded-full px-8 flex items-center gap-2 justify-center"
             >
               Contact Me
-            </button>
+            </a>
           </div>
 
           {/* Social Proof Stats */}
