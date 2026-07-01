@@ -60,8 +60,23 @@ export default function About({ content }) {
   const githubUrl = social.github || 'https://github.com/Nagaraj-Jakkappa';
   const linkedinUrl = social.linkedin || 'https://www.linkedin.com/in/nagaraj-jakkappa/';
 
-  // Use admin intro if provided, otherwise use hardcoded bio
+  // Use admin paragraphs if provided, otherwise fallback to intro or default
+  const hasAdminParagraphs = Array.isArray(about.paragraphs) && about.paragraphs.length > 0;
   const hasAdminIntro = about.intro && about.intro.trim().length > 0;
+  const adminKeywords = Array.isArray(about.highlightKeywords) ? about.highlightKeywords : [];
+
+  const renderParagraph = (text, keywords) => {
+    if (!keywords || keywords.length === 0 || !text) return text;
+    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const sortedKeywords = [...keywords].sort((a, b) => b.length - a.length);
+    const pattern = new RegExp(`(${sortedKeywords.map(escapeRegExp).join('|')})`, 'gi');
+    const parts = text.split(pattern);
+    
+    return parts.map((part, i) => {
+      const isMatch = sortedKeywords.some(k => k.toLowerCase() === part.toLowerCase());
+      return isMatch ? <span key={i} className={HL}>{part}</span> : part;
+    });
+  };
 
   // Use admin highlights as timeline if provided
   const hasAdminHighlights = Array.isArray(about.highlights) && about.highlights.length > 0;
@@ -141,7 +156,9 @@ export default function About({ content }) {
             {/* --- PROFILE IMAGE END --- */}
 
             <div className="space-y-5 text-slate-400 leading-relaxed text-[1.05rem]">
-              {hasAdminIntro ? (
+              {hasAdminParagraphs ? (
+                about.paragraphs.map((para, i) => <p key={i}>{renderParagraph(para, adminKeywords)}</p>)
+              ) : hasAdminIntro ? (
                 about.intro.split('\n').filter(Boolean).map((para, i) => <p key={i}>{para}</p>)
               ) : (
                 DEFAULT_BIO.map((node, i) => <p key={i}>{node}</p>)

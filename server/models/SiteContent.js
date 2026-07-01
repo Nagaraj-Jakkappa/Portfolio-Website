@@ -8,7 +8,19 @@ const mongoose = require('mongoose');
 const siteContentSchema = new mongoose.Schema(
   {
     hero: {
+      badge: { type: String, default: '', maxlength: 100 },
       headline: { type: String, default: '', maxlength: 200 },
+      name: { type: String, default: '', maxlength: 100 },
+      roles: [{ type: String, maxlength: 100 }],
+      description: { type: String, default: '', maxlength: 1000 },
+      stats: [
+        {
+          value: { type: String, maxlength: 50 },
+          label: { type: String, maxlength: 100 },
+          order: { type: Number, default: 0 },
+          isActive: { type: Boolean, default: true },
+        }
+      ],
       subtitle: { type: String, default: '', maxlength: 500 },
       role: { type: String, default: '', maxlength: 200 },
       primaryCtaText: { type: String, default: '', maxlength: 60 },
@@ -18,6 +30,8 @@ const siteContentSchema = new mongoose.Schema(
     },
     about: {
       title: { type: String, default: '', maxlength: 200 },
+      paragraphs: [{ type: String, maxlength: 2000 }],
+      highlightKeywords: [{ type: String, maxlength: 200 }],
       intro: { type: String, default: '', maxlength: 2000 },
       imageUrl: { type: String, default: '', maxlength: 1000 },
       location: { type: String, default: '', maxlength: 200 },

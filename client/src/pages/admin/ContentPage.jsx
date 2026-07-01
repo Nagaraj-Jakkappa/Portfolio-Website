@@ -27,7 +27,12 @@ const IC = {
 
 const EMPTY_CONTENT = {
   hero: {
+    badge: '',
     headline: '',
+    name: '',
+    roles: [],
+    description: '',
+    stats: [],
     subtitle: '',
     role: '',
     primaryCtaText: '',
@@ -37,6 +42,8 @@ const EMPTY_CONTENT = {
   },
   about: {
     title: '',
+    paragraphs: [],
+    highlightKeywords: [],
     intro: '',
     imageUrl: '',
     location: '',
@@ -93,8 +100,8 @@ export default function ContentPage() {
         const { data } = await api.get('/site-content');
         if (data) {
           setForm({
-            hero: { ...EMPTY_CONTENT.hero, ...data.hero },
-            about: { ...EMPTY_CONTENT.about, ...data.about, highlights: data.about?.highlights || [] },
+            hero: { ...EMPTY_CONTENT.hero, ...data.hero, roles: data.hero?.roles || [], stats: data.hero?.stats || [] },
+            about: { ...EMPTY_CONTENT.about, ...data.about, highlights: data.about?.highlights || [], paragraphs: data.about?.paragraphs || [], highlightKeywords: data.about?.highlightKeywords || [] },
             resume: { ...EMPTY_CONTENT.resume, ...data.resume },
             socialLinks: { ...EMPTY_CONTENT.socialLinks, ...data.socialLinks },
             currentlyBuilding: Array.isArray(data.currentlyBuilding) ? data.currentlyBuilding : [],
@@ -159,8 +166,8 @@ export default function ContentPage() {
 
       const { data } = await api.put('/site-content', payload);
       setForm({
-        hero: { ...EMPTY_CONTENT.hero, ...data.hero },
-        about: { ...EMPTY_CONTENT.about, ...data.about, highlights: data.about?.highlights || [] },
+        hero: { ...EMPTY_CONTENT.hero, ...data.hero, roles: data.hero?.roles || [], stats: data.hero?.stats || [] },
+        about: { ...EMPTY_CONTENT.about, ...data.about, highlights: data.about?.highlights || [], paragraphs: data.about?.paragraphs || [], highlightKeywords: data.about?.highlightKeywords || [] },
         resume: { ...EMPTY_CONTENT.resume, ...data.resume },
         socialLinks: { ...EMPTY_CONTENT.socialLinks, ...data.socialLinks },
         currentlyBuilding: Array.isArray(data.currentlyBuilding) ? data.currentlyBuilding : [],
@@ -186,6 +193,26 @@ export default function ContentPage() {
       setSaving(false);
     }
   };
+
+  // ── Hero Roles helpers ──────────────────────────────────────
+  const addRole = () => setForm((f) => ({ ...f, hero: { ...f.hero, roles: [...f.hero.roles, ''] } }));
+  const updateRole = (i, val) => setForm((f) => ({ ...f, hero: { ...f.hero, roles: f.hero.roles.map((r, idx) => (idx === i ? val : r)) } }));
+  const removeRole = (i) => setForm((f) => ({ ...f, hero: { ...f.hero, roles: f.hero.roles.filter((_, idx) => idx !== i) } }));
+
+  // ── Hero Stats helpers ──────────────────────────────────────
+  const addStat = () => setForm((f) => ({ ...f, hero: { ...f.hero, stats: [...f.hero.stats, { value: '', label: '', order: 0, isActive: true }] } }));
+  const updateStat = (i, key, val) => setForm((f) => ({ ...f, hero: { ...f.hero, stats: f.hero.stats.map((s, idx) => (idx === i ? { ...s, [key]: val } : s)) } }));
+  const removeStat = (i) => setForm((f) => ({ ...f, hero: { ...f.hero, stats: f.hero.stats.filter((_, idx) => idx !== i) } }));
+
+  // ── About Paragraphs helpers ────────────────────────────────
+  const addParagraph = () => setForm((f) => ({ ...f, about: { ...f.about, paragraphs: [...f.about.paragraphs, ''] } }));
+  const updateParagraph = (i, val) => setForm((f) => ({ ...f, about: { ...f.about, paragraphs: f.about.paragraphs.map((p, idx) => (idx === i ? val : p)) } }));
+  const removeParagraph = (i) => setForm((f) => ({ ...f, about: { ...f.about, paragraphs: f.about.paragraphs.filter((_, idx) => idx !== i) } }));
+
+  // ── About Highlight Keywords helpers ────────────────────────
+  const addHighlightKeyword = () => setForm((f) => ({ ...f, about: { ...f.about, highlightKeywords: [...f.about.highlightKeywords, ''] } }));
+  const updateHighlightKeyword = (i, val) => setForm((f) => ({ ...f, about: { ...f.about, highlightKeywords: f.about.highlightKeywords.map((k, idx) => (idx === i ? val : k)) } }));
+  const removeHighlightKeyword = (i) => setForm((f) => ({ ...f, about: { ...f.about, highlightKeywords: f.about.highlightKeywords.filter((_, idx) => idx !== i) } }));
 
   // ── Currently Building helpers ─────────────────────────────
   const addBuildItem = () =>
@@ -351,24 +378,97 @@ export default function ContentPage() {
       {/* ── Hero ─────────────────────────────────────────── */}
       <Section title="Hero Section" defaultOpen>
         <Input
+          label="Badge"
+          value={form.hero.badge}
+          onChange={(e) => setNested('hero', 'badge', e.target.value)}
+          placeholder="OPEN FOR FRONTEND & FULL STACK ROLES"
+        />
+        <Input
           label="Headline"
           value={form.hero.headline}
           onChange={(e) => setNested('hero', 'headline', e.target.value)}
-          placeholder="Crafting Digital Artistry Through Code"
+          placeholder="Building Production-Ready Web Applications"
         />
         <Input
-          label="Role / Sub-brand"
-          value={form.hero.role}
-          onChange={(e) => setNested('hero', 'role', e.target.value)}
-          placeholder="Nagaraj Jakkappa @ Techartistry.in"
+          label="Name"
+          value={form.hero.name}
+          onChange={(e) => setNested('hero', 'name', e.target.value)}
+          placeholder="Nagaraj Jakkappa"
         />
+        
+        {/* Rotating Roles */}
+        <div className="pt-2 border-t border-navy-800">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-medium text-slate-400">Rotating Roles</span>
+            <Btn variant="ghost" size="sm" onClick={addRole}>
+              <Ic d={IC.plus} size={11} /> Add
+            </Btn>
+          </div>
+          {form.hero.roles.map((r, i) => (
+            <div key={i} className="flex gap-2 mb-2 items-center">
+              <Input
+                value={r}
+                onChange={(e) => updateRole(i, e.target.value)}
+                placeholder="MERN Stack Developer"
+                className="flex-1"
+              />
+              <button onClick={() => removeRole(i)} className="p-2 text-rose-400 hover:bg-rose-500/20 rounded">
+                <Ic d={IC.trash} size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+
         <Textarea
-          label="Subtitle / Description"
-          value={form.hero.subtitle}
-          onChange={(e) => setNested('hero', 'subtitle', e.target.value)}
-          placeholder="BCA Graduate & Full-Stack Developer specializing in the MERN stack..."
+          label="Description"
+          value={form.hero.description}
+          onChange={(e) => setNested('hero', 'description', e.target.value)}
+          placeholder="I build and ship full-stack web apps..."
           rows={3}
         />
+
+        {/* Hero Stats */}
+        <div className="pt-2 border-t border-navy-800">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-medium text-slate-400">Hero Stats</span>
+            <Btn variant="ghost" size="sm" onClick={addStat}>
+              <Ic d={IC.plus} size={11} /> Add
+            </Btn>
+          </div>
+          {form.hero.stats.map((s, i) => (
+            <div key={i} className="grid grid-cols-[1fr_2fr_auto_auto] gap-2 mb-2 items-center">
+              <Input
+                value={s.value}
+                onChange={(e) => updateStat(i, 'value', e.target.value)}
+                placeholder="6+"
+              />
+              <Input
+                value={s.label}
+                onChange={(e) => updateStat(i, 'label', e.target.value)}
+                placeholder="LIVE PROJECTS"
+              />
+              <Input
+                type="number"
+                value={s.order}
+                onChange={(e) => updateStat(i, 'order', parseInt(e.target.value) || 0)}
+                placeholder="Order"
+                className="w-20"
+              />
+              <div className="flex gap-1">
+                <button
+                  onClick={() => updateStat(i, 'isActive', !s.isActive)}
+                  className={`p-2 rounded ${s.isActive ? 'text-emerald-400 bg-emerald-500/20' : 'text-slate-400 bg-navy-800'}`}
+                  title="Toggle Visibility"
+                >
+                  <Ic d={IC.check} size={14} />
+                </button>
+                <button onClick={() => removeStat(i)} className="p-2 text-rose-400 hover:bg-rose-500/20 rounded">
+                  <Ic d={IC.trash} size={14} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <Input
             label="Primary CTA Text"
@@ -407,14 +507,55 @@ export default function ContentPage() {
           onChange={(e) => setNested('about', 'title', e.target.value)}
           placeholder="The person behind the code"
         />
-        <Textarea
-          label="Intro (paragraphs)"
-          value={form.about.intro}
-          onChange={(e) => setNested('about', 'intro', e.target.value)}
-          placeholder="Hey! I'm a passionate frontend developer from Yadgir..."
-          rows={5}
-        />
-        <div className="grid grid-cols-2 gap-3">
+        
+        {/* Paragraphs */}
+        <div className="pt-2 border-t border-navy-800 mt-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-medium text-slate-400">Paragraphs</span>
+            <Btn variant="ghost" size="sm" onClick={addParagraph}>
+              <Ic d={IC.plus} size={11} /> Add
+            </Btn>
+          </div>
+          {form.about.paragraphs.map((p, i) => (
+            <div key={i} className="flex gap-2 mb-2 items-start">
+              <Textarea
+                value={p}
+                onChange={(e) => updateParagraph(i, e.target.value)}
+                placeholder="Paragraph text..."
+                rows={3}
+                className="flex-1"
+              />
+              <button onClick={() => removeParagraph(i)} className="p-2 text-rose-400 hover:bg-rose-500/20 rounded mt-1">
+                <Ic d={IC.trash} size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Highlight Keywords */}
+        <div className="pt-2 border-t border-navy-800 mt-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-medium text-slate-400">Highlight Keywords</span>
+            <Btn variant="ghost" size="sm" onClick={addHighlightKeyword}>
+              <Ic d={IC.plus} size={11} /> Add
+            </Btn>
+          </div>
+          {form.about.highlightKeywords.map((k, i) => (
+            <div key={i} className="flex gap-2 mb-2 items-center">
+              <Input
+                value={k}
+                onChange={(e) => updateHighlightKeyword(i, e.target.value)}
+                placeholder="Keyword to highlight (e.g. MERN Stack Developer)"
+                className="flex-1"
+              />
+              <button onClick={() => removeHighlightKeyword(i)} className="p-2 text-rose-400 hover:bg-rose-500/20 rounded">
+                <Ic d={IC.trash} size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mt-4">
           <Input
             label="Profile Image URL"
             value={form.about.imageUrl}
@@ -436,8 +577,8 @@ export default function ContentPage() {
           placeholder="BCA Graduate | Frontend Intern"
         />
 
-        {/* Highlights */}
-        <div className="pt-2 border-t border-navy-800">
+        {/* Timeline Highlights */}
+        <div className="pt-2 border-t border-navy-800 mt-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-slate-400">Highlights / Timeline</span>
             <Btn variant="ghost" size="sm" onClick={addHighlight}>

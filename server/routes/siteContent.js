@@ -7,7 +7,17 @@ const SiteContent = require('../models/SiteContent');
 // ── Validation rules ─────────────────────────────────────────
 const contentValidationRules = [
   // Hero
+  body('hero.badge').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
   body('hero.headline').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
+  body('hero.name').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
+  body('hero.roles').optional().isArray({ max: 10 }).withMessage('Too many roles'),
+  body('hero.roles.*').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
+  body('hero.description').optional({ checkFalsy: true }).isString().isLength({ max: 1000 }),
+  body('hero.stats').optional().isArray({ max: 10 }).withMessage('Too many stats'),
+  body('hero.stats.*.value').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
+  body('hero.stats.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
+  body('hero.stats.*.order').optional().isNumeric(),
+  body('hero.stats.*.isActive').optional().isBoolean(),
   body('hero.subtitle').optional({ checkFalsy: true }).isString().isLength({ max: 500 }),
   body('hero.role').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
   body('hero.primaryCtaText').optional({ checkFalsy: true }).isString().isLength({ max: 60 }),
@@ -17,6 +27,10 @@ const contentValidationRules = [
 
   // About
   body('about.title').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
+  body('about.paragraphs').optional().isArray({ max: 5 }).withMessage('Too many paragraphs'),
+  body('about.paragraphs.*').optional({ checkFalsy: true }).isString().isLength({ max: 2000 }),
+  body('about.highlightKeywords').optional().isArray({ max: 20 }).withMessage('Too many highlights'),
+  body('about.highlightKeywords.*').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),
   body('about.intro').optional({ checkFalsy: true }).isString().isLength({ max: 2000 }),
   body('about.imageUrl').optional({ checkFalsy: true }).isURL().withMessage('Invalid image URL'),
   body('about.location').optional({ checkFalsy: true }).isString().isLength({ max: 200 }),

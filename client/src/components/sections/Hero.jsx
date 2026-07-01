@@ -3,7 +3,7 @@ import { trackVisitorEvent } from '../../utils/visitorTracking';
 import developerWorkspace from '../../assets/illustrations/developer-workspace.webp';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ROTATING_ROLES = [
+const DEFAULT_ROTATING_ROLES = [
   "MERN Stack Developer",
   "Frontend Developer",
   "React Developer",
@@ -13,21 +13,24 @@ const ROTATING_ROLES = [
 
 export default function Hero({ content }) {
   const [roleIndex, setRoleIndex] = useState(0);
+  
+  const hero = content?.hero || {};
+  const roles = hero.roles?.length > 0 ? hero.roles : DEFAULT_ROTATING_ROLES;
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setRoleIndex((current) => (current + 1) % ROTATING_ROLES.length);
+      setRoleIndex((current) => (current + 1) % roles.length);
     }, 2200);
     return () => clearInterval(timer);
-  }, []);
+  }, [roles]);
 
-  const hero = content?.hero || {};
   const resume = content?.resume || {};
 
+  const badgeText = hero.badge || "Open for Frontend & Fullstack Roles";
   const headline = hero.headline || "Building Production-Ready\nWeb Applications";
-  const role = hero.role || 'Nagaraj Jakkappa | MERN Stack Developer';
+  const name = hero.name || "Nagaraj Jakkappa";
   const subtitle =
-    hero.subtitle ||
+    hero.description || hero.subtitle ||
     'I build and ship full-stack web apps with React, Node.js, Express, and MongoDB — from AI-powered SaaS platforms to secure CMS dashboards, with clean code, responsive UI, and production-minded security.';
 
   const primaryCtaText = hero.primaryCtaText || 'View Projects';
@@ -101,7 +104,7 @@ export default function Hero({ content }) {
             style={{ animationDelay: '0ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-            Open for Frontend & Fullstack Roles
+            {badgeText}
           </div>
 
           {/* Heading */}
@@ -125,12 +128,12 @@ export default function Hero({ content }) {
           <div
             className="font-display text-xl md:text-2xl text-slate-300 mb-4 animate-fade-up flex flex-wrap items-center gap-x-2 gap-y-1"
             style={{ animationDelay: '200ms', opacity: 0, animationFillMode: 'forwards' }}
-            aria-label="Nagaraj Jakkappa, MERN Stack Developer, Frontend Developer, React Developer, Full Stack Developer, Software Developer"
+            aria-label={`${name}, ${roles.join(', ')}`}
           >
-            <span aria-hidden="true">Nagaraj Jakkappa <span className="text-slate-500 font-light px-1">|</span></span>
+            <span aria-hidden="true">{name} <span className="text-slate-500 font-light px-1">|</span></span>
             <div className="relative inline-flex" aria-hidden="true">
               <span className="invisible pointer-events-none whitespace-nowrap">
-                Full Stack Developer
+                {roles.reduce((a, b) => a.length > b.length ? a : b, '')}
               </span>
               <AnimatePresence>
                 <motion.span
@@ -142,7 +145,7 @@ export default function Hero({ content }) {
                   className="absolute left-0 top-0 inline-block bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 bg-clip-text text-transparent font-semibold"
                   style={{ textShadow: "0 0 16px rgba(34, 211, 238, 0.16)", whiteSpace: 'nowrap' }}
                 >
-                  {ROTATING_ROLES[roleIndex]}
+                  {roles[roleIndex]}
                 </motion.span>
               </AnimatePresence>
             </div>
@@ -211,16 +214,19 @@ export default function Hero({ content }) {
             className="flex flex-wrap gap-10 mt-14 pt-10 border-t border-navy-800 animate-fade-up"
             style={{ animationDelay: '500ms', opacity: 0, animationFillMode: 'forwards' }}
           >
-            {[
-              { val: '6+', label: 'Live Projects' },
-              { val: 'MERN', label: 'Stack' },
-              { val: '8.26', label: 'BCA CGPA' },
-              { val: '1', label: 'Internship' },
-            ].map(({ val, label }) => (
-              <div key={label}>
-                <div className="font-display font-bold text-2xl text-white">{val}</div>
+            {(hero.stats?.length > 0
+              ? [...hero.stats].sort((a, b) => a.order - b.order).filter(s => s.isActive !== false)
+              : [
+                  { value: '6+', label: 'Live Projects' },
+                  { value: 'MERN', label: 'Stack' },
+                  { value: '8.26', label: 'BCA CGPA' },
+                  { value: '1', label: 'Internship' },
+                ]
+            ).map((stat, idx) => (
+              <div key={idx}>
+                <div className="font-display font-bold text-2xl text-white">{stat.value}</div>
                 <div className="text-[10px] text-blue-400/60 mt-0.5 tracking-widest uppercase font-mono">
-                  {label}
+                  {stat.label}
                 </div>
               </div>
             ))}
