@@ -131,15 +131,29 @@ export default function Hero({ content }) {
             className="flex flex-col sm:flex-row gap-2 mt-6 animate-fade-up"
             style={{ animationDelay: '400ms', opacity: 0, animationFillMode: 'forwards' }}
           >
-            <button
-              onClick={handlePrimaryCta}
+            <a
+              href={primaryCtaText === 'View Projects' ? '#projects' : (primaryCtaHref || '#projects')}
+              onClick={(event) => {
+                event.preventDefault();
+                
+                if (primaryCtaText === 'View Projects' || primaryCtaHref === '#projects' || primaryCtaHref === 'projects') {
+                  const target = document.getElementById("projects");
+                  if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  } else {
+                    window.location.href = '/#projects';
+                  }
+                } else {
+                  handlePrimaryCta();
+                }
+              }}
               className="btn-primary rounded-full px-8 flex items-center gap-2"
             >
               {primaryCtaText}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </button>
+            </a>
 
             {resumeUrl && (
               <button
