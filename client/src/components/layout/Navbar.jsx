@@ -83,14 +83,16 @@ export default function Navbar({ content }) {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo */}
-          <a href="https://www.techartistry.in/" aria-label="Go to Techartistry homepage" className="flex items-center gap-1 group shrink-0">
-            <span className="font-display font-black text-xl tracking-tighter text-white uppercase italic">
-              Tech
-              <span className="text-blue-400 group-hover:text-blue-300 transition-colors">
-                Artistry
-              </span>
+          <a href="/" aria-label="Go to homepage" className="flex items-center group shrink-0">
+            <span 
+              className="text-[11px] sm:text-sm md:text-base font-bold text-white uppercase italic transition-colors group-hover:text-blue-200"
+              style={{
+                fontFamily: '"AUSTRIA", "DARLESTON", "BESTHANY", "Georgia", serif',
+                letterSpacing: '0.18em'
+              }}
+            >
+              NAGARAJ JAKKAPPA
             </span>
-            <span className="font-mono text-xs text-slate-500 mt-1">.in</span>
           </a>
 
           {/* Desktop nav links – shown at lg+ */}
