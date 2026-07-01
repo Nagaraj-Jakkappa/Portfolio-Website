@@ -2,78 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../../api/axios';
 import techStackIllustration from '../../assets/illustrations/tech-stack-illustration.webp';
 import { fallbackSkills } from '../../data/fallbackPortfolioData';
-import { FaCode } from "react-icons/fa";
-import {
-  SiHtml5,
-  SiJavascript,
-  SiTypescript,
-  SiReact,
-  SiVite,
-  SiTailwindcss,
-  SiNodedotjs,
-  SiExpress,
-  SiMongodb,
-  SiPython,
-  SiC,
-  SiGit,
-  SiGithub,
-  SiPostman,
-  SiVercel,
-  SiNetlify,
-  SiRender,
-  SiRailway,
-  SiFirebase,
-  SiJsonwebtokens,
-  SiTensorflow,
-  SiOpencv,
-  SiStreamlit,
-  SiFigma,
-  SiRedux,
-  SiZod,
-  SiFramer,
-  SiCss,
-  SiCanvas,
-} from "react-icons/si";
-
-const skillIcons = {
-  HTML: SiHtml5,
-  HTML5: SiHtml5,
-  CSS: SiCss,
-  CSS3: SiCss,
-  JavaScript: SiJavascript,
-  TypeScript: SiTypescript,
-  React: SiReact,
-  "React.js": SiReact,
-  Vite: SiVite,
-  "Tailwind CSS": SiTailwindcss,
-  "Node.js": SiNodedotjs,
-  Express: SiExpress,
-  "Express.js": SiExpress,
-  MongoDB: SiMongodb,
-  Python: SiPython,
-  C: SiC,
-  Git: SiGit,
-  GitHub: SiGithub,
-  Postman: SiPostman,
-  Vercel: SiVercel,
-  Netlify: SiNetlify,
-  Render: SiRender,
-  Railway: SiRailway,
-  Firebase: SiFirebase,
-  JWT: SiJsonwebtokens,
-  TensorFlow: SiTensorflow,
-  OpenCV: SiOpencv,
-  Streamlit: SiStreamlit,
-  Figma: SiFigma,
-  Canva: SiCanvas,
-  Redux: SiRedux,
-  Zustand: SiRedux,
-  Zod: SiZod,
-  "Framer Motion": SiFramer,
-  "Git & GitHub": SiGit,
-  "REST APIs": FaCode,
-  "JWT Authentication": SiJsonwebtokens,
-};
+import { getTechIcon } from '../../utils/techIcons';
 
 const LEVEL_COLORS = {
   Frontend: 'text-blue-400 border-blue-400/20 bg-blue-500/10',
@@ -170,7 +99,7 @@ export default function Skills({ content }) {
                 </h3>
                 <ul className="space-y-3">
                   {items.map((skillName, index) => {
-                    const Icon = skillIcons[skillName] || FaCode;
+                    const Icon = getTechIcon(skillName);
                     return (
                       <li key={index} className="flex items-center gap-2 text-slate-300 text-sm">
                         <Icon className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden="true" />

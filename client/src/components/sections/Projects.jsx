@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useData';
 import { trackVisitorEvent } from '../../utils/visitorTracking';
 import { fallbackProjects } from '../../data/fallbackPortfolioData';
+import { getTechIcon } from '../../utils/techIcons';
 
 function getCaseStudy(title) {
   const t = title.toLowerCase();
@@ -173,11 +174,15 @@ function ProjectCard({ project, isOverlayOpen, onToggleOverlay }) {
         {/* Tech tags */}
         {techStack?.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-4">
-            {techStack.map((t) => (
-              <span key={t} className="tag text-[10px] bg-navy-800 border-navy-700 text-slate-300">
-                {t}
-              </span>
-            ))}
+            {techStack.map((t) => {
+              const Icon = getTechIcon(t);
+              return (
+                <span key={t} className="tag inline-flex items-center gap-1.5 text-[10px] bg-navy-800 border-navy-700 text-slate-300">
+                  <Icon className="h-3.5 w-3.5 shrink-0 text-cyan-300" aria-hidden="true" />
+                  <span>{t}</span>
+                </span>
+              );
+            })}
           </div>
         )}
 

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import api from '../api/axios';
 import { trackVisitorEvent } from '../utils/visitorTracking';
+import { getTechIcon } from '../utils/techIcons';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
@@ -347,11 +348,15 @@ export default function ProjectDetail() {
               <h3 className="text-sm font-mono tracking-widest text-white uppercase mb-4">Technologies</h3>
               {techStack?.length > 0 ? (
                 <div className="flex flex-wrap gap-2 break-words">
-                  {techStack.map(tech => (
-                    <span key={tech} className="px-3 py-1.5 text-xs font-medium text-slate-300 bg-navy-900 border border-navy-700 rounded-md">
-                      {tech}
-                    </span>
-                  ))}
+                  {techStack.map(tech => {
+                    const Icon = getTechIcon(tech);
+                    return (
+                      <span key={tech} className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-300 bg-navy-900 border border-navy-700 rounded-md">
+                        <Icon className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden="true" />
+                        <span>{tech}</span>
+                      </span>
+                    );
+                  })}
                 </div>
               ) : (
                 <span className="text-slate-500 text-sm">Not specified</span>
