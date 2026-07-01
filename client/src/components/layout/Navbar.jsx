@@ -42,24 +42,32 @@ export default function Navbar({ content }) {
 
   const handleNav = (rawHref) => {
     setOpen(false);
-    const href = (rawHref || '').trim();
-    const targetId = href.startsWith('http') || href.startsWith('/') || href.startsWith('#') ? href : `#${href}`;
+    let href = (rawHref || '').trim();
     
-    if (!isHome && targetId.startsWith('#')) {
-      window.location.href = '/' + targetId;
+    // Convert known sections
+    const knownSections = ['projects', 'about', 'experience', 'skills', 'contact', 'certifications'];
+    if (knownSections.includes(href.replace('/', ''))) {
+      href = `#${href.replace('/', '')}`;
+    }
+
+    if (href.startsWith('http')) {
+      window.open(href, '_blank', 'noopener,noreferrer');
       return;
     }
-    if (targetId.startsWith('#')) {
-      try {
-        const target = document.querySelector(targetId);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
-      } catch (e) {
-        console.warn("Invalid selector in navbar:", targetId);
-      }
+
+    const normalized = href.startsWith('#') ? href : `#${href}`;
+    const id = normalized.replace('#', '');
+    
+    if (!isHome) {
+      window.location.href = `/${normalized}`;
+      return;
+    }
+    
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      window.open(targetId, '_blank', 'noopener,noreferrer');
+      window.location.href = `/${normalized}`;
     }
   };
 

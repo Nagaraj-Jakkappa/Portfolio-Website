@@ -19,31 +19,39 @@ export default function Hero({ content }) {
   
   const heroMedia = content?.mediaAssets?.heroIllustration || { isActive: true, url: '', alt: '' };
 
-  const handleScroll = (id) => {
-    document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+  const handleScroll = (targetId) => {
+    const id = targetId.replace('#', '');
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handlePrimaryCta = () => {
-    const rawHref = (primaryCtaHref || '#projects').trim();
-    if (rawHref.startsWith('http') || rawHref.startsWith('/')) {
+    let rawHref = (primaryCtaHref || '#projects').trim();
+    
+    // Convert common inputs to hash
+    if (rawHref === 'projects' || rawHref === '/projects') {
+      rawHref = '#projects';
+    }
+    if (rawHref === '/') {
+      rawHref = '#hero'; // or window.scrollTo(0, 0)
+    }
+
+    if (rawHref.startsWith('http')) {
       window.open(rawHref, '_blank', 'noopener,noreferrer');
       return;
     }
-    
-    // Auto-prepend # if admin forgot it
-    const targetId = rawHref.startsWith('#') ? rawHref : `#${rawHref}`;
-    
-    try {
-      const target = document.querySelector(targetId);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.location.href = '/' + targetId;
-      }
-    } catch (e) {
-      console.warn("Invalid selector:", targetId);
-      window.location.href = '/#projects';
+
+    // Must be an internal section or route
+    const normalized = rawHref.startsWith('#') ? rawHref : `#${rawHref}`;
+    const id = normalized.replace('#', '');
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
     }
+
+    // Fallback if not found on current page
+    window.location.href = `/${normalized}`;
   };
 
   const viewResume = () => {
