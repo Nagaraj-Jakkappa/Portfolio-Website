@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const sectionAnchors = {
+  hero: "#home",
   projects: "#projects",
   about: "#about",
   skills: "#skills",
@@ -209,13 +210,18 @@ export default function Navbar({ content }) {
                     {item.label}
                   </a>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => handleNav(item.href)}
+                  <a
+                    href={item.href}
+                    onClick={(e) => {
+                      if (item.href.startsWith('#')) {
+                        e.preventDefault();
+                        handleNav(item.href);
+                      }
+                    }}
                     className="nav-link cursor-pointer text-sm font-medium tracking-wide uppercase transition-colors hover:text-blue-400"
                   >
                     {item.label}
-                  </button>
+                  </a>
                 )}
               </li>
             ))}
@@ -306,13 +312,18 @@ export default function Navbar({ content }) {
                         {item.label}
                       </a>
                     ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleNav(item.href)}
+                      <a
+                        href={item.href}
+                        onClick={(e) => {
+                          if (item.href.startsWith('#')) {
+                            e.preventDefault();
+                            handleNav(item.href);
+                          }
+                        }}
                         className="flex items-center w-full px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/[0.06] transition-all text-left"
                       >
                         {item.label}
-                      </button>
+                      </a>
                     )}
                   </li>
                 ))}

@@ -418,7 +418,8 @@ export default function ContentPage() {
       <Section title="Homepage Layout Controls" defaultOpen>
         <p className="text-sm text-slate-400 mb-4">
           Drag/move sections to reorder how they appear on the homepage. Locked sections (like Home) cannot be moved.<br/>
-          Desktop Nav is kept short for recruiters. Mobile Nav can show all homepage links. These toggles only affect navbar visibility, not homepage section visibility.
+          Desktop Nav is kept short for recruiters. Mobile Nav can show all homepage links. These toggles only affect navbar visibility, not homepage section visibility.<br/>
+          The Home section uses the stable internal key “hero” but displays as “Home” in the navbar and Admin Panel.
         </p>
         <div className="space-y-2">
           {form.homepageSections.map((sec, i) => (
