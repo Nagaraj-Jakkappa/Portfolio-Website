@@ -85,12 +85,13 @@ export default function Navbar({ content }) {
           {/* Logo */}
           <a href="/" aria-label="Go to homepage" className="flex items-center group shrink-0">
             <span 
-              className="text-base sm:text-lg md:text-2xl text-white transition-colors group-hover:text-blue-200"
+              className="text-base sm:text-lg md:text-2xl bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 bg-clip-text text-transparent"
               style={{
                 fontFamily: '"Liu Jian Mao Cao", cursive',
                 fontWeight: 400,
                 fontStyle: 'normal',
-                letterSpacing: '0.03em'
+                letterSpacing: '0.03em',
+                textShadow: '0 0 18px rgba(34, 211, 238, 0.18)'
               }}
             >
               NAGARAJ JAKKAPPA
