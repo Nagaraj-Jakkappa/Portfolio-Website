@@ -164,6 +164,13 @@ const contentValidationRules = [
   body('uiEffects.customCursor.isActive').optional().isBoolean(),
   body('uiEffects.customCursor.color').optional({ checkFalsy: true }).isString().isLength({ max: 50 }),
   body('uiEffects.customCursor.label').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
+
+  // Homepage Sections
+  body('homepageSections').optional().isArray(),
+  body('homepageSections.*.key').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
+  body('homepageSections.*.label').optional({ checkFalsy: true }).isString().isLength({ max: 100 }),
+  body('homepageSections.*.order').optional().isNumeric(),
+  body('homepageSections.*.isLocked').optional().isBoolean(),
 ];
 
 // ── GET /api/site-content — Public ───────────────────────────
@@ -368,6 +375,16 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         type: n.type === 'external' ? 'external' : 'section',
         visible: typeof n.visible === 'boolean' ? n.visible : true,
         order: Number(n.order) || 0,
+      }));
+    }
+
+    // Homepage Sections
+    if (Array.isArray(req.body.homepageSections)) {
+      payload.homepageSections = req.body.homepageSections.map((s) => ({
+        key: s.key?.trim() || '',
+        label: s.label?.trim() || '',
+        order: Number(s.order) || 0,
+        isLocked: typeof s.isLocked === 'boolean' ? s.isLocked : false,
       }));
     }
 

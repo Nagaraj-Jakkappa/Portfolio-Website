@@ -106,7 +106,7 @@ export default function CurrentlyBuilding({ content, loading }) {
   const renderImpactSection = (className = '') => (
     <div className={`w-full ${className}`}>
       <h2 className="font-display font-bold text-2xl text-white mb-6">
-        Engineering <span className="gradient-text">Impact</span>
+        Technical <span className="gradient-text">Proof</span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
         {loading ? (

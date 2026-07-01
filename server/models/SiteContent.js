@@ -155,8 +155,21 @@ const siteContentSchema = new mongoose.Schema(
         url: { type: String, trim: true },
         alt: { type: String, trim: true },
         isActive: { type: Boolean, default: true }
+      },
+      contactIllustration: {
+        url: { type: String, trim: true },
+        alt: { type: String, trim: true },
+        isActive: { type: Boolean, default: true }
       }
     },
+    homepageSections: [
+      {
+        key: { type: String, trim: true, maxlength: 100 },
+        label: { type: String, trim: true, maxlength: 100 },
+        order: { type: Number, default: 0 },
+        isLocked: { type: Boolean, default: false }
+      }
+    ],
     uiEffects: {
       customCursor: {
         isActive: { type: Boolean, default: true },

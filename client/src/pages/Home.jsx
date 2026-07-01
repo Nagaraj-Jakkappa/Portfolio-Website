@@ -12,7 +12,38 @@ import Projects from '../components/sections/Projects';
 import RecruiterMode from '../components/sections/RecruiterMode';
 import Contact from '../components/sections/Contact';
 
+const DEFAULT_SECTION_ORDER = [
+  { key: "hero", label: "Hero", order: 1, isLocked: true },
+  { key: "projects", label: "Featured Work", order: 2, isLocked: false },
+  { key: "about", label: "About", order: 3, isLocked: false },
+  { key: "skills", label: "My Tech Stack", order: 4, isLocked: false },
+  { key: "experience", label: "Hands-on Experience", order: 5, isLocked: false },
+  { key: "certifications", label: "Certifications & Education", order: 6, isLocked: false },
+  { key: "currentlyBuilding", label: "Currently Building & Technical Proof", order: 7, isLocked: false },
+  { key: "techPulse", label: "Tech Pulse", order: 8, isLocked: false },
+  { key: "now", label: "Now", order: 9, isLocked: false },
+  { key: "engineeringHighlights", label: "Engineering Highlights", order: 10, isLocked: false },
+  { key: "contact", label: "Contact", order: 11, isLocked: false }
+];
+
 export default function Home({ content, loading }) {
+  const sectionMap = {
+    hero: <Hero content={content} key="hero" />,
+    projects: <Projects key="projects" />,
+    about: <About content={content} key="about" />,
+    skills: <Skills content={content} key="skills" />,
+    experience: <Experience key="experience" />,
+    certifications: <Certifications content={content} key="certifications" />,
+    currentlyBuilding: <CurrentlyBuilding content={content} loading={loading} key="currentlyBuilding" />,
+    techPulse: <GithubPulse items={content?.techPulse} key="techPulse" />,
+    now: <NowSection items={content?.now} key="now" />,
+    engineeringHighlights: <RecruiterMode items={content?.engineeringHighlights} content={content} key="engineeringHighlights" />,
+    contact: <Contact content={content} key="contact" />
+  };
+
+  const sectionsToRender = Array.isArray(content?.homepageSections) && content.homepageSections.length > 0
+    ? [...content.homepageSections].sort((a, b) => a.order - b.order)
+    : DEFAULT_SECTION_ORDER;
 
   return (
     <>
@@ -69,26 +100,10 @@ export default function Home({ content, loading }) {
         </script>
       </Helmet>
 
-      <Hero content={content} />
-      <CurrentlyBuilding content={content} loading={loading} />
-
-      <About content={content} />
-
-      <Experience />
-
-      <NowSection items={content?.now} />
-
-      <Skills content={content} />
-
-      <GithubPulse items={content?.techPulse} />
-
-      <Certifications content={content} />
-
-      <Projects />
-
-      <RecruiterMode items={content?.engineeringHighlights} content={content} />
-
-      <Contact content={content} />
+      {sectionsToRender.map((section) => {
+        if (!sectionMap[section.key]) return null;
+        return sectionMap[section.key];
+      })}
     </>
   );
 }

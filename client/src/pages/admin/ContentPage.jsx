@@ -68,7 +68,8 @@ const EMPTY_CONTENT = {
   },
   uiEffects: {
     customCursor: { isActive: true, color: '#22d3ee', label: 'Premium Cursor' }
-  }
+  },
+  homepageSections: []
 };
 
 // ── Collapsible Section ─────────────────────────────────────
@@ -115,6 +116,7 @@ export default function ContentPage() {
             brandIdentity: { ...EMPTY_CONTENT.brandIdentity, ...data.brandIdentity },
             mediaAssets: { ...EMPTY_CONTENT.mediaAssets, ...data.mediaAssets },
             uiEffects: { ...EMPTY_CONTENT.uiEffects, ...data.uiEffects },
+            homepageSections: Array.isArray(data.homepageSections) ? data.homepageSections : [],
           });
         }
       } catch {
@@ -128,6 +130,24 @@ export default function ContentPage() {
   // ── Helpers ────────────────────────────────────────────────
   const setNested = (section, key, val) =>
     setForm((f) => ({ ...f, [section]: { ...f[section], [key]: val } }));
+
+  const moveHomepageSection = (index, direction) => {
+    const list = [...form.homepageSections];
+    if (direction === 'up' && index > 0) {
+      [list[index - 1], list[index]] = [list[index], list[index - 1]];
+    } else if (direction === 'down' && index < list.length - 1) {
+      [list[index + 1], list[index]] = [list[index], list[index + 1]];
+    }
+    // Update order values based on array position
+    const reordered = list.map((item, i) => ({ ...item, order: i + 1 }));
+    setForm((f) => ({ ...f, homepageSections: reordered }));
+  };
+
+  const updateHomepageSectionLabel = (index, label) => {
+    const list = [...form.homepageSections];
+    list[index] = { ...list[index], label };
+    setForm((f) => ({ ...f, homepageSections: list }));
+  };
 
   // ── Save ───────────────────────────────────────────────────
   const handleSave = async () => {
@@ -181,6 +201,7 @@ export default function ContentPage() {
         brandIdentity: { ...EMPTY_CONTENT.brandIdentity, ...data.brandIdentity },
         mediaAssets: { ...EMPTY_CONTENT.mediaAssets, ...data.mediaAssets },
         uiEffects: { ...EMPTY_CONTENT.uiEffects, ...data.uiEffects },
+        homepageSections: Array.isArray(data.homepageSections) ? data.homepageSections : [],
       });
       toast.success('Content saved!');
     } catch (err) {
@@ -374,6 +395,52 @@ export default function ContentPage() {
           </Btn>
         }
       />
+
+      {/* ── Homepage Layout Controls ─────────────────────────── */}
+      <Section title="Homepage Layout Controls" defaultOpen>
+        <p className="text-sm text-slate-400 mb-4">
+          Drag/move sections to reorder how they appear on the homepage. Locked sections (like Hero) cannot be moved.
+        </p>
+        <div className="space-y-2">
+          {form.homepageSections.map((sec, i) => (
+            <div key={sec.key} className="flex items-center gap-3 p-3 bg-navy-900 border border-navy-800 rounded-lg">
+              <div className="flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={() => moveHomepageSection(i, 'up')}
+                  disabled={sec.isLocked || i === 0 || form.homepageSections[i - 1]?.isLocked}
+                  className="text-slate-500 hover:text-white disabled:opacity-30 disabled:hover:text-slate-500"
+                >
+                  <Ic d={IC.chevUp} size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveHomepageSection(i, 'down')}
+                  disabled={sec.isLocked || i === form.homepageSections.length - 1 || form.homepageSections[i + 1]?.isLocked}
+                  className="text-slate-500 hover:text-white disabled:opacity-30 disabled:hover:text-slate-500"
+                >
+                  <Ic d={IC.chevDown} size={14} />
+                </button>
+              </div>
+              <div className="flex-1">
+                <Input
+                  value={sec.label}
+                  onChange={(e) => updateHomepageSectionLabel(i, e.target.value)}
+                  placeholder="Section Label"
+                />
+              </div>
+              <div className="w-24 text-xs text-slate-500 uppercase tracking-wider text-right">
+                {sec.isLocked ? <span className="text-rose-400">Locked</span> : `Order: ${sec.order}`}
+              </div>
+            </div>
+          ))}
+          {form.homepageSections.length === 0 && (
+            <div className="p-4 text-center text-slate-500 text-sm border border-dashed border-navy-800 rounded-lg">
+              No sections loaded. Run the sync script to populate default sections.
+            </div>
+          )}
+        </div>
+      </Section>
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <Section title="Hero Section" defaultOpen>
