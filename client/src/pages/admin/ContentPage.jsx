@@ -593,12 +593,17 @@ export default function ContentPage() {
             onChange={(e) => setNested('hero', 'primaryCtaText', e.target.value)}
             placeholder="Explore Projects"
           />
-          <Input
-            label="Primary CTA Href"
-            value={form.hero.primaryCtaHref}
-            onChange={(e) => setNested('hero', 'primaryCtaHref', e.target.value)}
-            placeholder="#projects"
-          />
+          <div>
+            <Input
+              label="Primary CTA Href"
+              value={form.hero.primaryCtaHref}
+              onChange={(e) => setNested('hero', 'primaryCtaHref', e.target.value)}
+              placeholder="#projects"
+            />
+            <p className="text-xs text-slate-500 mt-1">
+              Use lowercase section anchors like #projects, #contact, and #home.
+            </p>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Input

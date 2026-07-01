@@ -11,6 +11,21 @@ const DEFAULT_ROTATING_ROLES = [
   "Software Developer",
 ];
 
+const normalizeHashHref = (href) => {
+  if (!href || typeof href !== "string") return href;
+
+  const hashMap = {
+    "#Projects": "#projects",
+    "#projects": "#projects",
+    "#Contact": "#contact",
+    "#contact": "#contact",
+    "#Home": "#home",
+    "#home": "#home",
+  };
+
+  return hashMap[href.trim()] || href;
+};
+
 export default function Hero({ content }) {
   const [roleIndex, setRoleIndex] = useState(0);
   
@@ -170,7 +185,7 @@ export default function Hero({ content }) {
             style={{ animationDelay: '400ms', opacity: 0, animationFillMode: 'forwards' }}
           >
             <a
-              href={primaryCtaHref || '#projects'}
+              href={normalizeHashHref(primaryCtaHref) || '#projects'}
               className="btn-primary rounded-full px-8 flex items-center gap-2 justify-center"
             >
               {primaryCtaText}
