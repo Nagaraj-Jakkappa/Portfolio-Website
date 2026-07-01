@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { trackVisitorEvent } from '../../utils/visitorTracking';
 import developerWorkspace from '../../assets/illustrations/developer-workspace.webp';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const ROTATING_ROLES = [
+  "MERN Stack Developer",
+  "Frontend Developer",
+  "React Developer",
+  "Full Stack Developer",
+  "Software Developer",
+];
 
 export default function Hero({ content }) {
+  const [roleIndex, setRoleIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRoleIndex((current) => (current + 1) % ROTATING_ROLES.length);
+    }, 2200);
+    return () => clearInterval(timer);
+  }, []);
+
   const hero = content?.hero || {};
   const resume = content?.resume || {};
 
@@ -104,19 +122,31 @@ export default function Hero({ content }) {
           </h1>
 
           {/* Role / Sub-brand */}
-          <p
-            className="font-display text-xl md:text-2xl text-slate-300 mb-4 animate-fade-up"
+          <div
+            className="font-display text-xl md:text-2xl text-slate-300 mb-4 animate-fade-up flex flex-wrap items-center gap-x-2 gap-y-1"
             style={{ animationDelay: '200ms', opacity: 0, animationFillMode: 'forwards' }}
+            aria-label="Nagaraj Jakkappa, MERN Stack Developer, Frontend Developer, React Developer, Full Stack Developer, Software Developer"
           >
-            {role.includes('@') ? (
-              <>
-                {role.split('@')[0]}
-                <span className="text-blue-500 font-bold">@ {role.split('@')[1]}</span>
-              </>
-            ) : (
-              role
-            )}
-          </p>
+            <span aria-hidden="true">Nagaraj Jakkappa <span className="text-slate-500 font-light px-1">|</span></span>
+            <div className="relative inline-flex" aria-hidden="true">
+              <span className="invisible pointer-events-none whitespace-nowrap">
+                Full Stack Developer
+              </span>
+              <AnimatePresence>
+                <motion.span
+                  key={roleIndex}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="absolute left-0 top-0 inline-block bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 bg-clip-text text-transparent font-semibold"
+                  style={{ textShadow: "0 0 16px rgba(34, 211, 238, 0.16)", whiteSpace: 'nowrap' }}
+                >
+                  {ROTATING_ROLES[roleIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+          </div>
 
           {/* Targeted Description */}
           <p
