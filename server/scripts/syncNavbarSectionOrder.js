@@ -2,17 +2,62 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const SiteContent = require('../models/SiteContent');
 
-const DEFAULT_NAV_LABELS = {
-  projects: "Projects",
-  about: "About",
-  skills: "Skills",
-  experience: "Experience",
-  certifications: "Certifications",
-  currentlyBuilding: "Building",
-  techPulse: "Tech Pulse",
-  now: "Now",
-  engineeringHighlights: "Highlights",
-  contact: "Contact"
+const DEFAULT_NAV_VISIBILITY = {
+  hero: {
+    navLabel: "Home",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  projects: {
+    navLabel: "Projects",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  about: {
+    navLabel: "About",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  skills: {
+    navLabel: "Skills",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  experience: {
+    navLabel: "Experience",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  certifications: {
+    navLabel: "Certifications",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  currentlyBuilding: {
+    navLabel: "Building",
+    showInDesktopNav: false,
+    showInMobileNav: true,
+  },
+  techPulse: {
+    navLabel: "Tech Pulse",
+    showInDesktopNav: false,
+    showInMobileNav: true,
+  },
+  now: {
+    navLabel: "Now",
+    showInDesktopNav: false,
+    showInMobileNav: true,
+  },
+  engineeringHighlights: {
+    navLabel: "Highlights",
+    showInDesktopNav: false,
+    showInMobileNav: true,
+  },
+  contact: {
+    navLabel: "Contact",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
 };
 
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
@@ -34,25 +79,33 @@ async function syncNavbarSections() {
       process.exit(1);
     }
 
-    console.log('ℹ️ Syncing homepageSections with navLabel and showInNav...');
+    console.log('ℹ️ Syncing homepageSections with responsive nav fields...');
     
     let updatedCount = 0;
     const updatedSections = content.homepageSections.map((sec) => {
       let modified = false;
       
       const newSec = { ...sec.toObject() };
+      
+      const defaultVis = DEFAULT_NAV_VISIBILITY[newSec.key] || {
+        navLabel: newSec.label || newSec.key,
+        showInDesktopNav: true,
+        showInMobileNav: true
+      };
 
       if (typeof newSec.navLabel !== 'string' || !newSec.navLabel) {
-        newSec.navLabel = DEFAULT_NAV_LABELS[newSec.key] || newSec.label;
+        newSec.navLabel = defaultVis.navLabel;
         modified = true;
       }
 
-      if (typeof newSec.showInNav !== 'boolean' || newSec.key === 'hero') {
-        const newValue = newSec.key !== 'hero';
-        if (newSec.showInNav !== newValue) {
-          newSec.showInNav = newValue;
-          modified = true;
-        }
+      if (newSec.showInDesktopNav !== defaultVis.showInDesktopNav) {
+        newSec.showInDesktopNav = defaultVis.showInDesktopNav;
+        modified = true;
+      }
+      
+      if (newSec.showInMobileNav !== defaultVis.showInMobileNav) {
+        newSec.showInMobileNav = defaultVis.showInMobileNav;
+        modified = true;
       }
 
       if (modified) updatedCount++;
@@ -62,14 +115,14 @@ async function syncNavbarSections() {
     if (updatedCount > 0) {
       content.homepageSections = updatedSections;
       await content.save();
-      console.log(`✅ Updated ${updatedCount} sections with nav fields in SiteContent.`);
+      console.log(`✅ Updated ${updatedCount} sections with responsive nav fields in SiteContent.`);
     } else {
-      console.log('✅ All sections already have navLabel and showInNav fields. No changes made.');
+      console.log('✅ All sections already have showInDesktopNav and showInMobileNav fields. No changes made.');
     }
 
     console.log('Detailed sections state:');
     content.homepageSections.forEach(s => {
-      console.log(` - [${s.key}] navLabel: "${s.navLabel}", showInNav: ${s.showInNav}, order: ${s.order}`);
+      console.log(` - [${s.key}] desktop: ${s.showInDesktopNav}, mobile: ${s.showInMobileNav}`);
     });
 
   } catch (err) {

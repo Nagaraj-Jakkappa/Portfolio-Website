@@ -155,9 +155,15 @@ export default function ContentPage() {
     setForm((f) => ({ ...f, homepageSections: list }));
   };
 
-  const updateHomepageSectionShowInNav = (index, showInNav) => {
+  const updateHomepageSectionShowInDesktopNav = (index, showInDesktopNav) => {
     const list = [...form.homepageSections];
-    list[index] = { ...list[index], showInNav };
+    list[index] = { ...list[index], showInDesktopNav };
+    setForm((f) => ({ ...f, homepageSections: list }));
+  };
+
+  const updateHomepageSectionShowInMobileNav = (index, showInMobileNav) => {
+    const list = [...form.homepageSections];
+    list[index] = { ...list[index], showInMobileNav };
     setForm((f) => ({ ...f, homepageSections: list }));
   };
 
@@ -412,7 +418,7 @@ export default function ContentPage() {
       <Section title="Homepage Layout Controls" defaultOpen>
         <p className="text-sm text-slate-400 mb-4">
           Drag/move sections to reorder how they appear on the homepage. Locked sections (like Hero) cannot be moved.<br/>
-          Navbar links follow the same order as homepage sections. <code>Show in Navbar</code> only affects navigation links, not homepage visibility. Labels here are used for Admin organization and navbar labels where supported.
+          Desktop Nav is kept short for recruiters. Mobile Nav can show all homepage links. These toggles only affect navbar visibility, not homepage section visibility.
         </p>
         <div className="space-y-2">
           {form.homepageSections.map((sec, i) => (
@@ -447,15 +453,24 @@ export default function ContentPage() {
                   placeholder="Navbar Label"
                 />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
                 <label className="flex items-center gap-1.5 cursor-pointer text-sm text-slate-400 hover:text-white">
                   <input
                     type="checkbox"
-                    checked={sec.showInNav !== false}
-                    onChange={(e) => updateHomepageSectionShowInNav(i, e.target.checked)}
+                    checked={sec.showInDesktopNav !== false}
+                    onChange={(e) => updateHomepageSectionShowInDesktopNav(i, e.target.checked)}
                     className="rounded border-navy-700 bg-navy-800 text-cyan-500 focus:ring-cyan-500/50"
                   />
-                  <span>Show in Nav</span>
+                  <span>Desktop Nav</span>
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-sm text-slate-400 hover:text-white">
+                  <input
+                    type="checkbox"
+                    checked={sec.showInMobileNav !== false}
+                    onChange={(e) => updateHomepageSectionShowInMobileNav(i, e.target.checked)}
+                    className="rounded border-navy-700 bg-navy-800 text-cyan-500 focus:ring-cyan-500/50"
+                  />
+                  <span>Mobile Nav</span>
                 </label>
               </div>
               <div className="w-24 text-xs text-slate-500 uppercase tracking-wider text-right">

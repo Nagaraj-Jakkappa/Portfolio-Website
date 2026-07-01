@@ -173,6 +173,8 @@ const contentValidationRules = [
   body('homepageSections.*.order').optional().isNumeric(),
   body('homepageSections.*.isLocked').optional().isBoolean(),
   body('homepageSections.*.showInNav').optional().isBoolean(),
+  body('homepageSections.*.showInDesktopNav').optional().isBoolean(),
+  body('homepageSections.*.showInMobileNav').optional().isBoolean(),
 ];
 
 // ── GET /api/site-content — Public ───────────────────────────
@@ -389,6 +391,8 @@ router.put('/', protect, contentValidationRules, validate, async (req, res) => {
         order: Number(s.order) || 0,
         isLocked: typeof s.isLocked === 'boolean' ? s.isLocked : false,
         showInNav: typeof s.showInNav === 'boolean' ? s.showInNav : true,
+        showInDesktopNav: typeof s.showInDesktopNav === 'boolean' ? s.showInDesktopNav : true,
+        showInMobileNav: typeof s.showInMobileNav === 'boolean' ? s.showInMobileNav : true,
       }));
     }
 

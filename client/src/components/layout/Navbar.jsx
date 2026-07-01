@@ -14,30 +14,76 @@ const sectionAnchors = {
   contact: "#contact",
 };
 
-const DEFAULT_NAV_LABELS = {
-  projects: "Projects",
-  about: "About",
-  skills: "Skills",
-  experience: "Experience",
-  certifications: "Certifications",
-  currentlyBuilding: "Building",
-  techPulse: "Tech Pulse",
-  now: "Now",
-  engineeringHighlights: "Highlights",
-  contact: "Contact"
+const DEFAULT_NAV_VISIBILITY = {
+  hero: {
+    navLabel: "Home",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  projects: {
+    navLabel: "Projects",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  about: {
+    navLabel: "About",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  skills: {
+    navLabel: "Skills",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  experience: {
+    navLabel: "Experience",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  certifications: {
+    navLabel: "Certifications",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
+  currentlyBuilding: {
+    navLabel: "Building",
+    showInDesktopNav: false,
+    showInMobileNav: true,
+  },
+  techPulse: {
+    navLabel: "Tech Pulse",
+    showInDesktopNav: false,
+    showInMobileNav: true,
+  },
+  now: {
+    navLabel: "Now",
+    showInDesktopNav: false,
+    showInMobileNav: true,
+  },
+  engineeringHighlights: {
+    navLabel: "Highlights",
+    showInDesktopNav: false,
+    showInMobileNav: true,
+  },
+  contact: {
+    navLabel: "Contact",
+    showInDesktopNav: true,
+    showInMobileNav: true,
+  },
 };
 
-const NAV_LINKS = [
-  { label: 'Projects', href: '#projects' },
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Certifications', href: '#certifications' },
-  { label: 'Building', href: '#currently-building' },
-  { label: 'Tech Pulse', href: '#tech-pulse' },
-  { label: 'Now', href: '#now' },
-  { label: 'Highlights', href: '#engineering-highlights' },
-  { label: 'Contact', href: '#contact' },
+const FALLBACK_NAV_LINKS = [
+  { label: 'Home', href: '#home', showInDesktopNav: true, showInMobileNav: true },
+  { label: 'Projects', href: '#projects', showInDesktopNav: true, showInMobileNav: true },
+  { label: 'About', href: '#about', showInDesktopNav: true, showInMobileNav: true },
+  { label: 'Skills', href: '#skills', showInDesktopNav: true, showInMobileNav: true },
+  { label: 'Experience', href: '#experience', showInDesktopNav: true, showInMobileNav: true },
+  { label: 'Certifications', href: '#certifications', showInDesktopNav: true, showInMobileNav: true },
+  { label: 'Building', href: '#currently-building', showInDesktopNav: false, showInMobileNav: true },
+  { label: 'Tech Pulse', href: '#tech-pulse', showInDesktopNav: false, showInMobileNav: true },
+  { label: 'Now', href: '#now', showInDesktopNav: false, showInMobileNav: true },
+  { label: 'Highlights', href: '#engineering-highlights', showInDesktopNav: false, showInMobileNav: true },
+  { label: 'Contact', href: '#contact', showInDesktopNav: true, showInMobileNav: true },
 ];
 
 export default function Navbar({ content }) {
@@ -46,15 +92,33 @@ export default function Navbar({ content }) {
   const location = useLocation();
   const isHome = location.pathname === '/';
 
-  const navLinks = Array.isArray(content?.homepageSections) && content.homepageSections.length > 0
-    ? [...content.homepageSections]
-        .filter((sec) => sec.key !== 'hero' && sec.showInNav !== false)
-        .sort((a, b) => (a.order || 0) - (b.order || 0))
-        .map((sec) => ({
-          label: sec.navLabel || sec.label || DEFAULT_NAV_LABELS[sec.key] || sec.key,
-          href: sectionAnchors[sec.key] || `#${sec.key}`
-        }))
-    : NAV_LINKS;
+  let desktopNavLinks = [];
+  let mobileNavLinks = [];
+
+  if (Array.isArray(content?.homepageSections) && content.homepageSections.length > 0) {
+    const sortedSections = [...content.homepageSections].sort((a, b) => (a.order || 0) - (b.order || 0));
+    
+    const normalizedLinks = sortedSections.map((sec) => {
+      const defaultVis = DEFAULT_NAV_VISIBILITY[sec.key] || {
+        navLabel: sec.label || sec.key,
+        showInDesktopNav: true,
+        showInMobileNav: true
+      };
+
+      return {
+        label: sec.navLabel || sec.label || defaultVis.navLabel,
+        href: sectionAnchors[sec.key] || `#${sec.key}`,
+        showInDesktopNav: typeof sec.showInDesktopNav === 'boolean' ? sec.showInDesktopNav : defaultVis.showInDesktopNav,
+        showInMobileNav: typeof sec.showInMobileNav === 'boolean' ? sec.showInMobileNav : defaultVis.showInMobileNav,
+      };
+    });
+
+    desktopNavLinks = normalizedLinks.filter(l => l.showInDesktopNav);
+    mobileNavLinks = normalizedLinks.filter(l => l.showInMobileNav);
+  } else {
+    desktopNavLinks = FALLBACK_NAV_LINKS.filter(l => l.showInDesktopNav);
+    mobileNavLinks = FALLBACK_NAV_LINKS.filter(l => l.showInMobileNav);
+  }
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -133,7 +197,7 @@ export default function Navbar({ content }) {
 
           {/* Desktop nav links – shown at lg+ */}
           <ul className="hidden lg:flex items-center gap-6 xl:gap-8">
-            {navLinks.map((item) => (
+            {desktopNavLinks.map((item) => (
               <li key={item.label}>
                 {item.type === 'external' ? (
                   <a
@@ -229,7 +293,7 @@ export default function Navbar({ content }) {
           <div className="relative z-10 mx-4 mt-24 bg-navy-900 border border-navy-800 rounded-2xl shadow-2xl overflow-hidden">
             <nav className="p-5">
               <ul className="flex flex-col gap-1">
-                {navLinks.map((item) => (
+                {mobileNavLinks.map((item) => (
                   <li key={item.label}>
                     {item.type === 'external' ? (
                       <a

@@ -169,7 +169,9 @@ const siteContentSchema = new mongoose.Schema(
         navLabel: { type: String, trim: true, maxlength: 50 },
         order: { type: Number, default: 0 },
         isLocked: { type: Boolean, default: false },
-        showInNav: { type: Boolean, default: true }
+        showInNav: { type: Boolean, default: true },
+        showInDesktopNav: { type: Boolean, default: true },
+        showInMobileNav: { type: Boolean, default: true }
       }
     ],
     uiEffects: {
