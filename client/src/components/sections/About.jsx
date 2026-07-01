@@ -34,17 +34,17 @@ const getWhatsAppHref = (value) => {
   },
 ];
 
-const HL = "bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 bg-clip-text text-transparent font-semibold";
+const HL = "text-cyan-300 font-semibold";
 
 const DEFAULT_BIO = [
   <>
-    Hi, I’m <span className={HL}>Nagaraj Jakkappa</span> — a <span className={HL}>MERN Stack Developer</span> from Yadgir, Karnataka, focused on building secure, scalable, and production-ready web applications with <span className={HL}>React, Node.js, Express, and MongoDB</span>.
+    Hi, I’m <span className={HL}>Nagaraj Jakkappa</span> — a <span className={HL}>MERN Stack Developer</span> from Yadgir, Karnataka, focused on building secure, scalable, and production-ready web applications with React, Node.js, Express, and MongoDB.
   </>,
   <>
     I build full-stack projects that solve real problems — from <span className={HL}>HYRR</span>, an AI resume and ATS optimizer, to <span className={HL}>Techartistry</span>, a secure portfolio CMS, and a <span className={HL}>TensorFlow/MobileNetV2</span> pothole detection system.
   </>,
   <>
-    As a BCA graduate with a <span className={HL}>CGPA of 8.26</span>, I’m actively seeking full-time <span className={HL}>Frontend Developer</span> or <span className={HL}>MERN Stack Developer</span> roles where I can contribute to impactful products with <span className={HL}>clean code, modern UI, and strong security practices</span>.
+    As a BCA graduate with a <span className={HL}>CGPA of 8.26</span>, I’m actively seeking full-time Frontend Developer or MERN Stack Developer roles where I can contribute to impactful products with clean code, modern UI, and strong security practices.
   </>,
 ];
 
