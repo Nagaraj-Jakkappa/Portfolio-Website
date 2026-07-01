@@ -85,10 +85,11 @@ export default function Navbar({ content }) {
           {/* Logo */}
           <a href="/" aria-label="Go to homepage" className="flex items-center group shrink-0">
             <span 
-              className="text-[11px] sm:text-sm md:text-base font-bold text-white uppercase italic transition-colors group-hover:text-blue-200"
+              className="text-[11px] sm:text-sm md:text-base text-white uppercase transition-colors group-hover:text-blue-200"
               style={{
-                fontFamily: '"AUSTRIA", "DARLESTON", "BESTHANY", "Georgia", serif',
-                letterSpacing: '0.18em'
+                fontFamily: '"Cormorant Garamond", Georgia, serif',
+                letterSpacing: '0.12em',
+                fontWeight: 700
               }}
             >
               NAGARAJ JAKKAPPA
